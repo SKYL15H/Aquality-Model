@@ -175,3 +175,7 @@ data/
 dataset/
 runs/
 logs/
+output/
+*.tif
+*.tiff
+*.gpkg
