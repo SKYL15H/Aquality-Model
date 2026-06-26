@@ -514,7 +514,7 @@ def create_folium_visualization(coastal_gdf, results_df, output_path):
         tooltip_text = f"Kecamatan {row['Kecamatan']} ({status_2026})"
         
         popup_html = f"""
-        <div style='font-family: Arial, sans-serif; font-size: 13px; width: 280px; padding: 5px;'>
+        <div style='font-family: Arial, sans-serif; font-size: 13px; width: 300px; padding: 5px;'>
             <h4 style='margin: 0 0 5px 0; color: #2c3e50;'>Kecamatan {row['Kecamatan']}</h4>
             <span style='font-size: 11px; color: #7f8c8d;'>{row['Kabupaten_Kota']}</span>
             <hr style='margin: 8px 0;'/>
@@ -523,6 +523,10 @@ def create_folium_visualization(coastal_gdf, results_df, output_path):
             <span style='color: {color}; font-weight: bold;'>{status_2026}</span><br/>
             <b>Perubahan (2017 -> 2026):</b> 
             <span style='font-weight: bold;'>{row['Tren_Kualitas']}</span><br/>
+            <hr style='margin: 8px 0;'/>
+            <div style='font-size: 11px; line-height: 1.4; background-color: #f8f9fa; padding: 6px; border-left: 3px solid #3498db; margin: 5px 0;'>
+                <b>Analisis Kondisi:</b><br/>{row.get('penjelasan_kualitas', 'Tidak ada data penjelasan.')}
+            </div>
             <hr style='margin: 8px 0;'/>
             <table style='width: 100%; font-size: 12px;'>
                 <tr style='background: #f8f9fa;'>
@@ -764,6 +768,126 @@ def main():
     
     # 6. Looping analisis per kecamatan
     print("\n[STEP 5] Memproses analisis kualitas air per kecamatan...")
+    
+    DISTRICT_CONTEXTS = {
+        "pulomerak": {
+            "context": "kawasan Pelabuhan Penyeberangan Merak yang sangat aktif serta berdekatan dengan zona industri galangan kapal dan PLTU Suralaya",
+            "sources": ["aktivitas kapal feri", "limpasan industri pesisir", "buangan termal/sedimen PLTU"]
+        },
+        "ciwandan": {
+            "context": "wilayah Pelabuhan Logistik Ciwandan dan pusat industri berat (pabrik baja, kimia, dan semen) Cilegon",
+            "sources": ["buangan limbah industri berat", "bongkar muat kapal curah", "limpasan drainase industri"]
+        },
+        "citangkil": {
+            "context": "zona industri kimia dan petrokimia yang terhubung langsung dengan garis pantai industri Cilegon",
+            "sources": ["residu polutan kimiawi", "limpasan limbah cair industri", "aktivitas transportasi logistik laut"]
+        },
+        "grogol": {
+            "context": "wilayah pesisir utara Cilegon yang padat aktivitas manufaktur logam dan logistik pelabuhan",
+            "sources": ["limpasan sedimentasi", "buangan domestik perkotaan", "debu industri pesisir"]
+        },
+        "cibeber": {
+            "context": "daerah aliran sungai urban Cilegon yang membawa sisa buangan domestik perkotaan ke pesisir",
+            "sources": ["limbah domestik rumah tangga", "sampah plastik", "limpasan air hujan kota"]
+        },
+        "jombang": {
+            "context": "aliran drainase pusat kota Cilegon dengan kepadatan penduduk tinggi",
+            "sources": ["buangan detergen domestik", "sanitasi perkotaan", "limbah komersial mikro"]
+        },
+        "kasemen": {
+            "context": "wilayah Pelabuhan Perikanan Karangantu dan area budidaya tambak pesisir Serang yang sangat luas",
+            "sources": ["sisa pakan tambak udang/ikan", "limbah organik domestik pesisir", "aktivitas pasar ikan Karangantu"]
+        },
+        "anyar": {
+            "context": "kawasan pariwisata pantai utama Banten dengan kepadatan hotel, resort, dan rekreasi pesisir",
+            "sources": ["limbah domestik perhotelan", "aktivitas wisatawan", "sedimen dari sungai sekitar"]
+        },
+        "cinangka": {
+            "context": "zona wisata pantai berpasir dengan aktivitas rekreasi laut dan perhotelan intensif",
+            "sources": ["aktivitas wisata air", "limbah cair domestik", "limpasan pertanian dari hulu"]
+        },
+        "bojonegara": {
+            "context": "pusat industri galangan kapal, manufaktur lepas pantai, dan dermaga logistik swasta (jetty)",
+            "sources": ["tumpahan minyak ringan/oli kapal", "sedimentasi akibat reklamasi/pengerukan", "buangan industri galangan"]
+        },
+        "kramatwatu": {
+            "context": "zona peralihan muara sungai dan industri berat Bojonegara",
+            "sources": ["limpasan muara sungai", "sedimentasi lumpur", "buangan pelabuhan sekitar"]
+        },
+        "pontang": {
+            "context": "wilayah muara Sungai Ciujung dengan area tambak tradisional yang sangat dominan",
+            "sources": ["limpasan pertanian hulu", "sisa pupuk tambak", "sedimentasi lumpur Sungai Ciujung"]
+        },
+        "tirtayasa": {
+            "context": "daerah muara Ciujung bagian hilir dan hutan mangrove tersisa",
+            "sources": ["nutrien pertanian", "sedimen lumpur tebal", "limbah cair tambak"]
+        },
+        "tanara": {
+            "context": "hilir Sungai Cidurian dengan limpasan pertanian intensif",
+            "sources": ["pupuk urea/pestisida pertanian", "sedimentasi lumpur", "limbah rumah tangga pedesaan"]
+        },
+        "carita": {
+            "context": "kawasan wisata pantai rekreasi dan cagar alam pesisir",
+            "sources": ["limbah domestik pariwisata", "aktivitas perahu wisata", "limpasan sungai kecil"]
+        },
+        "labuan": {
+            "context": "zona Pelabuhan Perikanan Labuan dan PLTU Banten 2 Labuan",
+            "sources": ["aktivitas kapal nelayan dan bahan bakar solar", "limpasan pemukiman nelayan padat", "limbah air hangat PLTU"]
+        },
+        "panimbang": {
+            "context": "wilayah pesisir Teluk Lada yang dikembangkan sebagai KEK Pariwisata Tanjung Lesung",
+            "sources": ["pembangunan infrastruktur wisata", "sedimentasi lumpur Teluk Lada", "limpasan pertanian hulu"]
+        },
+        "sumur": {
+            "context": "wilayah penyangga Taman Nasional Ujung Kulon yang menghadap ke Selat Sunda",
+            "sources": ["suspensi pasir alami", "limpasan sungai liar hutan hujan", "aktivitas nelayan tradisional"]
+        },
+        "bayah": {
+            "context": "wilayah pesisir Samudra Hindia dengan pelabuhan khusus semen (jetty) dan pertambangan batubara/pasir di hulu",
+            "sources": ["sedimentasi debu tambang/semen", "erosi alami tebing pantai", "limpasan lumpur sungai"]
+        },
+        "wanasalam": {
+            "context": "pusat Pelabuhan Perikanan Binuangeun dengan aktivitas nelayan lepas pantai",
+            "sources": ["limbah organik Tempat Pelelangan Ikan (TPI)", "buangan bahan bakar solar kapal", "limpasan tambak udang sekitar"]
+        },
+        "cihara": {
+            "context": "pesisir selatan terbuka dengan karakteristik gelombang besar Samudra Hindia",
+            "sources": ["abrasi tebing alami", "sedimentasi sungai lokal", "turbulensi pasir akibat ombak"]
+        },
+        "panggarangan": {
+            "context": "pesisir terbuka dengan aktivitas tambang batu bara tradisional/pasir di hulu",
+            "sources": ["limpasan sedimen tambang rakyat", "abrasi pantai alami", "buangan domestik sungai"]
+        }
+    }
+
+    def generate_explanation(kec_name, status, ndti, ndci, kab_kota):
+        name_lower = kec_name.lower()
+        profile = DISTRICT_CONTEXTS.get(name_lower)
+        if profile:
+            context_text = f"Kecamatan {kec_name} merupakan {profile['context']}. "
+            sources_text = f"Kondisi ini dipengaruhi oleh {', '.join(profile['sources'])}."
+        else:
+            context_text = f"Kecamatan {kec_name} terletak di wilayah pesisir {kab_kota}. "
+            sources_text = "Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir."
+
+        if status == "TIDAK SEHAT":
+            reason = f"Status Kualitas Air di {kec_name} diklasifikasikan sebagai **TIDAK SEHAT**. {context_text}"
+            param_reasons = []
+            if ndti > 0.05:
+                param_reasons.append(f"tingkat kekeruhan air (NDTI: {ndti:.4f}) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi")
+            if ndci > 0.08:
+                param_reasons.append(f"konsentrasi klorofil-a (NDCI: {ndci:.4f}) melampaui batas aman 0.08 yang mengindikasikan adanya blooming alga (eutrofikasi) akibat penumpukan zat hara/nutrien")
+            if param_reasons:
+                reason += "Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana " + " dan ".join(param_reasons) + ". "
+            else:
+                reason += "Hasil analisis menunjukkan akumulasi parameter fisik-kimiawi air (TSS/CDOM) melampaui baku mutu optimal. "
+            reason += sources_text
+        elif status == "SEDANG":
+            reason = f"Kualitas air pesisir di {kec_name} berada dalam kondisi **SEDANG**. {context_text}Meskipun parameter kekeruhan (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) masih berada dalam tingkat toleransi wajar, tetap diperlukan pengawasan karena adanya kontribusi polusi dari {', '.join(profile['sources']) if profile else 'aktivitas antropogenik lokal'}."
+        else:
+            reason = f"Kualitas air pesisir di {kec_name} diklasifikasikan sebagai **SEHAT** (Optimum). {context_text}Kondisi fisik perairan terpantau sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan kadar klorofil-a (NDCI: {ndci:.4f}) yang seimbang, menunjukkan sirkulasi perairan yang baik serta minimnya dampak negatif dari {', '.join(profile['sources']) if profile else 'limbah domestik perkotaan'}."
+        return reason
+
     results = []
     
     for i, row in enumerate(coastal_gdf.itertuples()):
@@ -803,6 +927,7 @@ def main():
         else:
             tren = "STABIL"
             
+        explanation = generate_explanation(name_3, stats_t2["status"], stats_t2["mean_ndti"], stats_t2["mean_ndci"], name_2)
         results.append({
             "Kabupaten_Kota": name_2,
             "Kecamatan": name_3,
@@ -828,7 +953,8 @@ def main():
             "Status_Kualitas_2017": stats_t1["status"],
             # Comparison
             "Delta_Pct_Sehat": round(diff_healthy, 1),
-            "Tren_Kualitas": tren
+            "Tren_Kualitas": tren,
+            "penjelasan_kualitas": explanation
         })
         
     df_results = pd.DataFrame(results)

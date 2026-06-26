@@ -21,6 +21,7 @@
     "Status_Kualitas_2017": "SEHAT",
     "Delta_Pct_Sehat": -42.5,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Cibeber diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Cibeber merupakan daerah aliran sungai urban Cilegon yang membawa sisa buangan domestik perkotaan ke pesisir. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0528) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh limbah domestik rumah tangga, sampah plastik, limpasan air hujan kota.",
     "latitude": -6.773790448681986,
     "longitude": 106.36426765608188
   },
@@ -46,6 +47,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -0.7,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Citangkil diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Citangkil merupakan zona industri kimia dan petrokimia yang terhubung langsung dengan garis pantai industri Cilegon. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.1091) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh residu polutan kimiawi, limpasan limbah cair industri, aktivitas transportasi logistik laut.",
     "latitude": -6.0147750157539015,
     "longitude": 106.01169880630351
   },
@@ -71,6 +73,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -6.0,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Ciwandan diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Ciwandan merupakan wilayah Pelabuhan Logistik Ciwandan dan pusat industri berat (pabrik baja, kimia, dan semen) Cilegon. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.1172) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh buangan limbah industri berat, bongkar muat kapal curah, limpasan drainase industri.",
     "latitude": -6.031810954904247,
     "longitude": 105.9666086816527
   },
@@ -96,6 +99,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -0.1,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Grogol diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Grogol merupakan wilayah pesisir utara Cilegon yang padat aktivitas manufaktur logam dan logistik pelabuhan. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.1111) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh limpasan sedimentasi, buangan domestik perkotaan, debu industri pesisir.",
     "latitude": -5.970466926744196,
     "longitude": 106.01972577517455
   },
@@ -121,6 +125,7 @@
     "Status_Kualitas_2017": "SEHAT",
     "Delta_Pct_Sehat": -42.4,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Jombang diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Jombang merupakan aliran drainase pusat kota Cilegon dengan kepadatan penduduk tinggi. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0528) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh buangan detergen domestik, sanitasi perkotaan, limbah komersial mikro.",
     "latitude": -6.009500904288975,
     "longitude": 106.0652780123105
   },
@@ -146,6 +151,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -2.7,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Pulomerak diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Pulomerak merupakan kawasan Pelabuhan Penyeberangan Merak yang sangat aktif serta berdekatan dengan zona industri galangan kapal dan PLTU Suralaya. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.1080) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas kapal feri, limpasan industri pesisir, buangan termal/sedimen PLTU.",
     "latitude": -5.921088953639896,
     "longitude": 106.02091229275263
   },
@@ -171,6 +177,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -3.2,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Kasemen diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Kasemen merupakan wilayah Pelabuhan Perikanan Karangantu dan area budidaya tambak pesisir Serang yang sangat luas. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.1144) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh sisa pakan tambak udang/ikan, limbah organik domestik pesisir, aktivitas pasar ikan Karangantu.",
     "latitude": -6.0585431050355325,
     "longitude": 106.1851315015427
   },
@@ -196,6 +203,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": 0.0,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Bayah diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Bayah merupakan wilayah pesisir Samudra Hindia dengan pelabuhan khusus semen (jetty) dan pertambangan batubara/pasir di hulu. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.3649) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh sedimentasi debu tambang/semen, erosi alami tebing pantai, limpasan lumpur sungai.",
     "latitude": -6.919990147039922,
     "longitude": 106.29374896802632
   },
@@ -221,6 +229,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -7.3,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Cihara diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Cihara merupakan pesisir selatan terbuka dengan karakteristik gelombang besar Samudra Hindia. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.3559) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh abrasi tebing alami, sedimentasi sungai lokal, turbulensi pasir akibat ombak.",
     "latitude": -6.837194690654181,
     "longitude": 106.11936263606783
   },
@@ -246,6 +255,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": 0.1,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Cilograng diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Cilograng terletak di wilayah pesisir Lebak. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2627) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.915535612516416,
     "longitude": 106.37383458166006
   },
@@ -271,6 +281,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": 1.1,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Malingping diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Malingping terletak di wilayah pesisir Lebak. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2916) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.768425753423709,
     "longitude": 106.0046334167782
   },
@@ -296,6 +307,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -7.9,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Panggarangan diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Panggarangan merupakan pesisir terbuka dengan aktivitas tambang batu bara tradisional/pasir di hulu. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.3622) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh limpasan sedimen tambang rakyat, abrasi pantai alami, buangan domestik sungai.",
     "latitude": -6.829178322295856,
     "longitude": 106.22425979547451
   },
@@ -321,6 +333,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": 0.6,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Wanasalam diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Wanasalam merupakan pusat Pelabuhan Perikanan Binuangeun dengan aktivitas nelayan lepas pantai. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.3878) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh limbah organik Tempat Pelelangan Ikan (TPI), buangan bahan bakar solar kapal, limpasan tambak udang sekitar.",
     "latitude": -6.7652152388563795,
     "longitude": 105.92148226025402
   },
@@ -346,6 +359,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -12.3,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Carita diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Carita merupakan kawasan wisata pantai rekreasi dan cagar alam pesisir. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2714) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh limbah domestik pariwisata, aktivitas perahu wisata, limpasan sungai kecil.",
     "latitude": -6.279447356567963,
     "longitude": 105.8617958998518
   },
@@ -371,6 +385,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -13.1,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Cibitung diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Cibitung terletak di wilayah pesisir Pandeglang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2016) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.796277241739426,
     "longitude": 105.71997853731742
   },
@@ -396,6 +411,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -9.2,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Cigeulis diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Cigeulis terletak di wilayah pesisir Pandeglang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2181) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.618135276152167,
     "longitude": 105.68464647222719
   },
@@ -421,6 +437,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -7.4,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Cikeusik diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Cikeusik terletak di wilayah pesisir Pandeglang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2012) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.769991919286669,
     "longitude": 105.82991587303552
   },
@@ -446,6 +463,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -14.5,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Cimanggu diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Cimanggu terletak di wilayah pesisir Pandeglang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2349) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.751030625145283,
     "longitude": 105.64024091029599
   },
@@ -471,6 +489,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -6.3,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Jiput diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Jiput terletak di wilayah pesisir Pandeglang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2837) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.3200151748675575,
     "longitude": 105.89004430219698
   },
@@ -496,6 +515,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -4.8,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Labuan diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Labuan merupakan zona Pelabuhan Perikanan Labuan dan PLTU Banten 2 Labuan. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.3804) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas kapal nelayan dan bahan bakar solar, limpasan pemukiman nelayan padat, limbah air hangat PLTU.",
     "latitude": -6.370588874268677,
     "longitude": 105.83625459118669
   },
@@ -521,6 +541,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -6.7,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Pagelaran diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Pagelaran terletak di wilayah pesisir Pandeglang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.3523) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.419113970715683,
     "longitude": 105.85611303246756
   },
@@ -546,6 +567,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -9.0,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Panimbang diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Panimbang merupakan wilayah pesisir Teluk Lada yang dikembangkan sebagai KEK Pariwisata Tanjung Lesung. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2638) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh pembangunan infrastruktur wisata, sedimentasi lumpur Teluk Lada, limpasan pertanian hulu.",
     "latitude": -6.526545315940319,
     "longitude": 105.71403489864717
   },
@@ -571,6 +593,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -14.4,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Patia diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Patia terletak di wilayah pesisir Pandeglang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2085) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi dan konsentrasi klorofil-a (NDCI: 0.1402) melampaui batas aman 0.08 yang mengindikasikan adanya blooming alga (eutrofikasi) akibat penumpukan zat hara/nutrien. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.47955118797501,
     "longitude": 105.87755259963284
   },
@@ -596,6 +619,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -14.4,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Sobang diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Sobang terletak di wilayah pesisir Pandeglang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.1142) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi dan konsentrasi klorofil-a (NDCI: 0.1064) melampaui batas aman 0.08 yang mengindikasikan adanya blooming alga (eutrofikasi) akibat penumpukan zat hara/nutrien. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.605773404372719,
     "longitude": 105.78041531804125
   },
@@ -621,6 +645,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -9.2,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Sukaresmi diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Sukaresmi terletak di wilayah pesisir Pandeglang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.3248) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.501043754379976,
     "longitude": 105.83826649539873
   },
@@ -646,6 +671,7 @@
     "Status_Kualitas_2017": "SEDANG",
     "Delta_Pct_Sehat": -16.3,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Sumur diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Sumur merupakan wilayah penyangga Taman Nasional Ujung Kulon yang menghadap ke Selat Sunda. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0821) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh suspensi pasir alami, limpasan sungai liar hutan hujan, aktivitas nelayan tradisional.",
     "latitude": -6.733648500330891,
     "longitude": 105.39451940554099
   },
@@ -671,6 +697,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -13.5,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Anyar diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Anyar merupakan kawasan pariwisata pantai utama Banten dengan kepadatan hotel, resort, dan rekreasi pesisir. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.1442) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh limbah domestik perhotelan, aktivitas wisatawan, sedimen dari sungai sekitar.",
     "latitude": -6.089798534808957,
     "longitude": 105.9218289201232
   },
@@ -696,6 +723,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -6.5,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Bojonegara diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Bojonegara merupakan pusat industri galangan kapal, manufaktur lepas pantai, dan dermaga logistik swasta (jetty). Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0904) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh tumpahan minyak ringan/oli kapal, sedimentasi akibat reklamasi/pengerukan, buangan industri galangan.",
     "latitude": -5.960797435773915,
     "longitude": 106.07376385179298
   },
@@ -721,6 +749,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -8.4,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Cinangka diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Cinangka merupakan zona wisata pantai berpasir dengan aktivitas rekreasi laut dan perhotelan intensif. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.2546) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas wisata air, limbah cair domestik, limpasan pertanian dari hulu.",
     "latitude": -6.18000647254341,
     "longitude": 105.88647852813646
   },
@@ -746,6 +775,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -10.4,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Kramatwatu diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Kramatwatu merupakan zona peralihan muara sungai dan industri berat Bojonegara. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0964) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh limpasan muara sungai, sedimentasi lumpur, buangan pelabuhan sekitar.",
     "latitude": -6.0398896215399445,
     "longitude": 106.11302459488677
   },
@@ -771,6 +801,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -1.3,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Pontang diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Pontang merupakan wilayah muara Sungai Ciujung dengan area tambak tradisional yang sangat dominan. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.1184) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh limpasan pertanian hulu, sisa pupuk tambak, sedimentasi lumpur Sungai Ciujung.",
     "latitude": -6.031265621478985,
     "longitude": 106.26423094118272
   },
@@ -796,6 +827,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": 3.7,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Puloampel diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Puloampel terletak di wilayah pesisir Serang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0930) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -5.918023351482184,
     "longitude": 106.08663292462518
   },
@@ -821,6 +853,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": 10.9,
     "Tren_Kualitas": "MEMBAIK",
+    "penjelasan_kualitas": "Status Kualitas Air di Tanara diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Tanara merupakan hilir Sungai Cidurian dengan limpasan pertanian intensif. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0758) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh pupuk urea/pestisida pertanian, sedimentasi lumpur, limbah rumah tangga pedesaan.",
     "latitude": -6.019551384923157,
     "longitude": 106.36479020639595
   },
@@ -846,6 +879,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -4.0,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Tirtayasa diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Tirtayasa merupakan daerah muara Ciujung bagian hilir dan hutan mangrove tersisa. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0782) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh nutrien pertanian, sedimen lumpur tebal, limbah cair tambak.",
     "latitude": -5.986139838772155,
     "longitude": 106.31087631692577
   },
@@ -871,6 +905,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": 2.2,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Kemiri diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Kemiri terletak di wilayah pesisir Tangerang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0581) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.087463960111446,
     "longitude": 106.46385738712239
   },
@@ -896,6 +931,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -14.5,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Kualitas air pesisir di Kosambi berada dalam kondisi **SEDANG**. Kecamatan Kosambi terletak di wilayah pesisir Tangerang. Meskipun parameter kekeruhan (NDTI: 0.0370) dan klorofil-a (NDCI: -0.0417) masih berada dalam tingkat toleransi wajar, tetap diperlukan pengawasan karena adanya kontribusi polusi dari aktivitas antropogenik lokal.",
     "latitude": -6.0768865485360894,
     "longitude": 106.68820829500845
   },
@@ -921,6 +957,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -3.0,
     "Tren_Kualitas": "MEMBURUK",
+    "penjelasan_kualitas": "Status Kualitas Air di Kronjo diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Kronjo terletak di wilayah pesisir Tangerang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0707) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.070621991791184,
     "longitude": 106.42854014452014
   },
@@ -946,6 +983,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -7.3,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Mauk diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Mauk terletak di wilayah pesisir Tangerang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0577) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.056303711519413,
     "longitude": 106.5192432152793
   },
@@ -971,6 +1009,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -4.4,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Status Kualitas Air di Mekarbaru diklasifikasikan sebagai **TIDAK SEHAT**. Kecamatan Mekarbaru terletak di wilayah pesisir Tangerang. Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana tingkat kekeruhan air (NDTI: 0.0922) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi. Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir.",
     "latitude": -6.061924416072818,
     "longitude": 106.38773644976794
   },
@@ -996,6 +1035,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -40.9,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Kualitas air pesisir di Pakuhaji berada dalam kondisi **SEDANG**. Kecamatan Pakuhaji terletak di wilayah pesisir Tangerang. Meskipun parameter kekeruhan (NDTI: 0.0420) dan klorofil-a (NDCI: -0.0375) masih berada dalam tingkat toleransi wajar, tetap diperlukan pengawasan karena adanya kontribusi polusi dari aktivitas antropogenik lokal.",
     "latitude": -6.058404862645989,
     "longitude": 106.60631444613506
   },
@@ -1021,6 +1061,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -22.4,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Kualitas air pesisir di Sukadiri berada dalam kondisi **SEDANG**. Kecamatan Sukadiri terletak di wilayah pesisir Tangerang. Meskipun parameter kekeruhan (NDTI: 0.0435) dan klorofil-a (NDCI: -0.0357) masih berada dalam tingkat toleransi wajar, tetap diperlukan pengawasan karena adanya kontribusi polusi dari aktivitas antropogenik lokal.",
     "latitude": -6.070103216394473,
     "longitude": 106.55806621480215
   },
@@ -1046,6 +1087,7 @@
     "Status_Kualitas_2017": "TIDAK SEHAT",
     "Delta_Pct_Sehat": -23.3,
     "Tren_Kualitas": "STABIL",
+    "penjelasan_kualitas": "Kualitas air pesisir di Teluknaga berada dalam kondisi **SEDANG**. Kecamatan Teluknaga terletak di wilayah pesisir Tangerang. Meskipun parameter kekeruhan (NDTI: 0.0395) dan klorofil-a (NDCI: -0.0415) masih berada dalam tingkat toleransi wajar, tetap diperlukan pengawasan karena adanya kontribusi polusi dari aktivitas antropogenik lokal.",
     "latitude": -6.05162713135462,
     "longitude": 106.65965031056592
   }
