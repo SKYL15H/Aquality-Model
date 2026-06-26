@@ -184,6 +184,7 @@ logs/
 !output/
 output/*
 !output/provinces_stats.json
+!output/banten_water_quality_kecamatan.json
 !output/banten_water_quality_map.html
 !output/model/
 output/model/*

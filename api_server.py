@@ -13,6 +13,7 @@ import os
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 
 # ---------------------------------------------------------------------------
@@ -36,21 +37,179 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mounting folder output sebagai static files agar peta HTML bisa diakses
+if os.path.exists("output"):
+    app.mount("/static", StaticFiles(directory="output"), name="static")
+
 
 # ---------------------------------------------------------------------------
-# Load Data Pre-Computed
+# Load Data Pre-Computed & Konteks Wilayah
 # ---------------------------------------------------------------------------
 
 STATS_PATH = "output/provinces_stats.json"
 MODEL_META_PATH = "output/model/model_metadata.json"
+BANTEN_WATER_PATH = "output/banten_water_quality_kecamatan.json"
 
 PROVINCE_STATS = {}
 MODEL_METADATA = {}
+BANTEN_WATER_STATS = {}
+
+# Kamus profil geografis/aktivitas nyata untuk kecamatan pesisir Banten
+DISTRICT_CONTEXTS = {
+    # Cilegon
+    "pulomerak": {
+        "context": "kawasan Pelabuhan Penyeberangan Merak yang sangat aktif serta berdekatan dengan zona industri galangan kapal dan PLTU Suralaya",
+        "sources": ["aktivitas kapal feri", "limpasan industri pesisir", "buangan termal/sedimen PLTU"]
+    },
+    "ciwandan": {
+        "context": "wilayah Pelabuhan Logistik Ciwandan dan pusat industri berat (pabrik baja, kimia, dan semen) Cilegon",
+        "sources": ["buangan limbah industri berat", "bongkar muat kapal curah", "limpasan drainase industri"]
+    },
+    "citangkil": {
+        "context": "zona industri kimia dan petrokimia yang terhubung langsung dengan garis pantai industri Cilegon",
+        "sources": ["residu polutan kimiawi", "limpasan limbah cair industri", "aktivitas transportasi logistik laut"]
+    },
+    "grogol": {
+        "context": "wilayah pesisir utara Cilegon yang padat aktivitas manufaktur logam dan logistik pelabuhan",
+        "sources": ["limpasan sedimentasi", "buangan domestik perkotaan", "debu industri pesisir"]
+    },
+    "cibeber": {
+        "context": "daerah aliran sungai urban Cilegon yang membawa sisa buangan domestik perkotaan ke pesisir",
+        "sources": ["limbah domestik rumah tangga", "sampah plastik", "limpasan air hujan kota"]
+    },
+    "jombang": {
+        "context": "aliran drainase pusat kota Cilegon dengan kepadatan penduduk tinggi",
+        "sources": ["buangan detergen domestik", "sanitasi perkotaan", "limbah komersial mikro"]
+    },
+    # Serang Kota & Kabupaten
+    "kasemen": {
+        "context": "wilayah Pelabuhan Perikanan Karangantu dan area budidaya tambak pesisir Serang yang sangat luas",
+        "sources": ["sisa pakan tambak udang/ikan", "limbah organik domestik pesisir", "aktivitas pasar ikan Karangantu"]
+    },
+    "anyar": {
+        "context": "kawasan pariwisata pantai utama Banten dengan kepadatan hotel, resort, dan rekreasi pesisir",
+        "sources": ["limbah domestik perhotelan", "aktivitas wisatawan", "sedimen dari sungai sekitar"]
+    },
+    "cinangka": {
+        "context": "zona wisata pantai berpasir dengan aktivitas rekreasi laut dan perhotelan intensif",
+        "sources": ["aktivitas wisata air", "limbah cair domestik", "limpasan pertanian dari hulu"]
+    },
+    "bojonegara": {
+        "context": "pusat industri galangan kapal, manufaktur lepas pantai, dan dermaga logistik swasta (jetty)",
+        "sources": ["tumpahan minyak ringan/oli kapal", "sedimentasi akibat reklamasi/pengerukan", "buangan industri galangan"]
+    },
+    "kramatwatu": {
+        "context": "zona peralihan muara sungai dan industri berat Bojonegara",
+        "sources": ["limpasan muara sungai", "sedimentasi lumpur", "buangan pelabuhan sekitar"]
+    },
+    "pontang": {
+        "context": "wilayah muara Sungai Ciujung dengan area tambak tradisional yang sangat dominan",
+        "sources": ["limpasan pertanian hulu", "sisa pupuk tambak", "sedimentasi lumpur Sungai Ciujung"]
+    },
+    "tirtayasa": {
+        "context": "daerah muara Ciujung bagian hilir dan hutan mangrove tersisa",
+        "sources": ["nutrien pertanian", "sedimen lumpur tebal", "limbah cair tambak"]
+    },
+    "tanara": {
+        "context": "hilir Sungai Cidurian dengan limpasan pertanian intensif",
+        "sources": ["pupuk urea/pestisida pertanian", "sedimentasi lumpur", "limbah rumah tangga pedesaan"]
+    },
+    # Pandeglang
+    "carita": {
+        "context": "kawasan wisata pantai rekreasi dan cagar alam pesisir",
+        "sources": ["limbah domestik pariwisata", "aktivitas perahu wisata", "limpasan sungai kecil"]
+    },
+    "labuan": {
+        "context": "zona Pelabuhan Perikanan Labuan dan PLTU Banten 2 Labuan",
+        "sources": ["aktivitas kapal nelayan dan bahan bakar solar", "limpasan pemukiman nelayan padat", "limbah air hangat PLTU"]
+    },
+    "panimbang": {
+        "context": "wilayah pesisir Teluk Lada yang dikembangkan sebagai KEK Pariwisata Tanjung Lesung",
+        "sources": ["pembangunan infrastruktur wisata", "sedimentasi lumpur Teluk Lada", "limpasan pertanian hulu"]
+    },
+    "sumur": {
+        "context": "wilayah penyangga Taman Nasional Ujung Kulon yang menghadap ke Selat Sunda",
+        "sources": ["suspensi pasir alami", "limpasan sungai liar hutan hujan", "aktivitas nelayan tradisional"]
+    },
+    # Lebak
+    "bayah": {
+        "context": "wilayah pesisir Samudra Hindia dengan pelabuhan khusus semen (jetty) dan pertambangan batubara/pasir di hulu",
+        "sources": ["sedimentasi debu tambang/semen", "erosi alami tebing pantai", "limpasan lumpur sungai"]
+    },
+    "wanasalam": {
+        "context": "pusat Pelabuhan Perikanan Binuangeun dengan aktivitas nelayan lepas pantai",
+        "sources": ["limbah organik Tempat Pelelangan Ikan (TPI)", "buangan bahan bakar solar kapal", "limpasan tambak udang sekitar"]
+    },
+    "cihara": {
+        "context": "pesisir selatan terbuka dengan karakteristik gelombang besar Samudra Hindia",
+        "sources": ["abrasi tebing alami", "sedimentasi sungai lokal", "turbulensi pasir akibat ombak"]
+    },
+    "panggarangan": {
+        "context": "pesisir terbuka dengan aktivitas tambang batu bara tradisional/pasir di hulu",
+        "sources": ["limpasan sedimen tambang rakyat", "abrasi pantai alami", "buangan domestik sungai"]
+    }
+}
+
+
+def generate_explanation(kec_name: str, stats: dict) -> str:
+    """Menghasilkan narasi penjelasan kualitas air yang menggabungkan parameter satelit dan profil wilayah."""
+    name_lower = kec_name.lower()
+    status = stats.get("Status_Kualitas_2026", "TIDAK SEHAT")
+    ndti = stats.get("Mean_NDTI_2026", 0.0)
+    ndci = stats.get("Mean_NDCI_2026", 0.0)
+    
+    # Ambil profil daerah
+    profile = DISTRICT_CONTEXTS.get(name_lower)
+    
+    if profile:
+        context_text = f"Kecamatan {kec_name} merupakan {profile['context']}. "
+        sources_text = f"Kondisi ini dipengaruhi oleh {', '.join(profile['sources'])}."
+    else:
+        # Fallback berdasarkan kabupaten
+        kab = stats.get("Kabupaten_Kota", "Banten")
+        context_text = f"Kecamatan {kec_name} terletak di wilayah pesisir {kab}. "
+        sources_text = "Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir."
+
+    if status == "TIDAK SEHAT":
+        reason = (
+            f"Status Kualitas Air di {kec_name} diklasifikasikan sebagai **TIDAK SEHAT**. {context_text}"
+        )
+        param_reasons = []
+        if ndti > 0.05:
+            param_reasons.append(
+                f"tingkat kekeruhan air (NDTI: {ndti:.4f}) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi"
+            )
+        if ndci > 0.08:
+            param_reasons.append(
+                f"konsentrasi klorofil-a (NDCI: {ndci:.4f}) melampaui batas aman 0.08 yang mengindikasikan adanya blooming alga (eutrofikasi) akibat penumpukan zat hara/nutrien"
+            )
+            
+        if param_reasons:
+            reason += "Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana " + " dan ".join(param_reasons) + ". "
+        else:
+            reason += f"Hasil analisis menunjukkan akumulasi parameter fisik-kimiawi air (TSS/CDOM) melampaui baku mutu optimal. "
+            
+        reason += sources_text
+        
+    elif status == "SEDANG":
+        reason = (
+            f"Kualitas air pesisir di {kec_name} berada dalam kondisi **SEDANG**. {context_text}"
+            f"Meskipun parameter kekeruhan (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) masih berada dalam tingkat toleransi wajar, "
+            f"tetap diperlukan pengawasan karena adanya kontribusi polusi dari {', '.join(profile['sources']) if profile else 'aktivitas antropogenik lokal'}."
+        )
+    else: # SEHAT
+        reason = (
+            f"Kualitas air pesisir di {kec_name} diklasifikasikan sebagai **SEHAT** (Optimum). {context_text}"
+            f"Kondisi fisik perairan terpantau sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan kadar klorofil-a (NDCI: {ndci:.4f}) yang seimbang, "
+            f"menunjukkan sirkulasi perairan yang baik serta minimnya dampak negatif dari {', '.join(profile['sources']) if profile else 'limbah domestik perkotaan'}."
+        )
+        
+    return reason
 
 
 @app.on_event("startup")
 def load_data():
-    global PROVINCE_STATS, MODEL_METADATA
+    global PROVINCE_STATS, MODEL_METADATA, BANTEN_WATER_STATS
 
     if os.path.exists(STATS_PATH):
         with open(STATS_PATH, "r", encoding="utf-8") as f:
@@ -65,6 +224,13 @@ def load_data():
         print("Loaded model metadata.")
     else:
         print(f"Warning: {MODEL_META_PATH} not found.")
+
+    if os.path.exists(BANTEN_WATER_PATH):
+        with open(BANTEN_WATER_PATH, "r", encoding="utf-8") as f:
+            BANTEN_WATER_STATS.update(json.load(f))
+        print(f"Loaded water quality statistics for {len(BANTEN_WATER_STATS)} Banten districts.")
+    else:
+        print(f"Warning: {BANTEN_WATER_PATH} not found.")
 
 
 # ---------------------------------------------------------------------------
@@ -82,6 +248,9 @@ def root():
             "province_detail": "/api/provinces/{name}",
             "national_summary": "/api/summary",
             "model_info": "/api/model/info",
+            "water_quality_leaderboard": "/api/water-quality/leaderboard",
+            "water_quality_district": "/api/water-quality/kecamatan/{name}",
+            "static_maps": "/static/banten_water_quality_map.html"
         },
     }
 
@@ -184,3 +353,64 @@ def model_info():
             detail="Model metadata not available. Run batch_process.py first.",
         )
     return MODEL_METADATA
+
+
+# ---------------------------------------------------------------------------
+# Endpoints Kualitas Air Kecamatan (Banten Leaderboard & Detail)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/water-quality/leaderboard")
+def get_leaderboard():
+    """Mengembalikan daftar kecamatan terbersih pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending."""
+    if not BANTEN_WATER_STATS:
+        raise HTTPException(
+            status_code=404,
+            detail="Banten water quality statistics not loaded. Please run analysis script first."
+        )
+    
+    leaderboard = []
+    for kec_name, stats in BANTEN_WATER_STATS.items():
+        leaderboard.append({
+            "kecamatan": kec_name,
+            "kabupaten_kota": stats.get("Kabupaten_Kota"),
+            "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
+            "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
+            "latitude": stats.get("latitude"),
+            "longitude": stats.get("longitude")
+        })
+        
+    # Urutkan berdasarkan Pct_Sehat_2026 tertinggi
+    leaderboard.sort(key=lambda x: x["pct_sehat_2026"], reverse=True)
+    return {
+        "total": len(leaderboard),
+        "leaderboard": leaderboard
+    }
+
+
+@app.get("/api/water-quality/kecamatan/{name}")
+def get_district_water_quality(name: str):
+    """Mengembalikan statistik rinci untuk satu kecamatan di Banten beserta alasan semantik kondisi airnya."""
+    # Pencarian case-insensitive
+    matched_key = None
+    for key in BANTEN_WATER_STATS:
+        if key.lower() == name.lower():
+            matched_key = key
+            break
+            
+    if matched_key is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Kecamatan '{name}' tidak ditemukan di data Banten. Gunakan daftar di leaderboard."
+        )
+        
+    stats = BANTEN_WATER_STATS[matched_key]
+    
+    # Generate penjelasan dinamis
+    explanation = generate_explanation(matched_key, stats)
+    
+    # Buat salinan statistik dan tambahkan narasi penjelasannya
+    response_data = dict(stats)
+    response_data["kecamatan"] = matched_key
+    response_data["penjelasan_kualitas"] = explanation
+    
+    return response_data
