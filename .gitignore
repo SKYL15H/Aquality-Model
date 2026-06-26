@@ -170,12 +170,23 @@ secrets.json
 *.pkl
 *.npy
 *.npz
-*.joblib
+
+# Large datasets & raw spatial data
 data/
 dataset/
 runs/
 logs/
-output/
 *.tif
 *.tiff
 *.gpkg
+
+# Gitignore rules for output/ folder
+!output/
+output/*
+!output/provinces_stats.json
+!output/banten_water_quality_map.html
+!output/model/
+output/model/*
+!output/model/water_quality_rf.joblib
+!output/model/mangrove_rf.joblib
+!output/model/model_metadata.json
