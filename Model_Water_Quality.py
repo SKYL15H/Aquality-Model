@@ -147,19 +147,24 @@ def load_banten_coastal_beaches(land_geom_utm, buffer_meters=1000):
         {"name": "Pantai Bagedur", "Kecamatan": "Malingping", "Kabupaten_Kota": "Lebak", "lat": -6.9038, "lon": 106.0125},
         {"name": "Pantai Karang Bolong", "Kecamatan": "Cinangka", "Kabupaten_Kota": "Serang", "lat": -6.1082, "lon": 105.8569},
         {"name": "Pantai Ciputih", "Kecamatan": "Sumur", "Kabupaten_Kota": "Pandeglang", "lat": -6.6575, "lon": 105.5180},
-        {"name": "Pantai Pulau Umang", "Kecamatan": "Sumur", "Kabupaten_Kota": "Pandeglang", "lat": -6.6715, "lon": 105.5875},
+        {"name": "Pantai Pulau Umang", "Kecamatan": "Sumur", "Kabupaten_Kota": "Pandeglang", "lat": -6.64065, "lon": 105.58436},
         {"name": "Pantai Sambolo", "Kecamatan": "Anyar", "Kabupaten_Kota": "Serang", "lat": -6.0712, "lon": 105.8812},
         {"name": "Pantai Pasir Putih Sirih", "Kecamatan": "Anyar", "Kabupaten_Kota": "Serang", "lat": -6.0825, "lon": 105.8805},
         {"name": "Pantai Marbella", "Kecamatan": "Anyar", "Kabupaten_Kota": "Serang", "lat": -6.0620, "lon": 105.8825},
         {"name": "Pantai Florida Indah", "Kecamatan": "Cinangka", "Kabupaten_Kota": "Serang", "lat": -6.1345, "lon": 105.8670},
         {"name": "Pantai Jambu", "Kecamatan": "Cinangka", "Kabupaten_Kota": "Serang", "lat": -6.1158, "lon": 105.8640},
-        {"name": "Pantai Lontar", "Kecamatan": "Pontang", "Kabupaten_Kota": "Serang", "lat": -6.0102, "lon": 106.2730},
+        {"name": "Pantai Lontar", "Kecamatan": "Tirtayasa", "Kabupaten_Kota": "Serang", "lat": -5.96884, "lon": 106.29646},
         {"name": "Pantai Tanjung Pasir", "Kecamatan": "Teluknaga", "Kabupaten_Kota": "Tangerang", "lat": -6.0150, "lon": 106.6850},
         {"name": "Pantai Tanjung Kait", "Kecamatan": "Mauk", "Kabupaten_Kota": "Tangerang", "lat": -6.0195, "lon": 106.4520},
         {"name": "Pantai Binuangeun", "Kecamatan": "Wanasalam", "Kabupaten_Kota": "Lebak", "lat": -6.8290, "lon": 105.9030},
         {"name": "Pantai Karang Taraje", "Kecamatan": "Bayah", "Kabupaten_Kota": "Lebak", "lat": -6.9912, "lon": 106.3312},
         {"name": "Pantai Sangiang", "Kecamatan": "Anyar", "Kabupaten_Kota": "Serang", "lat": -5.9535, "lon": 105.8565},
-        {"name": "Pantai Pasir Putih Florida", "Kecamatan": "Cinangka", "Kabupaten_Kota": "Serang", "lat": -6.1265, "lon": 105.8645}
+        {"name": "Pantai Pasir Putih Florida", "Kecamatan": "Cinangka", "Kabupaten_Kota": "Serang", "lat": -6.1265, "lon": 105.8645},
+        {"name": "Pantai Karang Songsong", "Kecamatan": "Cihara", "Kabupaten_Kota": "Lebak", "lat": -6.88395, "lon": 106.11112},
+        {"name": "Pantai Pulau Cangkir", "Kecamatan": "Kronjo", "Kabupaten_Kota": "Tangerang", "lat": -6.00889, "lon": 106.42000},
+        {"name": "Pantai Pasir Putih Cihara", "Kecamatan": "Cihara", "Kabupaten_Kota": "Lebak", "lat": -6.84643, "lon": 106.06923},
+        {"name": "Pantai Tanjung Layar", "Kecamatan": "Bayah", "Kabupaten_Kota": "Lebak", "lat": -6.99431, "lon": 106.30716},
+        {"name": "Pantai Caringin", "Kecamatan": "Labuan", "Kabupaten_Kota": "Pandeglang", "lat": -6.35329, "lon": 105.82301}
     ]
     
     from shapely.geometry import Point
