@@ -53,7 +53,7 @@ NDTI_CLEAR_THRESHOLD = -0.05       # NDTI <= -0.05 -> Sangat Jernih
 # ---------------------------------------------------------------------------
 # 1. Ekstraksi Spasial Kecamatan Pesisir Banten
 # ---------------------------------------------------------------------------
-def load_banten_coastal_kecamatans(gadm_path=GADM_PATH, buffer_meters=3000, min_water_area_ha=10.0):
+def load_banten_coastal_kecamatans(gadm_path=GADM_PATH, buffer_meters=3000, min_water_area_ha=10.0, return_land_geom=False):
     """
     Memuat batas administrasi kecamatan GADM, menyaring wilayah Banten,
     dan menghitung poligon perairan pesisir untuk masing-masing kecamatan.
@@ -125,7 +125,95 @@ def load_banten_coastal_kecamatans(gadm_path=GADM_PATH, buffer_meters=3000, min_
     coastal_gdf["land_geom"] = coastal_gdf["land_geom"].apply(lambda g: gpd.GeoSeries([g], crs="EPSG:32748").to_crs(epsg=4326).iloc[0])
     
     print(f"  Ditemukan {len(coastal_gdf)} kecamatan pesisir dari total {len(banten)} kecamatan di Banten.")
+    if return_land_geom:
+        return coastal_gdf, land_geom
     return coastal_gdf
+
+# ---------------------------------------------------------------------------
+# 1b. Ekstraksi Spasial Pantai Pesisir Banten
+# ---------------------------------------------------------------------------
+def load_banten_coastal_beaches(land_geom_utm, buffer_meters=1000):
+    """
+    Memuat data pantai pesisir Banten, membuffer titiknya,
+    dan memotong dengan land_geom_utm untuk menyisakan wilayah air saja.
+    """
+    print("\n[STEP 1b] Mengekstrak data batas wilayah pantai pesisir Banten...")
+    
+    beaches = [
+        {"name": "Pantai Anyer", "Kecamatan": "Anyar", "Kabupaten_Kota": "Serang", "lat": -6.0465, "lon": 105.8850},
+        {"name": "Pantai Carita", "Kecamatan": "Carita", "Kabupaten_Kota": "Pandeglang", "lat": -6.1305, "lon": 105.8427},
+        {"name": "Pantai Tanjung Lesung", "Kecamatan": "Panimbang", "Kabupaten_Kota": "Pandeglang", "lat": -6.4785, "lon": 105.6565},
+        {"name": "Pantai Sawarna", "Kecamatan": "Bayah", "Kabupaten_Kota": "Lebak", "lat": -6.9930, "lon": 106.3180},
+        {"name": "Pantai Bagedur", "Kecamatan": "Malingping", "Kabupaten_Kota": "Lebak", "lat": -6.9038, "lon": 106.0125},
+        {"name": "Pantai Karang Bolong", "Kecamatan": "Cinangka", "Kabupaten_Kota": "Serang", "lat": -6.1082, "lon": 105.8569},
+        {"name": "Pantai Ciputih", "Kecamatan": "Sumur", "Kabupaten_Kota": "Pandeglang", "lat": -6.6575, "lon": 105.5180},
+        {"name": "Pantai Pulau Umang", "Kecamatan": "Sumur", "Kabupaten_Kota": "Pandeglang", "lat": -6.6715, "lon": 105.5875},
+        {"name": "Pantai Sambolo", "Kecamatan": "Anyar", "Kabupaten_Kota": "Serang", "lat": -6.0712, "lon": 105.8812},
+        {"name": "Pantai Pasir Putih Sirih", "Kecamatan": "Anyar", "Kabupaten_Kota": "Serang", "lat": -6.0825, "lon": 105.8805},
+        {"name": "Pantai Marbella", "Kecamatan": "Anyar", "Kabupaten_Kota": "Serang", "lat": -6.0620, "lon": 105.8825},
+        {"name": "Pantai Florida Indah", "Kecamatan": "Cinangka", "Kabupaten_Kota": "Serang", "lat": -6.1345, "lon": 105.8670},
+        {"name": "Pantai Jambu", "Kecamatan": "Cinangka", "Kabupaten_Kota": "Serang", "lat": -6.1158, "lon": 105.8640},
+        {"name": "Pantai Lontar", "Kecamatan": "Pontang", "Kabupaten_Kota": "Serang", "lat": -6.0102, "lon": 106.2730},
+        {"name": "Pantai Tanjung Pasir", "Kecamatan": "Teluknaga", "Kabupaten_Kota": "Tangerang", "lat": -6.0150, "lon": 106.6850},
+        {"name": "Pantai Tanjung Kait", "Kecamatan": "Mauk", "Kabupaten_Kota": "Tangerang", "lat": -6.0195, "lon": 106.4520},
+        {"name": "Pantai Binuangeun", "Kecamatan": "Wanasalam", "Kabupaten_Kota": "Lebak", "lat": -6.8290, "lon": 105.9030},
+        {"name": "Pantai Karang Taraje", "Kecamatan": "Bayah", "Kabupaten_Kota": "Lebak", "lat": -6.9912, "lon": 106.3312},
+        {"name": "Pantai Sangiang", "Kecamatan": "Anyar", "Kabupaten_Kota": "Serang", "lat": -5.9535, "lon": 105.8565},
+        {"name": "Pantai Pasir Putih Florida", "Kecamatan": "Cinangka", "Kabupaten_Kota": "Serang", "lat": -6.1265, "lon": 105.8645}
+    ]
+    
+    from shapely.geometry import Point
+    df = pd.DataFrame(beaches)
+    geometry = [Point(xy) for xy in zip(df['lon'], df['lat'])]
+    beaches_gdf = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+    
+    # Proyeksikan ke UTM 48S
+    beaches_utm = beaches_gdf.to_crs(epsg=32748)
+    
+    coastal_beaches = []
+    for idx, row in beaches_utm.iterrows():
+        point_geom = row.geometry
+        name = row["name"]
+        kec = row["Kecamatan"]
+        kab = row["Kabupaten_Kota"]
+        lat = row["lat"]
+        lon = row["lon"]
+        
+        # Buffer 1 km
+        buffered = point_geom.buffer(buffer_meters)
+        
+        # Kurangkan daratan
+        water_zone = buffered.difference(land_geom_utm)
+        
+        if not water_zone.is_empty:
+            coastal_beaches.append({
+                "Pantai": name,
+                "Kecamatan": kec,
+                "Kabupaten_Kota": kab,
+                "latitude": lat,
+                "longitude": lon,
+                "geometry": water_zone
+            })
+            
+    coastal_beaches_gdf = gpd.GeoDataFrame(coastal_beaches, crs="EPSG:32748")
+    coastal_beaches_gdf = coastal_beaches_gdf.to_crs(epsg=4326)
+    
+    print(f"  Ditemukan {len(coastal_beaches_gdf)} lokasi pantai pesisir Banten yang siap dianalisis.")
+    return coastal_beaches_gdf
+
+def generate_beach_explanation(beach_name, kec_name, status, ndti, ndci):
+    if status == "SEHAT":
+        return f"Kualitas air di {beach_name} ({kec_name}) tergolong **SEHAT** (Bersih). Kondisi perairan pantai sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) and klorofil-a (NDCI: {ndci:.4f}) yang normal, menjadikannya sangat aman dan nyaman untuk kegiatan pariwisata atau berenang."
+    elif status == "SEDANG":
+        return f"Kualitas air di {beach_name} ({kec_name}) berada dalam kondisi **SEDANG**. Perairan pantai cukup bersih namun tingkat kekeruhan (NDTI: {ndti:.4f}) atau klorofil-a (NDCI: {ndci:.4f}) menunjukkan nilai ambang batas wajar. Pengunjung dihimbau tetap menjaga kebersihan pantai sekitar."
+    else: # TIDAK SEHAT
+        reasons = []
+        if ndti > 0.05:
+            reasons.append(f"tingginya kekeruhan air (NDTI: {ndti:.4f}) akibat limpasan sedimen darat")
+        if ndci > 0.08:
+            reasons.append(f"kadar klorofil-a yang tinggi (NDCI: {ndci:.4f}) yang menandakan penumpukan nutrien/blooming alga")
+        reason_str = " dan ".join(reasons) if reasons else "penurunan baku mutu air laut pesisir"
+        return f"Kualitas air di {beach_name} ({kec_name}) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan {reason_str}. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini."
 
 # ---------------------------------------------------------------------------
 # 2. openEO — Download Composite Sentinel-2 dengan Band B05 (Red Edge)
@@ -450,7 +538,7 @@ def analyze_kecamatan_water_quality(ds, geom, pixel_area_ha):
 # ---------------------------------------------------------------------------
 # 6. Pembuatan Peta Visualisasi Interaktif Folium
 # ---------------------------------------------------------------------------
-def create_folium_visualization(coastal_gdf, results_df, output_path):
+def create_folium_visualization(coastal_gdf, results_df, output_path, beaches_gdf=None, beaches_results_df=None):
     """
     Membuat peta interaktif Folium yang memvisualisasikan data kualitas air pesisir Banten.
     """
@@ -567,6 +655,82 @@ def create_folium_visualization(coastal_gdf, results_df, output_path):
         ).add_child(folium.Popup(popup_html)).add_to(water_layer)
         
     water_layer.add_to(m)
+
+    # 3. Layer Pantai Banten (Circle Markers & Buffer Polygons)
+    if beaches_gdf is not None and beaches_results_df is not None:
+        beach_layer = folium.FeatureGroup(name="Kualitas Air Pantai Banten (1 km)", show=True)
+        merged_beaches = beaches_gdf.merge(beaches_results_df, on=["Pantai", "Kecamatan", "Kabupaten_Kota", "latitude", "longitude"], how="inner")
+        
+        for idx, row in merged_beaches.iterrows():
+            geojson_beach_water = mapping(row["geometry"])
+            status = row["Status_Kualitas_2026"]
+            color = color_map.get(status, "#7f8c8d")
+            
+            tooltip_text = f"{row['Pantai']} ({status})"
+            
+            popup_html = f"""
+            <div style='font-family: Arial, sans-serif; font-size: 13px; width: 300px; padding: 5px;'>
+                <h4 style='margin: 0 0 5px 0; color: #2c3e50;'>{row['Pantai']}</h4>
+                <span style='font-size: 11px; color: #7f8c8d;'>Kecamatan {row['Kecamatan']}, {row['Kabupaten_Kota']}</span>
+                <hr style='margin: 8px 0;'/>
+                <b>Status Kualitas (2026):</b> 
+                <span style='color: {color}; font-weight: bold;'>{status}</span><br/>
+                <b>Perubahan (2017 -> 2026):</b> 
+                <span style='font-weight: bold;'>{row['Tren_Kualitas']}</span><br/>
+                <hr style='margin: 8px 0;'/>
+                <div style='font-size: 11px; line-height: 1.4; background-color: #f8f9fa; padding: 6px; border-left: 3px solid #3498db; margin: 5px 0;'>
+                    <b>Analisis Kondisi:</b><br/>{row.get('penjelasan_kualitas', 'Tidak ada data penjelasan.')}
+                </div>
+                <hr style='margin: 8px 0;'/>
+                <table style='width: 100%; font-size: 12px;'>
+                    <tr style='background: #f8f9fa;'>
+                        <td>🟢 <b>Sehat:</b></td>
+                        <td style='text-align: right;'>{row['Pct_Sehat_2026']:.1f}%</td>
+                    </tr>
+                    <tr>
+                        <td>🟡 <b>Sedang:</b></td>
+                        <td style='text-align: right;'>{row['Pct_Sedang_2026']:.1f}%</td>
+                    </tr>
+                    <tr style='background: #f8f9fa;'>
+                        <td>🔴 <b>Tidak Sehat:</b></td>
+                        <td style='text-align: right;'>{row['Pct_TidakSehat_2026']:.1f}%</td>
+                    </tr>
+                </table>
+                <hr style='margin: 8px 0;'/>
+                <div style='font-size: 11px;'>
+                    <b>Mean NDTI (Turbidity):</b> {row['Mean_NDTI_2026']:.4f}<br/>
+                    <b>Mean NDCI (Chlorophyll):</b> {row['Mean_NDCI_2026']:.4f}<br/>
+                    <b>Mean TSS Proxy:</b> {row['Mean_TSS_2026']:.4f}
+                </div>
+            </div>
+            """
+            
+            # Map Marker untuk Pantai
+            marker_color = "green" if status == "SEHAT" else "orange" if status == "SEDANG" else "red"
+            folium.Marker(
+                location=[row["latitude"], row["longitude"]],
+                icon=folium.Icon(color=marker_color, icon="info-sign"),
+                tooltip=row["Pantai"],
+                popup=folium.Popup(popup_html, max_width=320)
+            ).add_to(beach_layer)
+            
+            # Poligon Buffer Air Pantai
+            folium.GeoJson(
+                geojson_beach_water,
+                style_function=lambda x, col=color: {
+                    "fillColor": col,
+                    "color": col,
+                    "weight": 1.0,
+                    "fillOpacity": 0.35
+                },
+                highlight_function=lambda x, col=color: {
+                    "fillOpacity": 0.65,
+                    "weight": 2.0
+                },
+                tooltip=tooltip_text
+            ).add_child(folium.Popup(popup_html)).add_to(beach_layer)
+            
+        beach_layer.add_to(m)
     
     # Tambahkan Legenda Peta (HTML Control)
     legend_html = """
@@ -694,7 +858,7 @@ def main():
     
     # 1. Load data batas kecamatan pesisir Banten
     try:
-        coastal_gdf = load_banten_coastal_kecamatans()
+        coastal_gdf, land_geom_utm = load_banten_coastal_kecamatans(return_land_geom=True)
     except Exception as exc:
         print(f"Error pada Step 1: {exc}")
         sys.exit(1)
@@ -976,34 +1140,129 @@ def main():
             json.dump(rf_metrics, f, indent=2, ensure_ascii=False)
         print(f"  Metadata model global disimpan ke: {meta_path}")
 
-    # 8. Ekspor Hasil
+    # 8. Proses Analisis Pantai
+    print("\n[STEP 6b] Memproses analisis kualitas air per pantai...")
+    coastal_beaches_gdf = load_banten_coastal_beaches(land_geom_utm)
+    
+    beach_results = []
+    for i, row in enumerate(coastal_beaches_gdf.itertuples()):
+        beach_name = row.Pantai
+        kec_name = row.Kecamatan
+        kab_name = row.Kabupaten_Kota
+        geom = row.geometry
+        lat = row.latitude
+        lon = row.longitude
+        
+        print(f"  [{i+1}/{len(coastal_beaches_gdf)}] Menganalisis Pantai {beach_name} ({kec_name}, {kab_name})...")
+        
+        # Analisis tahun 2017 (Baseline)
+        stats_t1 = analyze_kecamatan_water_quality(ds_t1, geom, pixel_area_ha)
+        
+        # Analisis tahun 2026 (Comparison)
+        stats_t2 = analyze_kecamatan_water_quality(ds_t2, geom, pixel_area_ha)
+        
+        if stats_t2 is None:
+            print(f"    Warning: Tidak ada piksel air valid ditemukan di Pantai {beach_name}.")
+            continue
+            
+        if stats_t1 is None:
+            stats_t1 = {
+                "water_area_ha": 0.0, "healthy_ha": 0.0, "moderate_ha": 0.0, "unhealthy_ha": 0.0,
+                "pct_healthy": 0.0, "pct_moderate": 0.0, "pct_unhealthy": 0.0,
+                "mean_ndti": 0.0, "mean_ndci": 0.0, "mean_tss": 0.0, "mean_cdom": 0.0, "status": "N/A"
+            }
+            
+        diff_healthy = stats_t2["pct_healthy"] - stats_t1["pct_healthy"]
+        diff_unhealthy = stats_t2["pct_unhealthy"] - stats_t1["pct_unhealthy"]
+        
+        if diff_healthy >= 5.0 and diff_unhealthy <= -5.0:
+            tren = "MEMBAIK"
+        elif diff_unhealthy >= 5.0:
+            tren = "MEMBURUK"
+        else:
+            tren = "STABIL"
+            
+        explanation = generate_beach_explanation(beach_name, kec_name, stats_t2["status"], stats_t2["mean_ndti"], stats_t2["mean_ndci"])
+        
+        beach_results.append({
+            "Pantai": beach_name,
+            "Kecamatan": kec_name,
+            "Kabupaten_Kota": kab_name,
+            "latitude": lat,
+            "longitude": lon,
+            # 2026 Data
+            "Luas_Air_2026_Ha": stats_t2["water_area_ha"],
+            "Sehat_2026_Ha": stats_t2["healthy_ha"],
+            "Sedang_2026_Ha": stats_t2["moderate_ha"],
+            "TidakSehat_2026_Ha": stats_t2["unhealthy_ha"],
+            "Pct_Sehat_2026": stats_t2["pct_healthy"],
+            "Pct_Sedang_2026": stats_t2["pct_moderate"],
+            "Pct_TidakSehat_2026": stats_t2["pct_unhealthy"],
+            "Mean_NDTI_2026": stats_t2["mean_ndti"],
+            "Mean_NDCI_2026": stats_t2["mean_ndci"],
+            "Mean_TSS_2026": stats_t2["mean_tss"],
+            "Mean_CDOM_2026": stats_t2["mean_cdom"],
+            "Status_Kualitas_2026": stats_t2["status"],
+            # 2017 Data
+            "Luas_Air_2017_Ha": stats_t1["water_area_ha"],
+            "Sehat_2017_Ha": stats_t1["healthy_ha"],
+            "Pct_Sehat_2017": stats_t1["pct_healthy"],
+            "Mean_NDTI_2017": stats_t1["mean_ndti"],
+            "Mean_NDCI_2017": stats_t1["mean_ndci"],
+            "Status_Kualitas_2017": stats_t1["status"],
+            # Comparison
+            "Delta_Pct_Sehat": round(diff_healthy, 1),
+            "Tren_Kualitas": tren,
+            "penjelasan_kualitas": explanation
+        })
+        
+    df_beach_results = pd.DataFrame(beach_results)
+
+    # 9. Ekspor Hasil
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
-    # Simpan CSV
+    # Simpan CSV Kecamatan
     csv_path = os.path.join(OUTPUT_DIR, "banten_water_quality_kecamatan.csv")
     df_results.to_csv(csv_path, index=False, encoding="utf-8-sig")
-    print(f"\n[STEP 7] Hasil statistik disimpan ke CSV: {csv_path}")
+    print(f"\n[STEP 7] Hasil statistik kecamatan disimpan ke CSV: {csv_path}")
     
-    # Simpan JSON per kecamatan
+    # Simpan JSON Kecamatan
     json_path = os.path.join(OUTPUT_DIR, "banten_water_quality_kecamatan.json")
     json_dict = df_results.set_index("Kecamatan").to_dict(orient="index")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_dict, f, indent=2, ensure_ascii=False)
-    print(f"          Hasil statistik disimpan ke JSON: {json_path}")
+    print(f"          Hasil statistik kecamatan disimpan ke JSON: {json_path}")
     
-    # 9. Peta Folium
+    # Simpan CSV Pantai
+    beach_csv_path = os.path.join(OUTPUT_DIR, "banten_water_quality_beach.csv")
+    df_beach_results.to_csv(beach_csv_path, index=False, encoding="utf-8-sig")
+    print(f"          Hasil statistik pantai disimpan ke CSV: {beach_csv_path}")
+    
+    # Simpan JSON Pantai
+    beach_json_path = os.path.join(OUTPUT_DIR, "banten_water_quality_beach.json")
+    beach_json_dict = df_beach_results.set_index("Pantai").to_dict(orient="index")
+    with open(beach_json_path, "w", encoding="utf-8") as f:
+        json.dump(beach_json_dict, f, indent=2, ensure_ascii=False)
+    print(f"          Hasil statistik pantai disimpan ke JSON: {beach_json_path}")
+    
+    # 10. Peta Folium
     html_path = os.path.join(OUTPUT_DIR, "banten_water_quality_map.html")
-    create_folium_visualization(coastal_gdf, df_results, html_path)
+    create_folium_visualization(coastal_gdf, df_results, html_path, coastal_beaches_gdf, df_beach_results)
     
     # Ringkasan Eksekusi
     total_time = time.time() - t_start
     print("\n" + "=" * 70)
     print("PROSES ANALISIS KUALITAS AIR SELESAI!")
-    print(f"Kecamatan diproses: {len(df_results)}")
-    print(f"Kecamatan Sehat  : {len(df_results[df_results['Status_Kualitas_2026'] == 'SEHAT'])}")
-    print(f"Kecamatan Sedang : {len(df_results[df_results['Status_Kualitas_2026'] == 'SEDANG'])}")
+    print(f"Kecamatan diproses  : {len(df_results)}")
+    print(f"Kecamatan Sehat     : {len(df_results[df_results['Status_Kualitas_2026'] == 'SEHAT'])}")
+    print(f"Kecamatan Sedang    : {len(df_results[df_results['Status_Kualitas_2026'] == 'SEDANG'])}")
     print(f"Kecamatan Tidak Sehat: {len(df_results[df_results['Status_Kualitas_2026'] == 'TIDAK SEHAT'])}")
-    print(f"Total Waktu Jalan: {total_time:.1f} detik ({total_time / 60:.1f} menit)")
+    print("-" * 40)
+    print(f"Pantai diproses     : {len(df_beach_results)}")
+    print(f"Pantai Sehat        : {len(df_beach_results[df_beach_results['Status_Kualitas_2026'] == 'SEHAT'])}")
+    print(f"Pantai Sedang       : {len(df_beach_results[df_beach_results['Status_Kualitas_2026'] == 'SEDANG'])}")
+    print(f"Pantai Tidak Sehat  : {len(df_beach_results[df_beach_results['Status_Kualitas_2026'] == 'TIDAK SEHAT'])}")
+    print(f"Total Waktu Jalan   : {total_time:.1f} detik ({total_time / 60:.1f} menit)")
     print("=" * 70)
 
 if __name__ == "__main__":

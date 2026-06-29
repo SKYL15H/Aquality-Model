@@ -49,10 +49,12 @@ if os.path.exists("output"):
 STATS_PATH = "output/provinces_stats.json"
 MODEL_META_PATH = "output/model/model_metadata.json"
 BANTEN_WATER_PATH = "output/banten_water_quality_kecamatan.json"
+BANTEN_BEACH_PATH = "output/banten_water_quality_beach.json"
 
 PROVINCE_STATS = {}
 MODEL_METADATA = {}
 BANTEN_WATER_STATS = {}
+BANTEN_BEACH_STATS = {}
 
 # Kamus profil geografis/aktivitas nyata untuk kecamatan pesisir Banten
 DISTRICT_CONTEXTS = {
@@ -209,7 +211,7 @@ def generate_explanation(kec_name: str, stats: dict) -> str:
 
 @app.on_event("startup")
 def load_data():
-    global PROVINCE_STATS, MODEL_METADATA, BANTEN_WATER_STATS
+    global PROVINCE_STATS, MODEL_METADATA, BANTEN_WATER_STATS, BANTEN_BEACH_STATS
 
     if os.path.exists(STATS_PATH):
         with open(STATS_PATH, "r", encoding="utf-8") as f:
@@ -232,6 +234,13 @@ def load_data():
     else:
         print(f"Warning: {BANTEN_WATER_PATH} not found.")
 
+    if os.path.exists(BANTEN_BEACH_PATH):
+        with open(BANTEN_BEACH_PATH, "r", encoding="utf-8") as f:
+            BANTEN_BEACH_STATS.update(json.load(f))
+        print(f"Loaded water quality statistics for {len(BANTEN_BEACH_STATS)} Banten beaches.")
+    else:
+        print(f"Warning: {BANTEN_BEACH_PATH} not found.")
+
 
 # ---------------------------------------------------------------------------
 # Endpoints
@@ -250,6 +259,8 @@ def root():
             "model_info": "/api/model/info",
             "water_quality_leaderboard": "/api/water-quality/leaderboard",
             "water_quality_district": "/api/water-quality/kecamatan/{name}",
+            "water_quality_beach_leaderboard": "/api/water-quality/beach/leaderboard",
+            "water_quality_beach": "/api/water-quality/beach/{name}",
             "static_maps": "/static/banten_water_quality_map.html"
         },
     }
@@ -411,6 +422,91 @@ def get_district_water_quality(name: str):
     # Buat salinan statistik dan tambahkan narasi penjelasannya
     response_data = dict(stats)
     response_data["kecamatan"] = matched_key
+    response_data["penjelasan_kualitas"] = explanation
+    
+    return response_data
+
+
+def generate_beach_explanation(beach_name: str, stats: dict) -> str:
+    """Menghasilkan narasi penjelasan kualitas air tingkat pantai."""
+    status = stats.get("Status_Kualitas_2026", "TIDAK SEHAT")
+    ndti = stats.get("Mean_NDTI_2026", 0.0)
+    ndci = stats.get("Mean_NDCI_2026", 0.0)
+    kec_name = stats.get("Kecamatan", "pesisir Banten")
+    
+    if status == "SEHAT":
+        return (
+            f"Kualitas air di {beach_name} ({kec_name}) tergolong **SEHAT** (Bersih). "
+            f"Kondisi perairan pantai sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) yang normal, "
+            f"menjadikannya sangat aman dan nyaman untuk kegiatan pariwisata atau berenang."
+        )
+    elif status == "SEDANG":
+        return (
+            f"Kualitas air di {beach_name} ({kec_name}) berada dalam kondisi **SEDANG**. "
+            f"Perairan pantai cukup bersih namun tingkat kekeruhan (NDTI: {ndti:.4f}) atau klorofil-a (NDCI: {ndci:.4f}) menunjukkan nilai ambang batas wajar. "
+            f"Pengunjung dihimbau tetap menjaga kebersihan pantai sekitar."
+        )
+    else: # TIDAK SEHAT
+        reasons = []
+        if ndti > 0.05:
+            reasons.append(f"tingginya kekeruhan air (NDTI: {ndti:.4f}) akibat limpasan sedimen darat")
+        if ndci > 0.08:
+            reasons.append(f"kadar klorofil-a yang tinggi (NDCI: {ndci:.4f}) yang menandakan penumpukan nutrien/blooming alga")
+        reason_str = " dan ".join(reasons) if reasons else "penurunan baku mutu air laut pesisir"
+        return (
+            f"Kualitas air di {beach_name} ({kec_name}) tergolong **TIDAK SEHAT** (Tercemar). "
+            f"Analisis menunjukkan {reason_str}. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini."
+        )
+
+
+@app.get("/api/water-quality/beach/leaderboard")
+def get_beach_leaderboard():
+    """Mengembalikan daftar pantai terbersih di pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending."""
+    if not BANTEN_BEACH_STATS:
+        raise HTTPException(
+            status_code=404,
+            detail="Banten beach water quality statistics not loaded. Please run analysis script first."
+        )
+    
+    leaderboard = []
+    for beach_name, stats in BANTEN_BEACH_STATS.items():
+        leaderboard.append({
+            "pantai": beach_name,
+            "kecamatan": stats.get("Kecamatan"),
+            "kabupaten_kota": stats.get("Kabupaten_Kota"),
+            "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
+            "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
+            "latitude": stats.get("latitude"),
+            "longitude": stats.get("longitude")
+        })
+        
+    leaderboard.sort(key=lambda x: x["pct_sehat_2026"], reverse=True)
+    return {
+        "total": len(leaderboard),
+        "leaderboard": leaderboard
+    }
+
+
+@app.get("/api/water-quality/beach/{name}")
+def get_beach_water_quality(name: str):
+    """Mengembalikan statistik rinci untuk satu pantai di Banten beserta penjelasan semantiknya."""
+    matched_key = None
+    for key in BANTEN_BEACH_STATS:
+        if key.lower() == name.lower():
+            matched_key = key
+            break
+            
+    if matched_key is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Pantai '{name}' tidak ditemukan di data Banten. Gunakan daftar di leaderboard."
+        )
+        
+    stats = BANTEN_BEACH_STATS[matched_key]
+    explanation = generate_beach_explanation(matched_key, stats)
+    
+    response_data = dict(stats)
+    response_data["pantai"] = matched_key
     response_data["penjelasan_kualitas"] = explanation
     
     return response_data
