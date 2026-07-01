@@ -50,11 +50,13 @@ STATS_PATH = "output/provinces_stats.json"
 MODEL_META_PATH = "output/model/model_metadata.json"
 BANTEN_WATER_PATH = "output/banten_water_quality_kecamatan.json"
 BANTEN_BEACH_PATH = "output/banten_water_quality_beach.json"
+BANTEN_INDUSTRIES_PATH = "output/banten_industries.json"
 
 PROVINCE_STATS = {}
 MODEL_METADATA = {}
 BANTEN_WATER_STATS = {}
 BANTEN_BEACH_STATS = {}
+BANTEN_INDUSTRIES = []
 
 # Kamus profil geografis/aktivitas nyata untuk kecamatan pesisir Banten
 DISTRICT_CONTEXTS = {
@@ -153,8 +155,35 @@ DISTRICT_CONTEXTS = {
 }
 
 
+def _build_industry_text(stats: dict) -> str:
+    """Membangun teks konteks jarak industri untuk narasi penjelasan."""
+    industri = stats.get("industri_terdekat")
+    jarak = stats.get("jarak_industri_km")
+    kategori = stats.get("kategori_dampak_industri")
+    tipe = stats.get("tipe_industri", "")
+    
+    if not industri or jarak is None:
+        return ""
+    
+    if kategori == "TINGGI":
+        return (
+            f" Lokasi ini berada dalam radius dampak **TINGGI** dari fasilitas industri {industri} ({tipe}) "
+            f"yang berjarak hanya **{jarak} km**, sehingga potensi kontribusi polutan industri terhadap penurunan kualitas air sangat signifikan."
+        )
+    elif kategori == "SEDANG":
+        return (
+            f" Terdapat fasilitas industri {industri} ({tipe}) dalam radius **{jarak} km** "
+            f"dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan."
+        )
+    else:
+        return (
+            f" Industri terdekat adalah {industri} ({tipe}) berjarak **{jarak} km** "
+            f"dengan kategori dampak **RENDAH**."
+        )
+
+
 def generate_explanation(kec_name: str, stats: dict) -> str:
-    """Menghasilkan narasi penjelasan kualitas air yang menggabungkan parameter satelit dan profil wilayah."""
+    """Menghasilkan narasi penjelasan kualitas air yang menggabungkan parameter satelit, profil wilayah, dan jarak industri."""
     name_lower = kec_name.lower()
     status = stats.get("Status_Kualitas_2026", "TIDAK SEHAT")
     ndti = stats.get("Mean_NDTI_2026", 0.0)
@@ -171,6 +200,9 @@ def generate_explanation(kec_name: str, stats: dict) -> str:
         kab = stats.get("Kabupaten_Kota", "Banten")
         context_text = f"Kecamatan {kec_name} terletak di wilayah pesisir {kab}. "
         sources_text = "Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir."
+
+    # Teks jarak industri
+    industry_text = _build_industry_text(stats)
 
     if status == "TIDAK SEHAT":
         reason = (
@@ -191,19 +223,21 @@ def generate_explanation(kec_name: str, stats: dict) -> str:
         else:
             reason += f"Hasil analisis menunjukkan akumulasi parameter fisik-kimiawi air (TSS/CDOM) melampaui baku mutu optimal. "
             
-        reason += sources_text
+        reason += sources_text + industry_text
         
     elif status == "SEDANG":
         reason = (
             f"Kualitas air pesisir di {kec_name} berada dalam kondisi **SEDANG**. {context_text}"
             f"Meskipun parameter kekeruhan (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) masih berada dalam tingkat toleransi wajar, "
             f"tetap diperlukan pengawasan karena adanya kontribusi polusi dari {', '.join(profile['sources']) if profile else 'aktivitas antropogenik lokal'}."
+            f"{industry_text}"
         )
     else: # SEHAT
         reason = (
             f"Kualitas air pesisir di {kec_name} diklasifikasikan sebagai **SEHAT** (Optimum). {context_text}"
             f"Kondisi fisik perairan terpantau sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan kadar klorofil-a (NDCI: {ndci:.4f}) yang seimbang, "
             f"menunjukkan sirkulasi perairan yang baik serta minimnya dampak negatif dari {', '.join(profile['sources']) if profile else 'limbah domestik perkotaan'}."
+            f"{industry_text}"
         )
         
     return reason
@@ -241,6 +275,14 @@ def load_data():
     else:
         print(f"Warning: {BANTEN_BEACH_PATH} not found.")
 
+    global BANTEN_INDUSTRIES
+    if os.path.exists(BANTEN_INDUSTRIES_PATH):
+        with open(BANTEN_INDUSTRIES_PATH, "r", encoding="utf-8") as f:
+            BANTEN_INDUSTRIES = json.load(f)
+        print(f"Loaded {len(BANTEN_INDUSTRIES)} industry locations.")
+    else:
+        print(f"Warning: {BANTEN_INDUSTRIES_PATH} not found.")
+
 
 # ---------------------------------------------------------------------------
 # Endpoints
@@ -261,6 +303,7 @@ def root():
             "water_quality_district": "/api/water-quality/kecamatan/{name}",
             "water_quality_beach_leaderboard": "/api/water-quality/beach/leaderboard",
             "water_quality_beach": "/api/water-quality/beach/{name}",
+            "industries": "/api/industries",
             "static_maps": "/static/banten_water_quality_map.html"
         },
     }
@@ -386,8 +429,11 @@ def get_leaderboard():
             "kabupaten_kota": stats.get("Kabupaten_Kota"),
             "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
             "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
-            "latitude": stats.get("latitude"),
-            "longitude": stats.get("longitude")
+            "latitude": stats.get("centroid_latitude"),
+            "longitude": stats.get("centroid_longitude"),
+            "industri_terdekat": stats.get("industri_terdekat"),
+            "jarak_industri_km": stats.get("jarak_industri_km"),
+            "kategori_dampak_industri": stats.get("kategori_dampak_industri")
         })
         
     # Urutkan berdasarkan Pct_Sehat_2026 tertinggi
@@ -428,23 +474,28 @@ def get_district_water_quality(name: str):
 
 
 def generate_beach_explanation(beach_name: str, stats: dict) -> str:
-    """Menghasilkan narasi penjelasan kualitas air tingkat pantai."""
+    """Menghasilkan narasi penjelasan kualitas air tingkat pantai dengan konteks jarak industri."""
     status = stats.get("Status_Kualitas_2026", "TIDAK SEHAT")
     ndti = stats.get("Mean_NDTI_2026", 0.0)
     ndci = stats.get("Mean_NDCI_2026", 0.0)
     kec_name = stats.get("Kecamatan", "pesisir Banten")
+    
+    # Teks jarak industri
+    industry_text = _build_industry_text(stats)
     
     if status == "SEHAT":
         return (
             f"Kualitas air di {beach_name} ({kec_name}) tergolong **SEHAT** (Bersih). "
             f"Kondisi perairan pantai sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) yang normal, "
             f"menjadikannya sangat aman dan nyaman untuk kegiatan pariwisata atau berenang."
+            f"{industry_text}"
         )
     elif status == "SEDANG":
         return (
             f"Kualitas air di {beach_name} ({kec_name}) berada dalam kondisi **SEDANG**. "
             f"Perairan pantai cukup bersih namun tingkat kekeruhan (NDTI: {ndti:.4f}) atau klorofil-a (NDCI: {ndci:.4f}) menunjukkan nilai ambang batas wajar. "
             f"Pengunjung dihimbau tetap menjaga kebersihan pantai sekitar."
+            f"{industry_text}"
         )
     else: # TIDAK SEHAT
         reasons = []
@@ -456,6 +507,7 @@ def generate_beach_explanation(beach_name: str, stats: dict) -> str:
         return (
             f"Kualitas air di {beach_name} ({kec_name}) tergolong **TIDAK SEHAT** (Tercemar). "
             f"Analisis menunjukkan {reason_str}. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini."
+            f"{industry_text}"
         )
 
 
@@ -477,7 +529,10 @@ def get_beach_leaderboard():
             "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
             "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
             "latitude": stats.get("latitude"),
-            "longitude": stats.get("longitude")
+            "longitude": stats.get("longitude"),
+            "industri_terdekat": stats.get("industri_terdekat"),
+            "jarak_industri_km": stats.get("jarak_industri_km"),
+            "kategori_dampak_industri": stats.get("kategori_dampak_industri")
         })
         
     leaderboard.sort(key=lambda x: x["pct_sehat_2026"], reverse=True)
@@ -510,3 +565,16 @@ def get_beach_water_quality(name: str):
     response_data["penjelasan_kualitas"] = explanation
     
     return response_data
+
+
+# ---------------------------------------------------------------------------
+# Endpoint Daftar Industri/Pabrik
+# ---------------------------------------------------------------------------
+
+@app.get("/api/industries")
+def get_industries():
+    """Mengembalikan daftar seluruh industri/pabrik besar di Banten beserta koordinatnya."""
+    return {
+        "total": len(BANTEN_INDUSTRIES),
+        "industries": BANTEN_INDUSTRIES
+    }

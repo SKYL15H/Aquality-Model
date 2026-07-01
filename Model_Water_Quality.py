@@ -16,6 +16,7 @@ import shutil
 import tempfile
 import time
 import json
+import math
 import argparse
 import joblib
 from datetime import datetime
@@ -49,6 +50,80 @@ NDTI_TURBID_THRESHOLD = 0.05       # NDTI > 0.05 -> Sangat Keruh (Tidak Sehat)
 NDCI_BLOOM_THRESHOLD = 0.08        # NDCI > 0.08 -> Blooming Alga (Tidak Sehat)
 NDCI_LOW_THRESHOLD = -0.02         # NDCI <= -0.02 -> Sangat Jernih/Rendah Nutrisi
 NDTI_CLEAR_THRESHOLD = -0.05       # NDTI <= -0.05 -> Sangat Jernih
+
+# Data Industri/Pabrik Besar di Banten
+# ---------------------------------------------------------------------------
+INDUSTRIES = [
+    {"nama": "PT Krakatau Steel", "tipe": "Baja/Logam", "latitude": -6.0048, "longitude": 106.0148},
+    {"nama": "PT Chandra Asri Petrochemical", "tipe": "Petrokimia", "latitude": -6.0200, "longitude": 106.0050},
+    {"nama": "PT Asahimas Chemical", "tipe": "Kimia", "latitude": -6.0120, "longitude": 106.0200},
+    {"nama": "PLTU Suralaya", "tipe": "Pembangkit Listrik", "latitude": -5.9320, "longitude": 105.9440},
+    {"nama": "PT Indah Kiat Pulp & Paper (Merak)", "tipe": "Pulp & Paper", "latitude": -5.9550, "longitude": 106.0000},
+    {"nama": "PT Indonesia Power Suralaya", "tipe": "Energi", "latitude": -5.9350, "longitude": 105.9460},
+    {"nama": "PT Banten Energy", "tipe": "Energi", "latitude": -6.0450, "longitude": 105.9750},
+    {"nama": "Pelabuhan Merak", "tipe": "Pelabuhan", "latitude": -5.9350, "longitude": 106.0000},
+    {"nama": "PT Lotte Chemical Indonesia", "tipe": "Kimia", "latitude": -6.0380, "longitude": 106.0100},
+    {"nama": "PLTU Labuan (Banten 2)", "tipe": "Pembangkit Listrik", "latitude": -6.3660, "longitude": 105.8180},
+    {"nama": "PT Indocement Tunggal Prakarsa (Bayah)", "tipe": "Semen", "latitude": -6.9500, "longitude": 106.2600},
+    {"nama": "Pelabuhan Ciwandan", "tipe": "Pelabuhan/Logistik", "latitude": -6.0350, "longitude": 105.9600},
+    {"nama": "PT Sulfindo Adiusaha", "tipe": "Kimia", "latitude": -6.0150, "longitude": 106.0080},
+    {"nama": "Pelabuhan Perikanan Karangantu", "tipe": "Perikanan", "latitude": -6.0310, "longitude": 106.1700}
+]
+
+def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    R = 6371.0
+    lat1_rad = math.radians(lat1)
+    lat2_rad = math.radians(lat2)
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return round(R * c, 2)
+
+def get_dampak_category(distance_km: float) -> str:
+    if distance_km < 5:
+        return "TINGGI"
+    elif distance_km <= 15:
+        return "SEDANG"
+    else:
+        return "RENDAH"
+
+def find_nearest_industries(lat: float, lon: float, top_n: int = 3) -> list:
+    distances = []
+    for industry in INDUSTRIES:
+        dist = haversine(lat, lon, industry["latitude"], industry["longitude"])
+        distances.append({
+            "nama": industry["nama"],
+            "tipe": industry["tipe"],
+            "jarak_km": dist,
+            "lat": industry["latitude"],
+            "lon": industry["longitude"]
+        })
+    distances.sort(key=lambda x: x["jarak_km"])
+    return distances[:top_n]
+
+def _build_industry_text(stats: dict) -> str:
+    industri = stats.get("industri_terdekat")
+    jarak = stats.get("jarak_industri_km")
+    kategori = stats.get("kategori_dampak_industri")
+    tipe = stats.get("tipe_industri", "")
+    if not industri or jarak is None:
+        return ""
+    if kategori == "TINGGI":
+        return (
+            f" Lokasi ini berada dalam radius dampak **TINGGI** dari fasilitas industri {industri} ({tipe}) "
+            f"yang berjarak hanya **{jarak} km**, sehingga potensi kontribusi polutan industri terhadap penurunan kualitas air sangat signifikan."
+        )
+    elif kategori == "SEDANG":
+        return (
+            f" Terdapat fasilitas industri {industri} ({tipe}) dalam radius **{jarak} km** "
+            f"dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan."
+        )
+    else:
+        return (
+            f" Industri terdekat adalah {industri} ({tipe}) berjarak **{jarak} km** "
+            f"dengan kategori dampak **RENDAH**."
+        )
 
 # ---------------------------------------------------------------------------
 # 1. Ekstraksi Spasial Kecamatan Pesisir Banten
@@ -206,11 +281,22 @@ def load_banten_coastal_beaches(land_geom_utm, buffer_meters=1000):
     print(f"  Ditemukan {len(coastal_beaches_gdf)} lokasi pantai pesisir Banten yang siap dianalisis.")
     return coastal_beaches_gdf
 
-def generate_beach_explanation(beach_name, kec_name, status, ndti, ndci):
+def generate_beach_explanation(beach_name, kec_name, status, ndti, ndci, stats):
+    industry_text = _build_industry_text(stats)
     if status == "SEHAT":
-        return f"Kualitas air di {beach_name} ({kec_name}) tergolong **SEHAT** (Bersih). Kondisi perairan pantai sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) and klorofil-a (NDCI: {ndci:.4f}) yang normal, menjadikannya sangat aman dan nyaman untuk kegiatan pariwisata atau berenang."
+        return (
+            f"Kualitas air di {beach_name} ({kec_name}) tergolong **SEHAT** (Bersih). "
+            f"Kondisi perairan pantai sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) and klorofil-a (NDCI: {ndci:.4f}) yang normal, "
+            f"menjadikannya sangat aman dan nyaman untuk kegiatan pariwisata atau berenang."
+            f"{industry_text}"
+        )
     elif status == "SEDANG":
-        return f"Kualitas air di {beach_name} ({kec_name}) berada dalam kondisi **SEDANG**. Perairan pantai cukup bersih namun tingkat kekeruhan (NDTI: {ndti:.4f}) atau klorofil-a (NDCI: {ndci:.4f}) menunjukkan nilai ambang batas wajar. Pengunjung dihimbau tetap menjaga kebersihan pantai sekitar."
+        return (
+            f"Kualitas air di {beach_name} ({kec_name}) berada dalam kondisi **SEDANG**. "
+            f"Perairan pantai cukup bersih namun tingkat kekeruhan (NDTI: {ndti:.4f}) atau klorofil-a (NDCI: {ndci:.4f}) menunjukkan nilai ambang batas wajar. "
+            f"Pengunjung dihimbau tetap menjaga kebersihan pantai sekitar."
+            f"{industry_text}"
+        )
     else: # TIDAK SEHAT
         reasons = []
         if ndti > 0.05:
@@ -218,7 +304,11 @@ def generate_beach_explanation(beach_name, kec_name, status, ndti, ndci):
         if ndci > 0.08:
             reasons.append(f"kadar klorofil-a yang tinggi (NDCI: {ndci:.4f}) yang menandakan penumpukan nutrien/blooming alga")
         reason_str = " dan ".join(reasons) if reasons else "penurunan baku mutu air laut pesisir"
-        return f"Kualitas air di {beach_name} ({kec_name}) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan {reason_str}. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini."
+        return (
+            f"Kualitas air di {beach_name} ({kec_name}) tergolong **TIDAK SEHAT** (Tercemar). "
+            f"Analisis menunjukkan {reason_str}. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini."
+            f"{industry_text}"
+        )
 
 # ---------------------------------------------------------------------------
 # 2. openEO — Download Composite Sentinel-2 dengan Band B05 (Red Edge)
@@ -1029,7 +1119,7 @@ def main():
         }
     }
 
-    def generate_explanation(kec_name, status, ndti, ndci, kab_kota):
+    def generate_explanation(kec_name, status, ndti, ndci, kab_kota, stats):
         name_lower = kec_name.lower()
         profile = DISTRICT_CONTEXTS.get(name_lower)
         if profile:
@@ -1038,6 +1128,8 @@ def main():
         else:
             context_text = f"Kecamatan {kec_name} terletak di wilayah pesisir {kab_kota}. "
             sources_text = "Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir."
+
+        industry_text = _build_industry_text(stats)
 
         if status == "TIDAK SEHAT":
             reason = f"Status Kualitas Air di {kec_name} diklasifikasikan sebagai **TIDAK SEHAT**. {context_text}"
@@ -1050,11 +1142,11 @@ def main():
                 reason += "Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana " + " dan ".join(param_reasons) + ". "
             else:
                 reason += "Hasil analisis menunjukkan akumulasi parameter fisik-kimiawi air (TSS/CDOM) melampaui baku mutu optimal. "
-            reason += sources_text
+            reason += sources_text + industry_text
         elif status == "SEDANG":
-            reason = f"Kualitas air pesisir di {kec_name} berada dalam kondisi **SEDANG**. {context_text}Meskipun parameter kekeruhan (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) masih berada dalam tingkat toleransi wajar, tetap diperlukan pengawasan karena adanya kontribusi polusi dari {', '.join(profile['sources']) if profile else 'aktivitas antropogenik lokal'}."
+            reason = f"Kualitas air pesisir di {kec_name} berada dalam kondisi **SEDANG**. {context_text}Meskipun parameter kekeruhan (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) masih berada dalam tingkat toleransi wajar, tetap diperlukan pengawasan karena adanya kontribusi polusi dari {', '.join(profile['sources']) if profile else 'aktivitas antropogenik lokal'}.{industry_text}"
         else:
-            reason = f"Kualitas air pesisir di {kec_name} diklasifikasikan sebagai **SEHAT** (Optimum). {context_text}Kondisi fisik perairan terpantau sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan kadar klorofil-a (NDCI: {ndci:.4f}) yang seimbang, menunjukkan sirkulasi perairan yang baik serta minimnya dampak negatif dari {', '.join(profile['sources']) if profile else 'limbah domestik perkotaan'}."
+            reason = f"Kualitas air pesisir di {kec_name} diklasifikasikan sebagai **SEHAT** (Optimum). {context_text}Kondisi fisik perairan terpantau sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan kadar klorofil-a (NDCI: {ndci:.4f}) yang seimbang, menunjukkan sirkulasi perairan yang baik serta minimnya dampak negatif dari {', '.join(profile['sources']) if profile else 'limbah domestik perkotaan'}.{industry_text}"
         return reason
 
     results = []
@@ -1096,7 +1188,27 @@ def main():
         else:
             tren = "STABIL"
             
-        explanation = generate_explanation(name_3, stats_t2["status"], stats_t2["mean_ndti"], stats_t2["mean_ndci"], name_2)
+        # Hitung centroid dan jarak industri
+        centroid = row.land_geom.centroid
+        lat, lon = centroid.y, centroid.x
+        stats_t2["centroid_latitude"] = round(lat, 6)
+        stats_t2["centroid_longitude"] = round(lon, 6)
+        nearest = find_nearest_industries(lat, lon, top_n=3)
+        if nearest:
+            stats_t2["industri_terdekat"] = nearest[0]["nama"]
+            stats_t2["tipe_industri"] = nearest[0]["tipe"]
+            stats_t2["jarak_industri_km"] = nearest[0]["jarak_km"]
+            stats_t2["kategori_dampak_industri"] = get_dampak_category(nearest[0]["jarak_km"])
+        if len(nearest) >= 2:
+            stats_t2["industri_terdekat_2"] = nearest[1]["nama"]
+            stats_t2["tipe_industri_2"] = nearest[1]["tipe"]
+            stats_t2["jarak_industri_2_km"] = nearest[1]["jarak_km"]
+        if len(nearest) >= 3:
+            stats_t2["industri_terdekat_3"] = nearest[2]["nama"]
+            stats_t2["tipe_industri_3"] = nearest[2]["tipe"]
+            stats_t2["jarak_industri_3_km"] = nearest[2]["jarak_km"]
+
+        explanation = generate_explanation(name_3, stats_t2["status"], stats_t2["mean_ndti"], stats_t2["mean_ndci"], name_2, stats_t2)
         results.append({
             "Kabupaten_Kota": name_2,
             "Kecamatan": name_3,
@@ -1113,6 +1225,18 @@ def main():
             "Mean_TSS_2026": stats_t2["mean_tss"],
             "Mean_CDOM_2026": stats_t2["mean_cdom"],
             "Status_Kualitas_2026": stats_t2["status"],
+            "centroid_latitude": stats_t2.get("centroid_latitude"),
+            "centroid_longitude": stats_t2.get("centroid_longitude"),
+            "industri_terdekat": stats_t2.get("industri_terdekat"),
+            "tipe_industri": stats_t2.get("tipe_industri"),
+            "jarak_industri_km": stats_t2.get("jarak_industri_km"),
+            "kategori_dampak_industri": stats_t2.get("kategori_dampak_industri"),
+            "industri_terdekat_2": stats_t2.get("industri_terdekat_2"),
+            "tipe_industri_2": stats_t2.get("tipe_industri_2"),
+            "jarak_industri_2_km": stats_t2.get("jarak_industri_2_km"),
+            "industri_terdekat_3": stats_t2.get("industri_terdekat_3"),
+            "tipe_industri_3": stats_t2.get("tipe_industri_3"),
+            "jarak_industri_3_km": stats_t2.get("jarak_industri_3_km"),
             # 2017 Data
             "Luas_Air_2017_Ha": stats_t1["water_area_ha"],
             "Sehat_2017_Ha": stats_t1["healthy_ha"],
@@ -1187,7 +1311,25 @@ def main():
         else:
             tren = "STABIL"
             
-        explanation = generate_beach_explanation(beach_name, kec_name, stats_t2["status"], stats_t2["mean_ndti"], stats_t2["mean_ndci"])
+        # Hitung jarak industri untuk pantai
+        nearest = find_nearest_industries(lat, lon, top_n=3)
+        stats_t2["latitude"] = lat
+        stats_t2["longitude"] = lon
+        if nearest:
+            stats_t2["industri_terdekat"] = nearest[0]["nama"]
+            stats_t2["tipe_industri"] = nearest[0]["tipe"]
+            stats_t2["jarak_industri_km"] = nearest[0]["jarak_km"]
+            stats_t2["kategori_dampak_industri"] = get_dampak_category(nearest[0]["jarak_km"])
+        if len(nearest) >= 2:
+            stats_t2["industri_terdekat_2"] = nearest[1]["nama"]
+            stats_t2["tipe_industri_2"] = nearest[1]["tipe"]
+            stats_t2["jarak_industri_2_km"] = nearest[1]["jarak_km"]
+        if len(nearest) >= 3:
+            stats_t2["industri_terdekat_3"] = nearest[2]["nama"]
+            stats_t2["tipe_industri_3"] = nearest[2]["tipe"]
+            stats_t2["jarak_industri_3_km"] = nearest[2]["jarak_km"]
+
+        explanation = generate_beach_explanation(beach_name, kec_name, stats_t2["status"], stats_t2["mean_ndti"], stats_t2["mean_ndci"], stats_t2)
         
         beach_results.append({
             "Pantai": beach_name,
@@ -1208,6 +1350,16 @@ def main():
             "Mean_TSS_2026": stats_t2["mean_tss"],
             "Mean_CDOM_2026": stats_t2["mean_cdom"],
             "Status_Kualitas_2026": stats_t2["status"],
+            "industri_terdekat": stats_t2.get("industri_terdekat"),
+            "tipe_industri": stats_t2.get("tipe_industri"),
+            "jarak_industri_km": stats_t2.get("jarak_industri_km"),
+            "kategori_dampak_industri": stats_t2.get("kategori_dampak_industri"),
+            "industri_terdekat_2": stats_t2.get("industri_terdekat_2"),
+            "tipe_industri_2": stats_t2.get("tipe_industri_2"),
+            "jarak_industri_2_km": stats_t2.get("jarak_industri_2_km"),
+            "industri_terdekat_3": stats_t2.get("industri_terdekat_3"),
+            "tipe_industri_3": stats_t2.get("tipe_industri_3"),
+            "jarak_industri_3_km": stats_t2.get("jarak_industri_3_km"),
             # 2017 Data
             "Luas_Air_2017_Ha": stats_t1["water_area_ha"],
             "Sehat_2017_Ha": stats_t1["healthy_ha"],
@@ -1237,6 +1389,12 @@ def main():
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_dict, f, indent=2, ensure_ascii=False)
     print(f"          Hasil statistik kecamatan disimpan ke JSON: {json_path}")
+    
+    # Simpan JSON Daftar Industri/Pabrik
+    industries_json_path = os.path.join(OUTPUT_DIR, "banten_industries.json")
+    with open(industries_json_path, "w", encoding="utf-8") as f:
+        json.dump(INDUSTRIES, f, indent=2, ensure_ascii=False)
+    print(f"          Daftar lokasi industri disimpan ke JSON: {industries_json_path}")
     
     # Simpan CSV Pantai
     beach_csv_path = os.path.join(OUTPUT_DIR, "banten_water_quality_beach.csv")
