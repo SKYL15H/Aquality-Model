@@ -598,7 +598,7 @@ def main():
                 "path_t2 = os.path.join(COMPOSITE_DIR, f\"Banten_Water_{YEAR_T2}.tif\")\n",
                 "\n",
                 "# Mode download (True = Lewati download, gunakan fallback data lokal yang sudah ada)\n",
-                "SKIP_OPENEO = True \n",
+                "SKIP_OPENEO = False \n",
                 "\n",
                 "if not SKIP_OPENEO:\n",
                 "    try:\n",
