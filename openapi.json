@@ -1,0 +1,329 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Coast-Vision API",
+    "description": "API analisis pesisir Indonesia: deteksi abrasi/akresi garis pantai dan klasifikasi kesehatan hutan mangrove 34 provinsi.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/provinces": {
+      "get": {
+        "tags": [
+          "Provinces & National Summary"
+        ],
+        "summary": "List Provinces",
+        "description": "Daftar seluruh provinsi yang sudah diproses.",
+        "operationId": "list_provinces_api_provinces_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/provinces/{name}": {
+      "get": {
+        "tags": [
+          "Provinces & National Summary"
+        ],
+        "summary": "Get Province",
+        "description": "Detail statistik untuk satu provinsi.",
+        "operationId": "get_province_api_provinces__name__get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/summary": {
+      "get": {
+        "tags": [
+          "Provinces & National Summary"
+        ],
+        "summary": "National Summary",
+        "description": "Ringkasan statistik nasional (agregat seluruh provinsi yang sudah diproses).",
+        "operationId": "national_summary_api_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/model/info": {
+      "get": {
+        "tags": [
+          "Model & Industry Data"
+        ],
+        "summary": "Model Info",
+        "description": "Metadata dan metrik akurasi model Random Forest.",
+        "operationId": "model_info_api_model_info_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/water-quality/leaderboard": {
+      "get": {
+        "tags": [
+          "Water Quality - Kecamatan"
+        ],
+        "summary": "Get Leaderboard",
+        "description": "Mengembalikan daftar kecamatan terbersih pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending.",
+        "operationId": "get_leaderboard_api_water_quality_leaderboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/water-quality/kecamatan/{name}": {
+      "get": {
+        "tags": [
+          "Water Quality - Kecamatan"
+        ],
+        "summary": "Get District Water Quality",
+        "description": "Mengembalikan statistik rinci untuk satu kecamatan di Banten beserta alasan semantik kondisi airnya.",
+        "operationId": "get_district_water_quality_api_water_quality_kecamatan__name__get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/water-quality/beach/leaderboard": {
+      "get": {
+        "tags": [
+          "Water Quality - Beach"
+        ],
+        "summary": "Get Beach Leaderboard",
+        "description": "Mengembalikan daftar pantai terbersih di pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending.",
+        "operationId": "get_beach_leaderboard_api_water_quality_beach_leaderboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/water-quality/beach/{name}": {
+      "get": {
+        "tags": [
+          "Water Quality - Beach"
+        ],
+        "summary": "Get Beach Water Quality",
+        "description": "Mengembalikan statistik rinci untuk satu pantai di Banten beserta penjelasan semantiknya.",
+        "operationId": "get_beach_water_quality_api_water_quality_beach__name__get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/industries": {
+      "get": {
+        "tags": [
+          "Model & Industry Data"
+        ],
+        "summary": "Get Industries",
+        "description": "Mengembalikan daftar seluruh industri/pabrik besar di Banten beserta koordinatnya.",
+        "operationId": "get_industries_api_industries_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

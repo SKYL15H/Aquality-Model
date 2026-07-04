@@ -288,7 +288,7 @@ def load_data():
 # Endpoints
 # ---------------------------------------------------------------------------
 
-@app.get("/")
+@app.get("/", tags=["General"])
 def root():
     return {
         "service": "Coast-Vision API",
@@ -309,7 +309,7 @@ def root():
     }
 
 
-@app.get("/api/provinces")
+@app.get("/api/provinces", tags=["Provinces & National Summary"])
 def list_provinces():
     """Daftar seluruh provinsi yang sudah diproses."""
     provinces = []
@@ -326,7 +326,7 @@ def list_provinces():
     }
 
 
-@app.get("/api/provinces/{name}")
+@app.get("/api/provinces/{name}", tags=["Provinces & National Summary"])
 def get_province(name: str):
     """Detail statistik untuk satu provinsi."""
     # Cari case-insensitive
@@ -349,7 +349,7 @@ def get_province(name: str):
     return PROVINCE_STATS[matched]
 
 
-@app.get("/api/summary")
+@app.get("/api/summary", tags=["Provinces & National Summary"])
 def national_summary():
     """Ringkasan statistik nasional (agregat seluruh provinsi yang sudah diproses)."""
     if not PROVINCE_STATS:
@@ -398,7 +398,7 @@ def national_summary():
     }
 
 
-@app.get("/api/model/info")
+@app.get("/api/model/info", tags=["Model & Industry Data"])
 def model_info():
     """Metadata dan metrik akurasi model Random Forest."""
     if not MODEL_METADATA:
@@ -413,7 +413,7 @@ def model_info():
 # Endpoints Kualitas Air Kecamatan (Banten Leaderboard & Detail)
 # ---------------------------------------------------------------------------
 
-@app.get("/api/water-quality/leaderboard")
+@app.get("/api/water-quality/leaderboard", tags=["Water Quality - Kecamatan"])
 def get_leaderboard():
     """Mengembalikan daftar kecamatan terbersih pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending."""
     if not BANTEN_WATER_STATS:
@@ -444,7 +444,7 @@ def get_leaderboard():
     }
 
 
-@app.get("/api/water-quality/kecamatan/{name}")
+@app.get("/api/water-quality/kecamatan/{name}", tags=["Water Quality - Kecamatan"])
 def get_district_water_quality(name: str):
     """Mengembalikan statistik rinci untuk satu kecamatan di Banten beserta alasan semantik kondisi airnya."""
     # Pencarian case-insensitive
@@ -511,7 +511,7 @@ def generate_beach_explanation(beach_name: str, stats: dict) -> str:
         )
 
 
-@app.get("/api/water-quality/beach/leaderboard")
+@app.get("/api/water-quality/beach/leaderboard", tags=["Water Quality - Beach"])
 def get_beach_leaderboard():
     """Mengembalikan daftar pantai terbersih di pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending."""
     if not BANTEN_BEACH_STATS:
@@ -542,7 +542,7 @@ def get_beach_leaderboard():
     }
 
 
-@app.get("/api/water-quality/beach/{name}")
+@app.get("/api/water-quality/beach/{name}", tags=["Water Quality - Beach"])
 def get_beach_water_quality(name: str):
     """Mengembalikan statistik rinci untuk satu pantai di Banten beserta penjelasan semantiknya."""
     matched_key = None
@@ -571,7 +571,7 @@ def get_beach_water_quality(name: str):
 # Endpoint Daftar Industri/Pabrik
 # ---------------------------------------------------------------------------
 
-@app.get("/api/industries")
+@app.get("/api/industries", tags=["Model & Industry Data"])
 def get_industries():
     """Mengembalikan daftar seluruh industri/pabrik besar di Banten beserta koordinatnya."""
     return {
