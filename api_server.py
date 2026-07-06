@@ -433,7 +433,8 @@ def get_leaderboard():
             "longitude": stats.get("centroid_longitude"),
             "industri_terdekat": stats.get("industri_terdekat"),
             "jarak_industri_km": stats.get("jarak_industri_km"),
-            "kategori_dampak_industri": stats.get("kategori_dampak_industri")
+            "kategori_dampak_industri": stats.get("kategori_dampak_industri"),
+            "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar")
         })
         
     # Urutkan berdasarkan Pct_Sehat_2026 tertinggi
@@ -532,7 +533,8 @@ def get_beach_leaderboard():
             "longitude": stats.get("longitude"),
             "industri_terdekat": stats.get("industri_terdekat"),
             "jarak_industri_km": stats.get("jarak_industri_km"),
-            "kategori_dampak_industri": stats.get("kategori_dampak_industri")
+            "kategori_dampak_industri": stats.get("kategori_dampak_industri"),
+            "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar")
         })
         
     leaderboard.sort(key=lambda x: x["pct_sehat_2026"], reverse=True)
