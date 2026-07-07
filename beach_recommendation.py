@@ -317,6 +317,18 @@ class BeachRecommender:
 
         return intro + tren_text + param_text
 
+    def save_to_json(self, output_path: str) -> None:
+        """Menyimpan hasil rekomendasi lengkap ke file JSON."""
+        enriched_scores = []
+        for entry in self._scores:
+            enriched_entry = dict(entry)
+            enriched_entry["narasi_rekomendasi"] = self.generate_recommendation_text(entry)
+            enriched_scores.append(enriched_entry)
+
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(enriched_scores, f, indent=2, ensure_ascii=False)
+        print(f"Berhasil menyimpan hasil rekomendasi ke: {output_path}")
+
 
 # ---------------------------------------------------------------------------
 # Standalone execution untuk testing
@@ -331,6 +343,10 @@ if __name__ == "__main__":
         exit(1)
 
     recommender = BeachRecommender(DATA_PATH)
+    
+    # Simpan hasil rekomendasi ke file JSON
+    output_json_path = os.path.join("output", "banten_beach_recommendations.json")
+    recommender.save_to_json(output_json_path)
 
     print("=" * 70)
     print("[BEACH] SISTEM REKOMENDASI PANTAI TERSEHAT - PESISIR BANTEN")
