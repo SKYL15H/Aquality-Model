@@ -161,7 +161,7 @@ Mengembalikan data kualitas air detail untuk kecamatan tertentu di Banten besert
   }
   ```
 
-#### `GET /api/water-quality/beach/leaderboard`
+#### `GET /api/water-quality/beach/explore`
 Mengembalikan peringkat kualitas air di lokasi-lokasi pantai wisata di Banten.
 * **Response (JSON)**:
   ```json

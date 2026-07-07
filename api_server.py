@@ -11,9 +11,11 @@ Penggunaan:
 import json
 import os
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+
+from beach_recommendation import BeachRecommender
 
 
 # ---------------------------------------------------------------------------
@@ -57,6 +59,7 @@ MODEL_METADATA = {}
 BANTEN_WATER_STATS = {}
 BANTEN_BEACH_STATS = {}
 BANTEN_INDUSTRIES = []
+BEACH_RECOMMENDER: BeachRecommender | None = None
 
 # Kamus profil geografis/aktivitas nyata untuk kecamatan pesisir Banten
 DISTRICT_CONTEXTS = {
@@ -245,7 +248,7 @@ def generate_explanation(kec_name: str, stats: dict) -> str:
 
 @app.on_event("startup")
 def load_data():
-    global PROVINCE_STATS, MODEL_METADATA, BANTEN_WATER_STATS, BANTEN_BEACH_STATS
+    global PROVINCE_STATS, MODEL_METADATA, BANTEN_WATER_STATS, BANTEN_BEACH_STATS, BEACH_RECOMMENDER
 
     if os.path.exists(STATS_PATH):
         with open(STATS_PATH, "r", encoding="utf-8") as f:
@@ -283,6 +286,16 @@ def load_data():
     else:
         print(f"Warning: {BANTEN_INDUSTRIES_PATH} not found.")
 
+    # Inisialisasi sistem rekomendasi pantai
+    if BANTEN_BEACH_STATS:
+        BEACH_RECOMMENDER = BeachRecommender(data_dict=BANTEN_BEACH_STATS)
+        summary = BEACH_RECOMMENDER.get_summary()
+        print(f"Beach Recommender initialized: {summary['total_pantai']} beaches scored, "
+              f"best={summary['pantai_terbaik']}, mean_score={summary['health_score_mean']}")
+    else:
+        BEACH_RECOMMENDER = None
+        print("Warning: Beach Recommender not initialized — no beach data available.")
+
 
 # ---------------------------------------------------------------------------
 # Endpoints
@@ -292,8 +305,8 @@ def load_data():
 def root():
     return {
         "service": "Coast-Vision API",
-        "version": "1.0.0",
-        "description": "Analisis pesisir & mangrove 34 provinsi Indonesia",
+        "version": "1.1.0",
+        "description": "Analisis pesisir & mangrove 34 provinsi Indonesia + Sistem Rekomendasi Pantai Tersehat",
         "endpoints": {
             "provinces_list": "/api/provinces",
             "province_detail": "/api/provinces/{name}",
@@ -304,6 +317,9 @@ def root():
             "water_quality_beach_leaderboard": "/api/water-quality/beach/leaderboard",
             "water_quality_beach": "/api/water-quality/beach/{name}",
             "industries": "/api/industries",
+            "recommendation_beaches": "/api/recommendation/beaches?top_n=5",
+            "recommendation_beach_detail": "/api/recommendation/beaches/{name}",
+            "recommendation_summary": "/api/recommendation/summary",
             "static_maps": "/static/banten_water_quality_map.html"
         },
     }
@@ -580,3 +596,86 @@ def get_industries():
         "total": len(BANTEN_INDUSTRIES),
         "industries": BANTEN_INDUSTRIES
     }
+
+
+# ---------------------------------------------------------------------------
+# Endpoints Sistem Rekomendasi Pantai Tersehat
+# ---------------------------------------------------------------------------
+
+@app.get("/api/recommendation/beaches", tags=["Beach Recommendation"])
+def get_beach_recommendations(
+    top_n: int = Query(default=None, ge=1, le=100, description="Jumlah pantai teratas. Kosongkan untuk semua."),
+    min_score: float = Query(default=None, ge=0, le=100, description="Filter: Health Score minimum."),
+):
+    """Mengembalikan daftar rekomendasi pantai tersehat di Banten, diurutkan berdasarkan Health Score tertinggi.
+    
+    Health Score dihitung dari kombinasi multi-parameter:
+    - 30% Persentase area air sehat (Pct_Sehat_2026)
+    - 20% Kejernihan air (1 - NDTI, inverted)
+    - 10% Kadar klorofil-a (1 - NDCI, inverted)
+    - 10% Kandungan padatan tersuspensi (1 - TSS, inverted)
+    - 5%  Bahan organik terlarut (1 - CDOM, inverted)
+    - 15% Tren kualitas historis (MEMBAIK > STABIL > MEMBURUK)
+    - 10% Dampak industri terdekat (RENDAH > SEDANG > TINGGI)
+    """
+    if BEACH_RECOMMENDER is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Sistem rekomendasi belum diinisialisasi. Data pantai tidak tersedia."
+        )
+    
+    results = BEACH_RECOMMENDER.get_recommendations(top_n=top_n)
+    
+    # Filter berdasarkan minimum score jika diberikan
+    if min_score is not None:
+        results = [r for r in results if r["health_score"] >= min_score]
+    
+    # Tambahkan narasi untuk setiap pantai
+    enriched = []
+    for beach in results:
+        entry = dict(beach)
+        entry["narasi_rekomendasi"] = BEACH_RECOMMENDER.generate_recommendation_text(beach)
+        enriched.append(entry)
+    
+    return {
+        "total": len(enriched),
+        "model": "Multi-Criteria Weighted Health Score v1.0",
+        "recommendations": enriched
+    }
+
+
+@app.get("/api/recommendation/beaches/{name}", tags=["Beach Recommendation"])
+def get_beach_recommendation_detail(name: str):
+    """Mengembalikan skor rekomendasi dan narasi detail untuk satu pantai berdasarkan nama."""
+    if BEACH_RECOMMENDER is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Sistem rekomendasi belum diinisialisasi."
+        )
+    
+    result = BEACH_RECOMMENDER.get_beach_score(name)
+    if result is None:
+        available = [b["pantai"] for b in BEACH_RECOMMENDER.get_recommendations()]
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": f"Pantai '{name}' tidak ditemukan.",
+                "available": available
+            }
+        )
+    
+    response = dict(result)
+    response["narasi_rekomendasi"] = BEACH_RECOMMENDER.generate_recommendation_text(result)
+    return response
+
+
+@app.get("/api/recommendation/summary", tags=["Beach Recommendation"])
+def get_recommendation_summary():
+    """Ringkasan statistik model rekomendasi: distribusi label, skor rata-rata, bobot parameter."""
+    if BEACH_RECOMMENDER is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Sistem rekomendasi belum diinisialisasi."
+        )
+    
+    return BEACH_RECOMMENDER.get_summary()
