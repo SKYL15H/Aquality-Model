@@ -312,9 +312,9 @@ def root():
             "province_detail": "/api/provinces/{name}",
             "national_summary": "/api/summary",
             "model_info": "/api/model/info",
-            "water_quality_leaderboard": "/api/water-quality/leaderboard",
+            "water_quality_leaderboard": "/api/water-quality/explore",
             "water_quality_district": "/api/water-quality/kecamatan/{name}",
-            "water_quality_beach_leaderboard": "/api/water-quality/beach/leaderboard",
+            "water_quality_beach_leaderboard": "/api/water-quality/beach/explore",
             "water_quality_beach": "/api/water-quality/beach/{name}",
             "industries": "/api/industries",
             "recommendation_beaches": "/api/recommendation/beaches?top_n=5",
@@ -429,7 +429,7 @@ def model_info():
 # Endpoints Kualitas Air Kecamatan (Banten Leaderboard & Detail)
 # ---------------------------------------------------------------------------
 
-@app.get("/api/water-quality/leaderboard", tags=["Water Quality - Kecamatan"])
+@app.get("/api/water-quality/explore", tags=["Water Quality - Kecamatan"])
 def get_leaderboard():
     """Mengembalikan daftar kecamatan terbersih pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending."""
     if not BANTEN_WATER_STATS:
@@ -528,7 +528,7 @@ def generate_beach_explanation(beach_name: str, stats: dict) -> str:
         )
 
 
-@app.get("/api/water-quality/beach/leaderboard", tags=["Water Quality - Beach"])
+@app.get("/api/water-quality/beach/explore", tags=["Water Quality - Beach"])
 def get_beach_leaderboard():
     """Mengembalikan daftar pantai terbersih di pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending."""
     if not BANTEN_BEACH_STATS:

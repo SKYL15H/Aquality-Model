@@ -126,7 +126,7 @@
         }
       }
     },
-    "/api/water-quality/leaderboard": {
+    "/api/water-quality/explore": {
       "get": {
         "tags": [
           "Water Quality - Kecamatan"

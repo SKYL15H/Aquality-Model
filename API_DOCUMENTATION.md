@@ -42,7 +42,7 @@ Mengembalikan status layanan, versi, dan rute endpoint yang tersedia.
 * **Response (JSON)**:
   ```json
   {
-    "service": "Coast-Vision API",
+    "service": "Aquality API",
     "version": "1.0.0",
     "description": "Analisis pesisir & mangrove 34 provinsi Indonesia",
     "endpoints": { ... }
@@ -117,7 +117,7 @@ Mengembalikan agregat statistik nasional dari seluruh data provinsi yang sudah d
 
 ### 3. Water Quality (Banten)
 
-#### `GET /api/water-quality/leaderboard`
+#### `GET /api/water-quality/explore`
 Mengembalikan peringkat kualitas air bersih di tingkat kecamatan pesisir Banten, diurutkan dari persentase area air sehat (`Pct_Sehat_2026`) tertinggi.
 * **Response (JSON)**:
   ```json
