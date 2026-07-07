@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Aquality API",
-    "description": "API Aquality untuk meneliti kualitas air di provinsi banten.",
-    "version": "1.0.0"
+    "title": "Coast-Vision API",
+    "description": "API analisis kualitas air pesisir Banten dan sistem rekomendasi pantai tersehat.",
+    "version": "1.1.0"
   },
   "paths": {
     "/": {
@@ -13,87 +13,6 @@
         ],
         "summary": "Root",
         "operationId": "root__get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/provinces": {
-      "get": {
-        "tags": [
-          "Provinces & National Summary"
-        ],
-        "summary": "List Provinces",
-        "description": "Daftar seluruh provinsi yang sudah diproses.",
-        "operationId": "list_provinces_api_provinces_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/provinces/{name}": {
-      "get": {
-        "tags": [
-          "Provinces & National Summary"
-        ],
-        "summary": "Get Province",
-        "description": "Detail statistik untuk satu provinsi.",
-        "operationId": "get_province_api_provinces__name__get",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Name"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/summary": {
-      "get": {
-        "tags": [
-          "Provinces & National Summary"
-        ],
-        "summary": "National Summary",
-        "description": "Ringkasan statistik nasional (agregat seluruh provinsi yang sudah diproses).",
-        "operationId": "national_summary_api_summary_get",
         "responses": {
           "200": {
             "description": "Successful Response",

@@ -23,12 +23,11 @@ from beach_recommendation import BeachRecommender
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="Aquality API",
+    title="Coast-Vision API",
     description=(
-        "API analisis kualitas air daerah pesisir"
-        "provinsi banten."
+        "API analisis kualitas air pesisir Banten dan sistem rekomendasi pantai tersehat."
     ),
-    version="1.0.0",
+    version="1.1.0",
 )
 
 app.add_middleware(
@@ -48,14 +47,12 @@ if os.path.exists("output"):
 # Load Data Pre-Computed & Konteks Wilayah
 # ---------------------------------------------------------------------------
 
-STATS_PATH = "output/provinces_stats.json"
 MODEL_META_PATH = "output/model/model_metadata.json"
 BANTEN_WATER_PATH = "output/banten_water_quality_kecamatan.json"
 BANTEN_BEACH_PATH = "output/banten_water_quality_beach.json"
 BANTEN_INDUSTRIES_PATH = "output/banten_industries.json"
 BANTEN_BEACH_GEOJSON_PATH = "output/banten_coastal_beaches.geojson"
 
-PROVINCE_STATS = {}
 MODEL_METADATA = {}
 BANTEN_WATER_STATS = {}
 BANTEN_BEACH_STATS = {}
@@ -116,7 +113,7 @@ DISTRICT_CONTEXTS = {
         "sources": ["limpasan pertanian hulu", "sisa pupuk tambak", "sedimentasi lumpur Sungai Ciujung"]
     },
     "tirtayasa": {
-        "context": "daerah muara Ciujung bagian hilir dan hutan mangrove tersisa",
+        "context": "daerah muara Ciujung bagian hilir dan kawasan vegetasi pesisir",
         "sources": ["nutrien pertanian", "sedimen lumpur tebal", "limbah cair tambak"]
     },
     "tanara": {
@@ -151,11 +148,11 @@ DISTRICT_CONTEXTS = {
     },
     "cihara": {
         "context": "pesisir selatan terbuka dengan karakteristik gelombang besar Samudra Hindia",
-        "sources": ["abrasi tebing alami", "sedimentasi sungai lokal", "turbulensi pasir akibat ombak"]
+        "sources": ["erosi tebing alami", "sedimentasi sungai lokal", "turbulensi pasir akibat ombak"]
     },
     "panggarangan": {
         "context": "pesisir terbuka dengan aktivitas tambang batu bara tradisional/pasir di hulu",
-        "sources": ["limpasan sedimen tambang rakyat", "abrasi pantai alami", "buangan domestik sungai"]
+        "sources": ["limpasan sedimen tambang rakyat", "erosi pantai alami", "buangan domestik sungai"]
     }
 }
 
@@ -250,14 +247,7 @@ def generate_explanation(kec_name: str, stats: dict) -> str:
 
 @app.on_event("startup")
 def load_data():
-    global PROVINCE_STATS, MODEL_METADATA, BANTEN_WATER_STATS, BANTEN_BEACH_STATS, BEACH_RECOMMENDER, BANTEN_BEACH_GEOJSON
-
-    if os.path.exists(STATS_PATH):
-        with open(STATS_PATH, "r", encoding="utf-8") as f:
-            PROVINCE_STATS.update(json.load(f))
-        print(f"Loaded statistics for {len(PROVINCE_STATS)} province(s).")
-    else:
-        print(f"Warning: {STATS_PATH} not found. Run batch_process.py first.")
+    global MODEL_METADATA, BANTEN_WATER_STATS, BANTEN_BEACH_STATS, BEACH_RECOMMENDER, BANTEN_BEACH_GEOJSON
 
     if os.path.exists(MODEL_META_PATH):
         with open(MODEL_META_PATH, "r", encoding="utf-8") as f:
@@ -317,13 +307,10 @@ def load_data():
 @app.get("/", tags=["General"])
 def root():
     return {
-        "service": "Aquality API",
+        "service": "Coast-Vision API",
         "version": "1.1.0",
-        "description": "Analisis kualitas air provinsi banten + sistem rekomendasi pantai terbersih",
+        "description": "Analisis kualitas air pesisir Banten & Sistem Rekomendasi Pantai Tersehat",
         "endpoints": {
-            "provinces_list": "/api/provinces",
-            "province_detail": "/api/provinces/{name}",
-            "national_summary": "/api/summary",
             "model_info": "/api/model/info",
             "water_quality_leaderboard": "/api/water-quality/explore",
             "water_quality_district": "/api/water-quality/kecamatan/{name}",
@@ -339,93 +326,7 @@ def root():
     }
 
 
-@app.get("/api/provinces", tags=["Provinces & National Summary"])
-def list_provinces():
-    """Daftar seluruh provinsi yang sudah diproses."""
-    provinces = []
-    for name, data in PROVINCE_STATS.items():
-        provinces.append({
-            "name": name,
-            "status_pantai": data.get("status_pantai"),
-            "status_mangrove": data.get("status_mangrove"),
-        })
-    provinces.sort(key=lambda x: x["name"])
-    return {
-        "total": len(provinces),
-        "provinces": provinces,
-    }
-
-
-@app.get("/api/provinces/{name}", tags=["Provinces & National Summary"])
-def get_province(name: str):
-    """Detail statistik untuk satu provinsi."""
-    # Cari case-insensitive
-    matched = None
-    for key in PROVINCE_STATS:
-        if key.lower() == name.lower():
-            matched = key
-            break
-
-    if matched is None:
-        available = sorted(PROVINCE_STATS.keys())
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "error": f"Province '{name}' not found.",
-                "available": available,
-            },
-        )
-
-    return PROVINCE_STATS[matched]
-
-
-@app.get("/api/summary", tags=["Provinces & National Summary"])
-def national_summary():
-    """Ringkasan statistik nasional (agregat seluruh provinsi yang sudah diproses)."""
-    if not PROVINCE_STATS:
-        raise HTTPException(status_code=404, detail="No data available.")
-
-    total_abrasi   = sum(p.get("abrasi_ha", 0) for p in PROVINCE_STATS.values())
-    total_akresi   = sum(p.get("akresi_ha", 0) for p in PROVINCE_STATS.values())
-    total_mangrove = sum(p.get("mangrove_total_ha", 0) for p in PROVINCE_STATS.values())
-    total_sehat    = sum(p.get("mangrove_sehat_ha", 0) for p in PROVINCE_STATS.values())
-    total_sedang   = sum(p.get("mangrove_sedang_ha", 0) for p in PROVINCE_STATS.values())
-    total_rusak    = sum(p.get("mangrove_rusak_ha", 0) for p in PROVINCE_STATS.values())
-
-    ndvi_values = [
-        p.get("mean_ndvi", 0)
-        for p in PROVINCE_STATS.values()
-        if p.get("mean_ndvi", 0) > 0
-    ]
-    mean_ndvi = sum(ndvi_values) / len(ndvi_values) if ndvi_values else 0
-
-    status_counts = {"ABRASI": 0, "AKRESI": 0, "STABIL": 0}
-    for p in PROVINCE_STATS.values():
-        s = p.get("status_pantai", "STABIL")
-        status_counts[s] = status_counts.get(s, 0) + 1
-
-    return {
-        "total_provinces": len(PROVINCE_STATS),
-        "period": {
-            "baseline_year": 2017,
-            "comparison_year": 2026,
-        },
-        "shoreline": {
-            "total_abrasi_ha": round(total_abrasi, 2),
-            "total_akresi_ha": round(total_akresi, 2),
-            "net_change_ha": round(total_akresi - total_abrasi, 2),
-            "provinces_abrasi": status_counts.get("ABRASI", 0),
-            "provinces_akresi": status_counts.get("AKRESI", 0),
-            "provinces_stabil": status_counts.get("STABIL", 0),
-        },
-        "mangrove": {
-            "total_area_ha": round(total_mangrove, 2),
-            "sehat_ha": round(total_sehat, 2),
-            "sedang_ha": round(total_sedang, 2),
-            "rusak_ha": round(total_rusak, 2),
-            "mean_ndvi": round(mean_ndvi, 4),
-        },
-    }
+# Rute abrasi, akresi, dan mangrove provinsi dihapus
 
 
 @app.get("/api/model/info", tags=["Model & Industry Data"])

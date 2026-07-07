@@ -1,6 +1,6 @@
-# Aquality API Documentation
+# Coast-Vision API Documentation
 
-Dokumentasi lengkap API Aquality untuk meneliti kualitas air di provinsi banten.
+Dokumentasi lengkap API Coast-Vision untuk analisis kualitas air pesisir Banten dan sistem rekomendasi pantai tersehat.
 
 ---
 
@@ -42,74 +42,10 @@ Mengembalikan status layanan, versi, dan rute endpoint yang tersedia.
 * **Response (JSON)**:
   ```json
   {
-    "service": "Aquality API",
-    "version": "1.0.0",
-    "description": "Analisis kualitas air laut di provinsi banten",
+    "service": "Coast-Vision API",
+    "version": "1.1.0",
+    "description": "Analisis kualitas air pesisir Banten & Sistem Rekomendasi Pantai Tersehat",
     "endpoints": { ... }
-  }
-  ```
-
----
-
-### 2. Provinces & National Summary
-
-#### `GET /api/provinces`
-Mengembalikan daftar seluruh provinsi yang telah diproses beserta ringkasan status pantai dan status mangrovenya.
-* **Response (JSON)**:
-  ```json
-  {
-    "total": 34,
-    "provinces": [
-      {
-        "name": "Banten",
-        "status_pantai": "ABRASI",
-        "status_mangrove": "SEDANG"
-      }
-    ]
-  }
-  ```
-
-#### `GET /api/provinces/{name}`
-Mengembalikan statistik detail (abrasi, akresi, dan area mangrove) untuk provinsi tertentu.
-* **Path Parameters**:
-  * `name` (string): Nama provinsi (case-insensitive, contoh: `banten`).
-* **Response (JSON)**:
-  ```json
-  {
-    "abrasi_ha": 120.5,
-    "akresi_ha": 45.2,
-    "mangrove_total_ha": 3500.0,
-    "mangrove_sehat_ha": 2000.0,
-    "mangrove_sedang_ha": 1000.0,
-    "mangrove_rusak_ha": 500.0,
-    "status_pantai": "ABRASI",
-    "status_mangrove": "SEDANG",
-    "mean_ndvi": 0.65
-  }
-  ```
-
-#### `GET /api/summary`
-Mengembalikan agregat statistik nasional dari seluruh data provinsi yang sudah diproses.
-* **Response (JSON)**:
-  ```json
-  {
-    "total_provinces": 1,
-    "period": { "baseline_year": 2017, "comparison_year": 2026 },
-    "shoreline": {
-      "total_abrasi_ha": 120.5,
-      "total_akresi_ha": 45.2,
-      "net_change_ha": -75.3,
-      "provinces_abrasi": 1,
-      "provinces_akresi": 0,
-      "provinces_stabil": 0
-    },
-    "mangrove": {
-      "total_area_ha": 3500.0,
-      "sehat_ha": 2000.0,
-      "sedang_ha": 1000.0,
-      "rusak_ha": 500.0,
-      "mean_ndvi": 0.65
-    }
   }
   ```
 

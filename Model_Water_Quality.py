@@ -1078,7 +1078,7 @@ def main():
             "sources": ["limpasan pertanian hulu", "sisa pupuk tambak", "sedimentasi lumpur Sungai Ciujung"]
         },
         "tirtayasa": {
-            "context": "daerah muara Ciujung bagian hilir dan hutan mangrove tersisa",
+            "context": "daerah muara Ciujung bagian hilir dan kawasan vegetasi pesisir",
             "sources": ["nutrien pertanian", "sedimen lumpur tebal", "limbah cair tambak"]
         },
         "tanara": {
@@ -1111,11 +1111,11 @@ def main():
         },
         "cihara": {
             "context": "pesisir selatan terbuka dengan karakteristik gelombang besar Samudra Hindia",
-            "sources": ["abrasi tebing alami", "sedimentasi sungai lokal", "turbulensi pasir akibat ombak"]
+            "sources": ["erosi tebing alami", "sedimentasi sungai lokal", "turbulensi pasir akibat ombak"]
         },
         "panggarangan": {
             "context": "pesisir terbuka dengan aktivitas tambang batu bara tradisional/pasir di hulu",
-            "sources": ["limpasan sedimen tambang rakyat", "abrasi pantai alami", "buangan domestik sungai"]
+            "sources": ["limpasan sedimen tambang rakyat", "erosi pantai alami", "buangan domestik sungai"]
         }
     }
 
