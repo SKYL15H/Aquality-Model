@@ -1,4 +1,4 @@
-# Coast-Vision Dependencies
+# Aquality Dependencies
 
 # === API Server ===
 fastapi>=0.100.0

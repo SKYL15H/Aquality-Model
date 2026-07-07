@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Coast-Vision API",
-    "description": "API analisis pesisir Indonesia: deteksi abrasi/akresi garis pantai dan klasifikasi kesehatan hutan mangrove 34 provinsi.",
+    "title": "Aquality API",
+    "description": "API Aquality untuk meneliti kualitas air di provinsi banten.",
     "version": "1.0.0"
   },
   "paths": {

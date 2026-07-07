@@ -1,5 +1,5 @@
 """
-api_server.py — FastAPI Server untuk Coast-Vision
+api_server.py — FastAPI Server untuk Aquality
 
 Menyajikan data hasil pre-computation ke frontend website.
 Hanya membaca file JSON dan model .joblib yang sudah disiapkan oleh batch_process.py.
@@ -23,10 +23,10 @@ from beach_recommendation import BeachRecommender
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="Coast-Vision API",
+    title="Aquality API",
     description=(
-        "API analisis pesisir Indonesia: deteksi abrasi/akresi garis pantai "
-        "dan klasifikasi kesehatan hutan mangrove 34 provinsi."
+        "API analisis kualitas air daerah pesisir"
+        "provinsi banten."
     ),
     version="1.0.0",
 )
@@ -317,7 +317,7 @@ def load_data():
 @app.get("/", tags=["General"])
 def root():
     return {
-        "service": "Coast-Vision API",
+        "service": "Aquality API",
         "version": "1.1.0",
         "description": "Analisis pesisir & mangrove 34 provinsi Indonesia + Sistem Rekomendasi Pantai Tersehat",
         "endpoints": {

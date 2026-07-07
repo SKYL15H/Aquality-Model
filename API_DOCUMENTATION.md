@@ -1,6 +1,6 @@
-# Coast-Vision API Documentation
+# Aquality API Documentation
 
-Dokumentasi lengkap API Coast-Vision untuk deteksi abrasi/akresi garis pantai dan klasifikasi kesehatan hutan mangrove.
+Dokumentasi lengkap API Aquality untuk meneliti kualitas air di provinsi banten.
 
 ---
 

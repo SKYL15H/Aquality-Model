@@ -411,7 +411,7 @@ def save_industries_json():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("COMPUTE INDUSTRY DISTANCE — Coast-Vision Banten")
+    print("COMPUTE INDUSTRY DISTANCE —  Aquality Banten")
     print("=" * 60)
     
     # Verifikasi file input
