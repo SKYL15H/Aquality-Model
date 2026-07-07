@@ -44,7 +44,7 @@ Mengembalikan status layanan, versi, dan rute endpoint yang tersedia.
   {
     "service": "Aquality API",
     "version": "1.0.0",
-    "description": "Analisis pesisir & mangrove 34 provinsi Indonesia",
+    "description": "Analisis kualitas air laut di provinsi banten",
     "endpoints": { ... }
   }
   ```

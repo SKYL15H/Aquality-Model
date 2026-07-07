@@ -319,7 +319,7 @@ def root():
     return {
         "service": "Aquality API",
         "version": "1.1.0",
-        "description": "Analisis pesisir & mangrove 34 provinsi Indonesia + Sistem Rekomendasi Pantai Tersehat",
+        "description": "Analisis kualitas air provinsi banten + sistem rekomendasi pantai terbersih",
         "endpoints": {
             "provinces_list": "/api/provinces",
             "province_detail": "/api/provinces/{name}",
