@@ -53,12 +53,14 @@ MODEL_META_PATH = "output/model/model_metadata.json"
 BANTEN_WATER_PATH = "output/banten_water_quality_kecamatan.json"
 BANTEN_BEACH_PATH = "output/banten_water_quality_beach.json"
 BANTEN_INDUSTRIES_PATH = "output/banten_industries.json"
+BANTEN_BEACH_GEOJSON_PATH = "output/banten_coastal_beaches.geojson"
 
 PROVINCE_STATS = {}
 MODEL_METADATA = {}
 BANTEN_WATER_STATS = {}
 BANTEN_BEACH_STATS = {}
 BANTEN_INDUSTRIES = []
+BANTEN_BEACH_GEOJSON = {}
 BEACH_RECOMMENDER: BeachRecommender | None = None
 
 # Kamus profil geografis/aktivitas nyata untuk kecamatan pesisir Banten
@@ -248,7 +250,7 @@ def generate_explanation(kec_name: str, stats: dict) -> str:
 
 @app.on_event("startup")
 def load_data():
-    global PROVINCE_STATS, MODEL_METADATA, BANTEN_WATER_STATS, BANTEN_BEACH_STATS, BEACH_RECOMMENDER
+    global PROVINCE_STATS, MODEL_METADATA, BANTEN_WATER_STATS, BANTEN_BEACH_STATS, BEACH_RECOMMENDER, BANTEN_BEACH_GEOJSON
 
     if os.path.exists(STATS_PATH):
         with open(STATS_PATH, "r", encoding="utf-8") as f:
@@ -286,6 +288,17 @@ def load_data():
     else:
         print(f"Warning: {BANTEN_INDUSTRIES_PATH} not found.")
 
+    if os.path.exists(BANTEN_BEACH_GEOJSON_PATH):
+        with open(BANTEN_BEACH_GEOJSON_PATH, "r", encoding="utf-8") as f:
+            geojson_data = json.load(f)
+            for feature in geojson_data.get("features", []):
+                beach_name = feature.get("properties", {}).get("Pantai")
+                if beach_name:
+                    BANTEN_BEACH_GEOJSON[beach_name.lower()] = feature
+        print(f"Loaded {len(BANTEN_BEACH_GEOJSON)} beach GeoJSON features.")
+    else:
+        print(f"Warning: {BANTEN_BEACH_GEOJSON_PATH} not found.")
+
     # Inisialisasi sistem rekomendasi pantai
     if BANTEN_BEACH_STATS:
         BEACH_RECOMMENDER = BeachRecommender(data_dict=BANTEN_BEACH_STATS)
@@ -316,6 +329,7 @@ def root():
             "water_quality_district": "/api/water-quality/kecamatan/{name}",
             "water_quality_beach_leaderboard": "/api/water-quality/beach/explore",
             "water_quality_beach": "/api/water-quality/beach/{name}",
+            "analyze_beach_by_slug": "/api/analyze/{slug}",
             "industries": "/api/industries",
             "recommendation_beaches": "/api/recommendation/beaches?top_n=5",
             "recommendation_beach_detail": "/api/recommendation/beaches/{name}",
@@ -541,6 +555,7 @@ def get_beach_leaderboard():
     for beach_name, stats in BANTEN_BEACH_STATS.items():
         leaderboard.append({
             "pantai": beach_name,
+            "slug": stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in beach_name.lower().strip()).replace(" ", "-").replace("--", "-"),
             "kecamatan": stats.get("Kecamatan"),
             "kabupaten_kota": stats.get("Kabupaten_Kota"),
             "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
@@ -580,7 +595,45 @@ def get_beach_water_quality(name: str):
     
     response_data = dict(stats)
     response_data["pantai"] = matched_key
+    response_data["slug"] = stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in matched_key.lower().strip()).replace(" ", "-").replace("--", "-")
     response_data["penjelasan_kualitas"] = explanation
+    response_data["geojson"] = BANTEN_BEACH_GEOJSON.get(matched_key.lower())
+    
+    return response_data
+
+
+@app.get("/analyze/{slug}", tags=["Water Quality - Beach"])
+@app.get("/api/analyze/{slug}", tags=["Water Quality - Beach"])
+def analyze_beach_by_slug(slug: str):
+    """Mengembalikan analisis kualitas air rinci untuk satu pantai berdasarkan slug-nya (contoh: 'pantai-carita')."""
+    matched_key = None
+    for key, stats in BANTEN_BEACH_STATS.items():
+        item_slug = stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in key.lower().strip()).replace(" ", "-").replace("--", "-")
+        if item_slug.lower() == slug.lower():
+            matched_key = key
+            break
+            
+    if matched_key is None:
+        available_slugs = [
+            stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in k.lower().strip()).replace(" ", "-").replace("--", "-")
+            for k, stats in BANTEN_BEACH_STATS.items()
+        ]
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": f"Pantai dengan slug '{slug}' tidak ditemukan.",
+                "available_slugs": available_slugs
+            }
+        )
+        
+    stats = BANTEN_BEACH_STATS[matched_key]
+    explanation = generate_beach_explanation(matched_key, stats)
+    
+    response_data = dict(stats)
+    response_data["pantai"] = matched_key
+    response_data["slug"] = stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in matched_key.lower().strip()).replace(" ", "-").replace("--", "-")
+    response_data["penjelasan_kualitas"] = explanation
+    response_data["geojson"] = BANTEN_BEACH_GEOJSON.get(matched_key.lower())
     
     return response_data
 

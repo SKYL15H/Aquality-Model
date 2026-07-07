@@ -159,6 +159,7 @@ class BeachRecommender:
 
             results.append({
                 "pantai": name,
+                "slug": stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in name.lower().strip()).replace(" ", "-").replace("--", "-"),
                 "kecamatan": stats.get("Kecamatan"),
                 "kabupaten_kota": stats.get("Kabupaten_Kota"),
                 "latitude": stats.get("latitude"),

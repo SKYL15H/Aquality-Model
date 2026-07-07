@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Aquality API",
+    "title": "Coast-Vision API",
     "description": "API analisis pesisir Indonesia: deteksi abrasi/akresi garis pantai dan klasifikasi kesehatan hutan mangrove 34 provinsi.",
     "version": "1.0.0"
   },
@@ -133,7 +133,7 @@
         ],
         "summary": "Get Leaderboard",
         "description": "Mengembalikan daftar kecamatan terbersih pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending.",
-        "operationId": "get_leaderboard_api_water_quality_leaderboard_get",
+        "operationId": "get_leaderboard_api_water_quality_explore_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -194,7 +194,7 @@
         ],
         "summary": "Get Beach Leaderboard",
         "description": "Mengembalikan daftar pantai terbersih di pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending.",
-        "operationId": "get_beach_leaderboard_api_water_quality_beach_leaderboard_get",
+        "operationId": "get_beach_leaderboard_api_water_quality_beach_explore_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -248,6 +248,88 @@
         }
       }
     },
+    "/api/analyze/{slug}": {
+      "get": {
+        "tags": [
+          "Water Quality - Beach"
+        ],
+        "summary": "Analyze Beach By Slug",
+        "description": "Mengembalikan analisis kualitas air rinci untuk satu pantai berdasarkan slug-nya (contoh: 'pantai-carita').",
+        "operationId": "analyze_beach_by_slug_api_analyze__slug__get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analyze/{slug}": {
+      "get": {
+        "tags": [
+          "Water Quality - Beach"
+        ],
+        "summary": "Analyze Beach By Slug",
+        "description": "Mengembalikan analisis kualitas air rinci untuk satu pantai berdasarkan slug-nya (contoh: 'pantai-carita').",
+        "operationId": "analyze_beach_by_slug_analyze__slug__get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/industries": {
       "get": {
         "tags": [
@@ -256,6 +338,125 @@
         "summary": "Get Industries",
         "description": "Mengembalikan daftar seluruh industri/pabrik besar di Banten beserta koordinatnya.",
         "operationId": "get_industries_api_industries_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recommendation/beaches": {
+      "get": {
+        "tags": [
+          "Beach Recommendation"
+        ],
+        "summary": "Get Beach Recommendations",
+        "description": "Mengembalikan daftar rekomendasi pantai tersehat di Banten, diurutkan berdasarkan Health Score tertinggi.\n\nHealth Score dihitung dari kombinasi multi-parameter:\n- 30% Persentase area air sehat (Pct_Sehat_2026)\n- 20% Kejernihan air (1 - NDTI, inverted)\n- 10% Kadar klorofil-a (1 - NDCI, inverted)\n- 10% Kandungan padatan tersuspensi (1 - TSS, inverted)\n- 5%  Bahan organik terlarut (1 - CDOM, inverted)\n- 15% Tren kualitas historis (MEMBAIK > STABIL > MEMBURUK)\n- 10% Dampak industri terdekat (RENDAH > SEDANG > TINGGI)",
+        "operationId": "get_beach_recommendations_api_recommendation_beaches_get",
+        "parameters": [
+          {
+            "name": "top_n",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Jumlah pantai teratas. Kosongkan untuk semua.",
+              "title": "Top N"
+            },
+            "description": "Jumlah pantai teratas. Kosongkan untuk semua."
+          },
+          {
+            "name": "min_score",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 100,
+              "minimum": 0,
+              "description": "Filter: Health Score minimum.",
+              "title": "Min Score"
+            },
+            "description": "Filter: Health Score minimum."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recommendation/beaches/{name}": {
+      "get": {
+        "tags": [
+          "Beach Recommendation"
+        ],
+        "summary": "Get Beach Recommendation Detail",
+        "description": "Mengembalikan skor rekomendasi dan narasi detail untuk satu pantai berdasarkan nama.",
+        "operationId": "get_beach_recommendation_detail_api_recommendation_beaches__name__get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recommendation/summary": {
+      "get": {
+        "tags": [
+          "Beach Recommendation"
+        ],
+        "summary": "Get Recommendation Summary",
+        "description": "Ringkasan statistik model rekomendasi: distribusi label, skor rata-rata, bobot parameter.",
+        "operationId": "get_recommendation_summary_api_recommendation_summary_get",
         "responses": {
           "200": {
             "description": "Successful Response",

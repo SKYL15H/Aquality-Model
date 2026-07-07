@@ -170,6 +170,7 @@ Mengembalikan peringkat kualitas air di lokasi-lokasi pantai wisata di Banten.
     "leaderboard": [
       {
         "pantai": "Pantai Carita",
+        "slug": "pantai-carita",
         "kecamatan": "Carita",
         "kabupaten_kota": "Pandeglang",
         "pct_sehat_2026": 88.2,
@@ -188,6 +189,52 @@ Mengembalikan peringkat kualitas air di lokasi-lokasi pantai wisata di Banten.
 Mengembalikan data kualitas air beserta narasi penjelasan keamanan aktivitas wisata (seperti berenang) untuk pantai tertentu di Banten.
 * **Path Parameters**:
   * `name` (string): Nama pantai (contoh: `pantai carita`).
+
+#### `GET /analyze/{slug}` atau `GET /api/analyze/{slug}`
+Mengembalikan data kualitas air detail dan narasi penjelasan keamanan aktivitas wisata berdasarkan slug pantai.
+* **Path Parameters**:
+  * `slug` (string): Slug nama pantai (contoh: `pantai-carita`).
+* **Response (JSON)**:
+  ```json
+  {
+    "Kecamatan": "Carita",
+    "Kabupaten_Kota": "Pandeglang",
+    "url_gambar": "https://storage.googleapis.com/aquality-images/images/carita.jpg",
+    "latitude": -6.1305,
+    "longitude": 105.8427,
+    "Luas_Air_2026_Ha": 328.77,
+    "Sehat_2026_Ha": 0.99,
+    "Sedang_2026_Ha": 0.0,
+    "TidakSehat_2026_Ha": 327.78,
+    "Pct_Sehat_2026": 0.3,
+    "Mean_NDTI_2026": 0.3347,
+    "Mean_NDCI_2026": 0.0255,
+    "Status_Kualitas_2026": "TIDAK SEHAT",
+    "penjelasan_kualitas": "Kualitas air di Pantai Carita (Carita) tergolong TIDAK SEHAT...",
+    "slug": "pantai-carita",
+    "pantai": "Pantai Carita",
+    "geojson": {
+      "type": "Feature",
+      "properties": {
+        "Pantai": "Pantai Carita",
+        "Kecamatan": "Carita",
+        "Kabupaten_Kota": "Pandeglang",
+        "latitude": -6.1305,
+        "longitude": 105.8427
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [105.85169498681118, -6.13137237609326],
+            [105.85067676613207, -6.134751322260146],
+            "...(coordinates)..."
+          ]
+        ]
+      }
+    }
+  }
+  ```
 
 ---
 
