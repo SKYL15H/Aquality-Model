@@ -24,18 +24,115 @@ from typing import Any
 
 
 # ---------------------------------------------------------------------------
-# Konstanta bobot parameter untuk skor komposit
+# Konstanta bobot parameter untuk skor komposit (v2.0)
 # ---------------------------------------------------------------------------
 
-# Bobot setiap parameter dalam perhitungan Health Score (total = 1.0)
+# Klasifikasi energi gelombang pantai berdasarkan kecamatan
+# HIGH  = Samudra Hindia (pantai selatan) — ombak besar, turbulensi alami tinggi
+# MEDIUM = Selat Sunda (pantai barat) — ombak sedang
+# LOW   = Laut Jawa / Teluk Jakarta (pantai utara) — perairan tenang
+COASTAL_ENERGY = {
+    # Pantai Selatan — Samudra Hindia (HIGH energy)
+    "Bayah": "HIGH",
+    "Cihara": "HIGH",
+    "Malingping": "HIGH",
+    "Wanasalam": "HIGH",
+    "Panggarangan": "HIGH",
+    # Pantai Barat — Selat Sunda (MEDIUM energy)
+    "Sumur": "MEDIUM",
+    "Panimbang": "MEDIUM",
+    "Carita": "MEDIUM",
+    "Cinangka": "MEDIUM",
+    "Anyar": "MEDIUM",
+    "Labuan": "MEDIUM",
+    # Pantai Utara — Laut Jawa / Teluk Jakarta (LOW energy)
+    "Teluknaga": "LOW",
+    "Mauk": "LOW",
+    "Kronjo": "LOW",
+    "Tirtayasa": "LOW",
+    "Pontang": "LOW",
+    "Tanara": "LOW",
+    "Kasemen": "LOW",
+    "Bojonegara": "LOW",
+    "Kramatwatu": "LOW",
+    "Pulomerak": "LOW",
+    "Ciwandan": "LOW",
+    "Grogol": "LOW",
+}
+
+# Faktor koreksi NDTI berdasarkan energi gelombang pantai.
+# Pada pantai berenergi tinggi, sebagian besar kekeruhan bersifat alami
+# (turbulensi ombak mengaduk pasir dasar), bukan polusi.
+NDTI_CORRECTION = {
+    "HIGH": 0.35,    # Hanya 35% NDTI bersifat antropogenik; 65% turbulensi alami
+    "MEDIUM": 0.70,  # 30% turbulensi alami
+    "LOW": 1.00,     # Tidak dikoreksi — NDTI mencerminkan kondisi sebenarnya
+}
+
+# Koreksi kompensasi Pct_Sehat berdasarkan energi pantai.
+# Pct_Sehat_2026 dihitung oleh model RF yang menggunakan NDTI mentah,
+# sehingga pantai berenergi tinggi dirugikan secara sistematis.
+PCT_SEHAT_BOOST = {
+    "HIGH": 15.0,    # Tambah 15 pp sebagai kompensasi bias RF
+    "MEDIUM": 5.0,   # Koreksi ringan
+    "LOW": 0.0,      # Tidak dikoreksi
+}
+
+# Risiko polusi urban/antropogenik per kecamatan (0 = pristine, 1 = sangat tercemar).
+# Parameter proxy berdasarkan kepadatan penduduk, aktivitas industri, jarak dari
+# pusat urban, dan keberadaan muara sungai yang membawa limbah domestik.
+URBAN_POLLUTION_RISK = {
+    # Pantai Utara — dekat Jakarta/Tangerang urban sprawl
+    "Teluknaga": 0.90,   # Suburban Tangerang, sangat dekat Jakarta
+    "Mauk": 0.75,        # Pesisir Tangerang, urban sedang
+    "Kronjo": 0.65,      # Semi-urban Tangerang
+    # Pesisir industri Cilegon
+    "Pulomerak": 0.85,   # Industri berat + Pelabuhan Merak
+    "Ciwandan": 0.90,    # Hub industri baja/kimia
+    "Grogol": 0.75,      # Industri utara Cilegon
+    "Bojonegara": 0.80,  # Galangan kapal + industri
+    # Pesisir Serang
+    "Kasemen": 0.70,     # Pelabuhan ikan + tambak padat
+    "Kramatwatu": 0.65,  # Dekat zona industri
+    "Tirtayasa": 0.50,   # Tambak pedesaan
+    "Pontang": 0.55,     # Muara sungai + tambak
+    "Tanara": 0.50,      # Limpasan pertanian
+    # Pantai Barat — zona wisata
+    "Anyar": 0.45,       # Pariwisata, pembangunan sedang
+    "Cinangka": 0.40,    # Pariwisata sedang
+    "Carita": 0.40,      # Pariwisata
+    "Labuan": 0.55,      # Pelabuhan ikan + PLTU Labuan
+    # Barat daya — kurang berkembang
+    "Panimbang": 0.30,   # KEK pariwisata berkembang
+    "Sumur": 0.15,       # Penyangga TN Ujung Kulon, pristine
+    # Pantai Selatan — terpencil dan alami
+    "Bayah": 0.25,       # Terpencil, ada pertambangan semen
+    "Cihara": 0.15,      # Sangat terpencil
+    "Malingping": 0.20,  # Terpencil
+    "Wanasalam": 0.35,   # Pelabuhan ikan Binuangeun
+    "Panggarangan": 0.20, # Terpencil, tambang rakyat
+}
+
+# Skor sirkulasi perairan berdasarkan energi gelombang.
+# Prinsip oseanografi: energi gelombang tinggi = sirkulasi lebih baik = dilusi
+# polutan lebih cepat = perairan lebih bersih secara alami.
+SIRKULASI_SCORES = {
+    "HIGH": 1.0,     # Sirkulasi sangat baik
+    "MEDIUM": 0.6,   # Sirkulasi cukup
+    "LOW": 0.2,      # Sirkulasi lemah, polutan terakumulasi
+}
+
+# Bobot setiap parameter dalam perhitungan Health Score v2.0 (total = 1.0)
 WEIGHTS = {
-    "pct_sehat": 0.30,       # Persentase area sehat — faktor utama
-    "ndti_inv": 0.20,        # Kekeruhan (inverted — rendah = bagus)
-    "ndci_inv": 0.10,        # Klorofil-a (inverted — rendah = bagus)
-    "tss_inv": 0.10,         # TSS (inverted — rendah = bagus)
-    "cdom_inv": 0.05,        # CDOM (inverted — rendah = bagus)
-    "tren": 0.15,            # Tren kualitas historis
-    "industri_inv": 0.10,    # Dampak industri terdekat (inverted)
+    "pct_sehat": 0.25,          # Persentase area sehat (terkoreksi bias pantai)
+    "ndti_inv": 0.15,           # Kekeruhan (terkoreksi energi gelombang)
+    "ndci_inv": 0.10,           # Klorofil-a (inverted)
+    "tss_inv": 0.05,            # TSS (inverted)
+    "cdom_inv": 0.05,           # CDOM (inverted)
+    "tren": 0.10,               # Tren kualitas historis
+    "industri_inv": 0.10,       # Dampak industri terdekat (inverted)
+    "polusi_urban_inv": 0.15,   # Risiko polusi urban (inverted — rendah = bagus)
+    "sirkulasi_pantai": 0.05,   # Bonus sirkulasi perairan (tinggi = bagus)
 }
 
 # Skor kualitatif untuk tren kualitas
@@ -103,12 +200,39 @@ class BeachRecommender:
     # ------------------------------------------------------------------
 
     def _compute_all_scores(self) -> None:
-        """Menghitung Health Score untuk seluruh pantai dan menyimpannya dalam self._scores."""
+        """Menghitung Health Score v2.0 untuk seluruh pantai.
+        
+        Perbedaan dari v1.0:
+        - NDTI dikoreksi berdasarkan energi gelombang pantai (HIGH/MEDIUM/LOW)
+        - Pct_Sehat mendapat kompensasi boost untuk pantai berenergi tinggi
+        - Ditambahkan parameter risiko polusi urban/antropogenik
+        - Ditambahkan bonus sirkulasi perairan
+        """
         beaches = self.raw_data
 
-        # 1. Kumpulkan nilai mentah untuk normalisasi
-        pct_vals = [b.get("Pct_Sehat_2026", 0.0) for b in beaches.values()]
-        ndti_vals = [abs(b.get("Mean_NDTI_2026", 0.0)) for b in beaches.values()]
+        # 1. Tentukan tipe pantai dan koreksi NDTI untuk setiap pantai
+        corrected_data = {}
+        for name, stats in beaches.items():
+            kec = stats.get("Kecamatan", "")
+            energy_type = COASTAL_ENERGY.get(kec, "MEDIUM")
+            correction = NDTI_CORRECTION.get(energy_type, 1.0)
+            boost = PCT_SEHAT_BOOST.get(energy_type, 0.0)
+
+            raw_ndti = abs(stats.get("Mean_NDTI_2026", 0.0))
+            corrected_ndti = raw_ndti * correction  # Koreksi NDTI
+
+            raw_pct = stats.get("Pct_Sehat_2026", 0.0)
+            corrected_pct = min(100.0, raw_pct + boost)  # Kompensasi Pct_Sehat
+
+            corrected_data[name] = {
+                "energy_type": energy_type,
+                "corrected_ndti": corrected_ndti,
+                "corrected_pct": corrected_pct,
+            }
+
+        # 2. Kumpulkan nilai terkoreksi untuk normalisasi min-max
+        pct_vals = [v["corrected_pct"] for v in corrected_data.values()]
+        ndti_vals = [v["corrected_ndti"] for v in corrected_data.values()]
         ndci_vals = [abs(b.get("Mean_NDCI_2026", 0.0)) for b in beaches.values()]
         tss_vals = [b.get("Mean_TSS_2026", 0.0) for b in beaches.values()]
         cdom_vals = [b.get("Mean_CDOM_2026", 0.0) for b in beaches.values()]
@@ -121,15 +245,22 @@ class BeachRecommender:
 
         results = []
         for name, stats in beaches.items():
-            pct_sehat = stats.get("Pct_Sehat_2026", 0.0)
-            ndti = abs(stats.get("Mean_NDTI_2026", 0.0))
+            kec = stats.get("Kecamatan", "")
+            cd = corrected_data[name]
+            energy_type = cd["energy_type"]
+
+            pct_sehat = cd["corrected_pct"]
+            ndti = cd["corrected_ndti"]
             ndci = abs(stats.get("Mean_NDCI_2026", 0.0))
             tss = stats.get("Mean_TSS_2026", 0.0)
             cdom = stats.get("Mean_CDOM_2026", 0.0)
             tren = stats.get("Tren_Kualitas", "STABIL")
             kategori_industri = stats.get("kategori_dampak_industri", "RENDAH")
 
-            # Normalisasi
+            # Risiko polusi urban (0-1, 0 = pristine)
+            polusi_urban = URBAN_POLLUTION_RISK.get(kec, 0.40)
+
+            # Normalisasi parameter ke skala 0-100
             s_pct = self._normalize(pct_sehat, min_pct, max_pct)
             s_ndti = self._normalize(ndti, min_ndti, max_ndti, invert=True)
             s_ndci = self._normalize(ndci, min_ndci, max_ndci, invert=True)
@@ -137,8 +268,12 @@ class BeachRecommender:
             s_cdom = self._normalize(cdom, min_cdom, max_cdom, invert=True)
             s_tren = TREN_SCORES.get(tren, 0.5) * 100.0
             s_industri = INDUSTRI_SCORES.get(kategori_industri, 0.5) * 100.0
+            # Polusi urban inverted: risiko rendah (0) → skor tinggi (100)
+            s_polusi_urban = (1.0 - polusi_urban) * 100.0
+            # Sirkulasi pantai berdasarkan energi gelombang
+            s_sirkulasi = SIRKULASI_SCORES.get(energy_type, 0.5) * 100.0
 
-            # Hitung skor komposit (weighted sum)
+            # Hitung skor komposit (weighted sum) v2.0
             health_score = (
                 WEIGHTS["pct_sehat"] * s_pct
                 + WEIGHTS["ndti_inv"] * s_ndti
@@ -147,6 +282,8 @@ class BeachRecommender:
                 + WEIGHTS["cdom_inv"] * s_cdom
                 + WEIGHTS["tren"] * s_tren
                 + WEIGHTS["industri_inv"] * s_industri
+                + WEIGHTS["polusi_urban_inv"] * s_polusi_urban
+                + WEIGHTS["sirkulasi_pantai"] * s_sirkulasi
             )
             health_score = round(health_score, 2)
 
@@ -160,7 +297,7 @@ class BeachRecommender:
             results.append({
                 "pantai": name,
                 "slug": stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in name.lower().strip()).replace(" ", "-").replace("--", "-"),
-                "kecamatan": stats.get("Kecamatan"),
+                "kecamatan": kec,
                 "kabupaten_kota": stats.get("Kabupaten_Kota"),
                 "latitude": stats.get("latitude"),
                 "longitude": stats.get("longitude"),
@@ -168,9 +305,11 @@ class BeachRecommender:
                 "health_score": health_score,
                 "label_rekomendasi": label,
                 # Parameter individual
-                "pct_sehat_2026": pct_sehat,
+                "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
+                "pct_sehat_terkoreksi": round(pct_sehat, 1),
                 "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
                 "mean_ndti_2026": stats.get("Mean_NDTI_2026", 0.0),
+                "ndti_terkoreksi": round(ndti, 4),
                 "mean_ndci_2026": stats.get("Mean_NDCI_2026", 0.0),
                 "mean_tss_2026": stats.get("Mean_TSS_2026", 0.0),
                 "mean_cdom_2026": stats.get("Mean_CDOM_2026", 0.0),
@@ -178,6 +317,9 @@ class BeachRecommender:
                 "industri_terdekat": stats.get("industri_terdekat"),
                 "jarak_industri_km": stats.get("jarak_industri_km"),
                 "kategori_dampak_industri": kategori_industri,
+                # Parameter baru v2.0
+                "tipe_pantai": energy_type,
+                "risiko_polusi_urban": round(polusi_urban, 2),
                 # Breakdown skor per parameter (untuk transparansi)
                 "skor_detail": {
                     "skor_pct_sehat": round(s_pct, 2),
@@ -187,6 +329,8 @@ class BeachRecommender:
                     "skor_cdom": round(s_cdom, 2),
                     "skor_tren": round(s_tren, 2),
                     "skor_industri": round(s_industri, 2),
+                    "skor_polusi_urban": round(s_polusi_urban, 2),
+                    "skor_sirkulasi": round(s_sirkulasi, 2),
                 },
             })
 
@@ -245,7 +389,7 @@ class BeachRecommender:
         }
 
     def generate_recommendation_text(self, beach_entry: dict[str, Any]) -> str:
-        """Menghasilkan narasi rekomendasi untuk satu pantai."""
+        """Menghasilkan narasi rekomendasi v2.0 untuk satu pantai."""
         name = beach_entry["pantai"]
         kec = beach_entry.get("kecamatan", "")
         score = beach_entry["health_score"]
@@ -255,6 +399,8 @@ class BeachRecommender:
         pct = beach_entry.get("pct_sehat_2026", 0)
         tren = beach_entry.get("tren_kualitas", "STABIL")
         detail = beach_entry.get("skor_detail", {})
+        tipe_pantai = beach_entry.get("tipe_pantai", "MEDIUM")
+        polusi_urban = beach_entry.get("risiko_polusi_urban", 0.4)
 
         if label == "SANGAT DIREKOMENDASIKAN":
             intro = (
@@ -288,13 +434,29 @@ class BeachRecommender:
                 f"Perairan pantai ini hanya memiliki {pct}% area sehat."
             )
 
+        # Konteks tipe pantai
+        tipe_labels = {
+            "HIGH": "pantai berenergi tinggi menghadap Samudra Hindia dengan sirkulasi perairan yang sangat baik",
+            "MEDIUM": "pantai berenergi sedang di Selat Sunda dengan sirkulasi perairan cukup baik",
+            "LOW": "pantai berenergi rendah di Laut Jawa/Teluk Jakarta dengan sirkulasi perairan terbatas",
+        }
+        tipe_text = f" Pantai ini termasuk kategori {tipe_labels.get(tipe_pantai, 'pantai pesisir')}."
+
+        # Konteks polusi urban
+        if polusi_urban >= 0.70:
+            polusi_text = f" Risiko polusi antropogenik **TINGGI** (skor risiko: {polusi_urban:.0%}) karena kedekatan dengan pusat urban padat dan/atau kawasan industri."
+        elif polusi_urban >= 0.40:
+            polusi_text = f" Risiko polusi antropogenik **SEDANG** (skor risiko: {polusi_urban:.0%}) dari aktivitas pariwisata dan pemukiman sekitar."
+        else:
+            polusi_text = f" Risiko polusi antropogenik **RENDAH** (skor risiko: {polusi_urban:.0%}) karena lokasi terpencil dan minim aktivitas urban."
+
         # Tambahkan insight tren
         if tren == "MEMBAIK":
-            tren_text = " Kabar baiknya, tren kualitas air di pantai ini **MEMBAIK** dibandingkan tahun 2017."
+            tren_text = " Tren kualitas air **MEMBAIK** dibandingkan tahun 2017."
         elif tren == "MEMBURUK":
-            tren_text = " Perlu diperhatikan bahwa kualitas air di pantai ini menunjukkan tren **MEMBURUK** sejak 2017."
+            tren_text = " Perlu diperhatikan bahwa kualitas air menunjukkan tren **MEMBURUK** sejak 2017."
         else:
-            tren_text = " Kualitas air di pantai ini **STABIL** dibandingkan kondisi tahun 2017."
+            tren_text = " Kualitas air **STABIL** dibandingkan kondisi tahun 2017."
 
         # Insight parameter dominan
         best_param = max(detail.items(), key=lambda x: x[1])
@@ -308,15 +470,17 @@ class BeachRecommender:
             "skor_cdom": "bahan organik terlarut",
             "skor_tren": "tren historis",
             "skor_industri": "jarak dari industri",
+            "skor_polusi_urban": "rendahnya polusi urban",
+            "skor_sirkulasi": "sirkulasi perairan",
         }
 
         param_text = (
-            f" Keunggulan utama pantai ini adalah {param_names.get(best_param[0], best_param[0])} "
-            f"(skor: {best_param[1]}), sedangkan aspek yang perlu ditingkatkan adalah "
+            f" Keunggulan utama: {param_names.get(best_param[0], best_param[0])} "
+            f"(skor: {best_param[1]}). Aspek terlemah: "
             f"{param_names.get(worst_param[0], worst_param[0])} (skor: {worst_param[1]})."
         )
 
-        return intro + tren_text + param_text
+        return intro + tipe_text + polusi_text + tren_text + param_text
 
     def save_to_json(self, output_path: str) -> None:
         """Menyimpan hasil rekomendasi lengkap ke file JSON."""
