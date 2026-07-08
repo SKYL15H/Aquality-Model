@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Coast-Vision API",
+    "title": "Aquality API",
     "description": "API analisis kualitas air pesisir Banten dan sistem rekomendasi pantai tersehat.",
     "version": "1.1.0"
   },

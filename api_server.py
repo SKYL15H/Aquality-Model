@@ -23,7 +23,7 @@ from beach_recommendation import BeachRecommender
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="Coast-Vision API",
+    title="Aquality API",
     description=(
         "API analisis kualitas air pesisir Banten dan sistem rekomendasi pantai tersehat."
     ),
@@ -307,7 +307,7 @@ def load_data():
 @app.get("/", tags=["General"])
 def root():
     return {
-        "service": "Coast-Vision API",
+        "service": "Aquality API",
         "version": "1.1.0",
         "description": "Analisis kualitas air pesisir Banten & Sistem Rekomendasi Pantai Tersehat",
         "endpoints": {

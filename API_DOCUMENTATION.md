@@ -1,6 +1,6 @@
-# Coast-Vision API Documentation
+# Aquality API Documentation
 
-Dokumentasi lengkap API Coast-Vision untuk analisis kualitas air pesisir Banten dan sistem rekomendasi pantai tersehat.
+Dokumentasi lengkap API Aquality untuk analisis kualitas air pesisir Banten dan sistem rekomendasi pantai tersehat.
 
 ---
 
@@ -42,7 +42,7 @@ Mengembalikan status layanan, versi, dan rute endpoint yang tersedia.
 * **Response (JSON)**:
   ```json
   {
-    "service": "Coast-Vision API",
+    "service": "Aquality API",
     "version": "1.1.0",
     "description": "Analisis kualitas air pesisir Banten & Sistem Rekomendasi Pantai Tersehat",
     "endpoints": { ... }
