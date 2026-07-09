@@ -371,37 +371,64 @@ def model_info():
 
 @app.get("/api/water-quality/explore", tags=["Water Quality - Kecamatan"])
 def get_leaderboard():
-    """Mengembalikan daftar kecamatan terbersih pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending."""
+    """Mengembalikan daftar kecamatan terbersih pesisir Banten diurutkan berdasarkan Skor Kelayakan Terestrial secara descending."""
     if not BANTEN_WATER_STATS:
         raise HTTPException(
             status_code=404,
             detail="Banten water quality statistics not loaded. Please run analysis script first."
         )
     
+    # 1. Kumpulkan nilai untuk normalisasi
+    idi_vals = [s.get("indeks_dampak_industri", 0.0) for s in BANTEN_WATER_STATS.values()]
+    density_vals = [s.get("kepadatan_penduduk_kecamatan", 500.0) for s in BANTEN_WATER_STATS.values()]
+    influence_vals = [s.get("indeks_pengaruh_urban", 0.0) for s in BANTEN_WATER_STATS.values()]
+    
+    min_idi, max_idi = min(idi_vals), max(idi_vals)
+    min_density, max_density = min(density_vals), max(density_vals)
+    min_influence, max_influence = min(influence_vals), max(influence_vals)
+    
+    def normalize(val, min_v, max_v, invert=False):
+        if max_v == min_v:
+            return 50.0
+        norm = (val - min_v) / (max_v - min_v)
+        if invert:
+            norm = 1.0 - norm
+        return max(0.0, min(100.0, norm * 100.0))
+        
     leaderboard = []
     for kec_name, stats in BANTEN_WATER_STATS.items():
+        idi = stats.get("indeks_dampak_industri", 0.0)
+        density = stats.get("kepadatan_penduduk_kecamatan", 500.0)
+        influence = stats.get("indeks_pengaruh_urban", 0.0)
+        
+        s_industri = normalize(idi, min_idi, max_idi, invert=True)
+        s_density = normalize(density, min_density, max_density, invert=True)
+        s_influence = normalize(influence, min_influence, max_influence, invert=True)
+        
+        # Hitung skor terestrial kecamatan (bobot 40-30-30)
+        score = round(0.40 * s_industri + 0.30 * s_density + 0.30 * s_influence, 2)
+        
         leaderboard.append({
             "kecamatan": kec_name,
             "kabupaten_kota": stats.get("Kabupaten_Kota"),
-            "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
-            "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
+            "health_score": score,
             "latitude": stats.get("centroid_latitude"),
             "longitude": stats.get("centroid_longitude"),
             "industri_terdekat": stats.get("industri_terdekat"),
             "jarak_industri_km": stats.get("jarak_industri_km"),
             "kategori_dampak_industri": stats.get("kategori_dampak_industri"),
-            "indeks_dampak_industri": stats.get("indeks_dampak_industri"),
+            "indeks_dampak_industri": idi,
             "jumlah_industri_radius_10km": stats.get("jumlah_industri_radius_10km"),
             "kepadatan_industri": stats.get("kepadatan_industri"),
             "industri_relevan_terdekat": stats.get("industri_relevan_terdekat"),
             "jarak_industri_relevan_km": stats.get("jarak_industri_relevan_km"),
-            "kepadatan_penduduk_kecamatan": stats.get("kepadatan_penduduk_kecamatan"),
-            "indeks_pengaruh_urban": stats.get("indeks_pengaruh_urban"),
+            "kepadatan_penduduk_kecamatan": density,
+            "indeks_pengaruh_urban": influence,
             "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar")
         })
         
-    # Urutkan berdasarkan Pct_Sehat_2026 tertinggi
-    leaderboard.sort(key=lambda x: x["pct_sehat_2026"], reverse=True)
+    # Urutkan berdasarkan health_score tertinggi
+    leaderboard.sort(key=lambda x: x["health_score"], reverse=True)
     return {
         "total": len(leaderboard),
         "leaderboard": leaderboard
@@ -470,38 +497,14 @@ def generate_beach_explanation(beach_name: str, stats: dict) -> str:
 
 @app.get("/api/water-quality/beach/explore", tags=["Water Quality - Beach"])
 def get_beach_leaderboard():
-    """Mengembalikan daftar pantai terbersih di pesisir Banten diurutkan berdasarkan Pct_Sehat_2026 secara descending."""
-    if not BANTEN_BEACH_STATS:
+    """Mengembalikan daftar pantai terbersih di pesisir Banten diurutkan berdasarkan Health Score secara descending."""
+    if not BEACH_RECOMMENDER:
         raise HTTPException(
             status_code=404,
-            detail="Banten beach water quality statistics not loaded. Please run analysis script first."
+            detail="Beach recommender not initialized. Please load statistics first."
         )
     
-    leaderboard = []
-    for beach_name, stats in BANTEN_BEACH_STATS.items():
-        leaderboard.append({
-            "pantai": beach_name,
-            "slug": stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in beach_name.lower().strip()).replace(" ", "-").replace("--", "-"),
-            "kecamatan": stats.get("Kecamatan"),
-            "kabupaten_kota": stats.get("Kabupaten_Kota"),
-            "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
-            "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
-            "latitude": stats.get("latitude"),
-            "longitude": stats.get("longitude"),
-            "industri_terdekat": stats.get("industri_terdekat"),
-            "jarak_industri_km": stats.get("jarak_industri_km"),
-            "kategori_dampak_industri": stats.get("kategori_dampak_industri"),
-            "indeks_dampak_industri": stats.get("indeks_dampak_industri"),
-            "jumlah_industri_radius_10km": stats.get("jumlah_industri_radius_10km"),
-            "kepadatan_industri": stats.get("kepadatan_industri"),
-            "industri_relevan_terdekat": stats.get("industri_relevan_terdekat"),
-            "jarak_industri_relevan_km": stats.get("jarak_industri_relevan_km"),
-            "kepadatan_penduduk_kecamatan": stats.get("kepadatan_penduduk_kecamatan"),
-            "indeks_pengaruh_urban": stats.get("indeks_pengaruh_urban"),
-            "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar")
-        })
-        
-    leaderboard.sort(key=lambda x: x["pct_sehat_2026"], reverse=True)
+    leaderboard = BEACH_RECOMMENDER.get_recommendations()
     return {
         "total": len(leaderboard),
         "leaderboard": leaderboard
