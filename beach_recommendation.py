@@ -143,10 +143,13 @@ TREN_SCORES = {
 }
 
 # Skor kualitatif untuk kategori dampak industri (inverted: rendah = baik)
+# 5 level berdasarkan Indeks Dampak Industri (IDI)
 INDUSTRI_SCORES = {
-    "RENDAH": 1.0,
+    "SANGAT RENDAH": 1.0,
+    "RENDAH": 0.75,
     "SEDANG": 0.5,
-    "TINGGI": 0.0,
+    "TINGGI": 0.25,
+    "SANGAT TINGGI": 0.0,
 }
 
 # Label klasifikasi Health Score
@@ -256,6 +259,7 @@ class BeachRecommender:
             cdom = stats.get("Mean_CDOM_2026", 0.0)
             tren = stats.get("Tren_Kualitas", "STABIL")
             kategori_industri = stats.get("kategori_dampak_industri", "RENDAH")
+            idi_raw = stats.get("indeks_dampak_industri", 0.0)  # IDI 0-100
 
             # Risiko polusi urban (0-1, 0 = pristine)
             polusi_urban = URBAN_POLLUTION_RISK.get(kec, 0.40)
@@ -267,7 +271,11 @@ class BeachRecommender:
             s_tss = self._normalize(tss, min_tss, max_tss, invert=True)
             s_cdom = self._normalize(cdom, min_cdom, max_cdom, invert=True)
             s_tren = TREN_SCORES.get(tren, 0.5) * 100.0
-            s_industri = INDUSTRI_SCORES.get(kategori_industri, 0.5) * 100.0
+            # Gunakan IDI kontinu jika tersedia, fallback ke kategorikal
+            if idi_raw > 0:
+                s_industri = max(0.0, 100.0 - idi_raw)  # Inverted: IDI tinggi = skor rendah
+            else:
+                s_industri = INDUSTRI_SCORES.get(kategori_industri, 0.5) * 100.0
             # Polusi urban inverted: risiko rendah (0) → skor tinggi (100)
             s_polusi_urban = (1.0 - polusi_urban) * 100.0
             # Sirkulasi pantai berdasarkan energi gelombang
@@ -317,6 +325,11 @@ class BeachRecommender:
                 "industri_terdekat": stats.get("industri_terdekat"),
                 "jarak_industri_km": stats.get("jarak_industri_km"),
                 "kategori_dampak_industri": kategori_industri,
+                "indeks_dampak_industri": idi_raw,
+                "industri_relevan_terdekat": stats.get("industri_relevan_terdekat"),
+                "jarak_industri_relevan_km": stats.get("jarak_industri_relevan_km"),
+                "jumlah_industri_radius_10km": stats.get("jumlah_industri_radius_10km", 0),
+                "kepadatan_industri": stats.get("kepadatan_industri", 0),
                 # Parameter baru v2.0
                 "tipe_pantai": energy_type,
                 "risiko_polusi_urban": round(polusi_urban, 2),
@@ -399,6 +412,8 @@ class BeachRecommender:
         pct = beach_entry.get("pct_sehat_2026", 0)
         tren = beach_entry.get("tren_kualitas", "STABIL")
         detail = beach_entry.get("skor_detail", {})
+        idi = beach_entry.get("indeks_dampak_industri", 0)
+        n_industri = beach_entry.get("jumlah_industri_radius_10km", 0)
         tipe_pantai = beach_entry.get("tipe_pantai", "MEDIUM")
         polusi_urban = beach_entry.get("risiko_polusi_urban", 0.4)
 
@@ -450,6 +465,17 @@ class BeachRecommender:
         else:
             polusi_text = f" Risiko polusi antropogenik **RENDAH** (skor risiko: {polusi_urban:.0%}) karena lokasi terpencil dan minim aktivitas urban."
 
+        # Konteks dampak industri (3 metrik baru)
+        kategori_industri = beach_entry.get("kategori_dampak_industri", "RENDAH")
+        if idi >= 30:
+            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — terdapat {n_industri} industri dalam radius 10 km yang secara kumulatif memberikan tekanan signifikan terhadap kualitas perairan."
+        elif idi >= 15:
+            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — pengaruh industri terhadap perairan bersifat moderat dengan {n_industri} industri dalam radius 10 km."
+        elif idi >= 5:
+            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — dampak industri relatif rendah ({n_industri} industri dalam radius 10 km)."
+        else:
+            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — pantai ini sangat jauh dari kawasan industri sehingga dampak industri terhadap kualitas air sangat minimal."
+
         # Tambahkan insight tren
         if tren == "MEMBAIK":
             tren_text = " Tren kualitas air **MEMBAIK** dibandingkan tahun 2017."
@@ -480,7 +506,7 @@ class BeachRecommender:
             f"{param_names.get(worst_param[0], worst_param[0])} (skor: {worst_param[1]})."
         )
 
-        return intro + tipe_text + polusi_text + tren_text + param_text
+        return intro + tipe_text + industri_text + polusi_text + tren_text + param_text
 
     def save_to_json(self, output_path: str) -> None:
         """Menyimpan hasil rekomendasi lengkap ke file JSON."""

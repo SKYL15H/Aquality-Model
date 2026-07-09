@@ -158,30 +158,51 @@ DISTRICT_CONTEXTS = {
 
 
 def _build_industry_text(stats: dict) -> str:
-    """Membangun teks konteks jarak industri untuk narasi penjelasan."""
+    """Membangun teks konteks dampak industri untuk narasi penjelasan.
+    
+    Menggunakan 3 metrik: jarak industri terdekat, kepadatan, dan Indeks Dampak Industri (IDI).
+    """
     industri = stats.get("industri_terdekat")
     jarak = stats.get("jarak_industri_km")
-    kategori = stats.get("kategori_dampak_industri")
+    idi = stats.get("indeks_dampak_industri", 0)
+    kategori = stats.get("kategori_dampak_industri", "")
     tipe = stats.get("tipe_industri", "")
+    n_radius = stats.get("jumlah_industri_radius_10km", 0)
+    industri_relevan = stats.get("industri_relevan_terdekat")
+    jarak_relevan = stats.get("jarak_industri_relevan_km")
     
     if not industri or jarak is None:
         return ""
     
-    if kategori == "TINGGI":
-        return (
-            f" Lokasi ini berada dalam radius dampak **TINGGI** dari fasilitas industri {industri} ({tipe}) "
-            f"yang berjarak hanya **{jarak} km**, sehingga potensi kontribusi polutan industri terhadap penurunan kualitas air sangat signifikan."
+    # Bangun teks berdasarkan IDI
+    if idi >= 30:
+        text = (
+            f" Indeks Dampak Industri di wilayah ini **{idi}/100** (kategori **{kategori}**) "
+            f"dengan {n_radius} fasilitas industri dalam radius 10 km."
         )
-    elif kategori == "SEDANG":
-        return (
-            f" Terdapat fasilitas industri {industri} ({tipe}) dalam radius **{jarak} km** "
-            f"dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan."
+        if industri_relevan and jarak_relevan:
+            text += f" Industri paling relevan terhadap pencemaran air adalah {industri_relevan} berjarak **{jarak_relevan} km**."
+        text += " Tekanan kumulatif industri terhadap kualitas perairan sangat signifikan."
+    elif idi >= 15:
+        text = (
+            f" Indeks Dampak Industri **{idi}/100** ({kategori}) dengan {n_radius} industri dalam radius 10 km. "
+            f"Industri terdekat: {industri} ({tipe}) berjarak **{jarak} km**. "
+            f"Pengaruh industri terhadap kualitas perairan bersifat moderat."
+        )
+    elif idi >= 5:
+        text = (
+            f" Indeks Dampak Industri **{idi}/100** ({kategori}). "
+            f"Industri terdekat adalah {industri} ({tipe}) berjarak **{jarak} km** "
+            f"dengan dampak relatif rendah terhadap kualitas air."
         )
     else:
-        return (
-            f" Industri terdekat adalah {industri} ({tipe}) berjarak **{jarak} km** "
-            f"dengan kategori dampak **RENDAH**."
+        text = (
+            f" Indeks Dampak Industri sangat rendah (**{idi}/100**). "
+            f"Industri terdekat ({industri}) berjarak **{jarak} km** — "
+            f"dampak industri terhadap kualitas air sangat minimal."
         )
+    
+    return text
 
 
 def generate_explanation(kec_name: str, stats: dict) -> str:
@@ -365,6 +386,11 @@ def get_leaderboard():
             "industri_terdekat": stats.get("industri_terdekat"),
             "jarak_industri_km": stats.get("jarak_industri_km"),
             "kategori_dampak_industri": stats.get("kategori_dampak_industri"),
+            "indeks_dampak_industri": stats.get("indeks_dampak_industri"),
+            "jumlah_industri_radius_10km": stats.get("jumlah_industri_radius_10km"),
+            "kepadatan_industri": stats.get("kepadatan_industri"),
+            "industri_relevan_terdekat": stats.get("industri_relevan_terdekat"),
+            "jarak_industri_relevan_km": stats.get("jarak_industri_relevan_km"),
             "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar")
         })
         
@@ -466,6 +492,11 @@ def get_beach_leaderboard():
             "industri_terdekat": stats.get("industri_terdekat"),
             "jarak_industri_km": stats.get("jarak_industri_km"),
             "kategori_dampak_industri": stats.get("kategori_dampak_industri"),
+            "indeks_dampak_industri": stats.get("indeks_dampak_industri"),
+            "jumlah_industri_radius_10km": stats.get("jumlah_industri_radius_10km"),
+            "kepadatan_industri": stats.get("kepadatan_industri"),
+            "industri_relevan_terdekat": stats.get("industri_relevan_terdekat"),
+            "jarak_industri_relevan_km": stats.get("jarak_industri_relevan_km"),
             "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar")
         })
         

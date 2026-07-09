@@ -36,7 +36,19 @@
     "Delta_Pct_Sehat": -12.9,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Anyer (Anyar) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.1405) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri Pelabuhan Ciwandan (Pelabuhan/Logistik) dalam radius **8.39 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-anyer"
+    "slug": "pantai-anyer",
+    "industri_relevan_terdekat": "Pelabuhan Ciwandan",
+    "tipe_industri_relevan": "Pelabuhan/Logistik",
+    "jarak_industri_relevan_km": 8.39,
+    "relevansi_industri": 0.5,
+    "jumlah_industri_radius_10km": 2,
+    "kepadatan_industri": 0.0064,
+    "total_relevansi_radius": 1.2,
+    "daftar_industri_radius": [
+      "PT Banten Energy",
+      "Pelabuhan Ciwandan"
+    ],
+    "indeks_dampak_industri": 21.63
   },
   "Pantai Carita": {
     "Kecamatan": "Carita",
@@ -75,7 +87,16 @@
     "Delta_Pct_Sehat": -5.2,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Carita (Carita) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.3347) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah Pelabuhan Ciwandan (Pelabuhan/Logistik) berjarak **16.76 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-carita"
+    "slug": "pantai-carita",
+    "industri_relevan_terdekat": "Pelabuhan Ciwandan",
+    "tipe_industri_relevan": "Pelabuhan/Logistik",
+    "jarak_industri_relevan_km": 16.76,
+    "relevansi_industri": 0.5,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 9.61
   },
   "Pantai Tanjung Lesung": {
     "Kecamatan": "Panimbang",
@@ -98,7 +119,7 @@
     "industri_terdekat": "PLTU Labuan (Banten 2)",
     "tipe_industri": "Pembangkit Listrik",
     "jarak_industri_km": 21.79,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "Pelabuhan Ciwandan",
     "tipe_industri_2": "Pelabuhan/Logistik",
     "jarak_industri_2_km": 59.64,
@@ -114,7 +135,16 @@
     "Delta_Pct_Sehat": -13.7,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Tanjung Lesung (Panimbang) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.2385) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah PLTU Labuan (Banten 2) (Pembangkit Listrik) berjarak **21.79 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-tanjung-lesung"
+    "slug": "pantai-tanjung-lesung",
+    "industri_relevan_terdekat": "PLTU Labuan (Banten 2)",
+    "tipe_industri_relevan": "Pembangkit Listrik",
+    "jarak_industri_relevan_km": 21.79,
+    "relevansi_industri": 0.7,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.89
   },
   "Pantai Sawarna": {
     "Kecamatan": "Bayah",
@@ -137,7 +167,7 @@
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
     "tipe_industri": "Semen",
     "jarak_industri_km": 7.99,
-    "kategori_dampak_industri": "SEDANG",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PLTU Labuan (Banten 2)",
     "tipe_industri_2": "Pembangkit Listrik",
     "jarak_industri_2_km": 88.94,
@@ -153,7 +183,18 @@
     "Delta_Pct_Sehat": -0.2,
     "Tren_Kualitas": "STABIL",
     "penjelasan_kualitas": "Kualitas air di Pantai Sawarna (Bayah) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.3341) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri PT Indocement Tunggal Prakarsa (Bayah) (Semen) dalam radius **7.99 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-sawarna"
+    "slug": "pantai-sawarna",
+    "industri_relevan_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
+    "tipe_industri_relevan": "Semen",
+    "jarak_industri_relevan_km": 7.99,
+    "relevansi_industri": 0.6,
+    "jumlah_industri_radius_10km": 1,
+    "kepadatan_industri": 0.0032,
+    "total_relevansi_radius": 0.6,
+    "daftar_industri_radius": [
+      "PT Indocement Tunggal Prakarsa (Bayah)"
+    ],
+    "indeks_dampak_industri": 2.57
   },
   "Pantai Bagedur": {
     "Kecamatan": "Malingping",
@@ -176,7 +217,7 @@
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
     "tipe_industri": "Semen",
     "jarak_industri_km": 27.8,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PLTU Labuan (Banten 2)",
     "tipe_industri_2": "Pembangkit Listrik",
     "jarak_industri_2_km": 63.54,
@@ -192,7 +233,16 @@
     "Delta_Pct_Sehat": -60.0,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Bagedur (Malingping) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.3763) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah PT Indocement Tunggal Prakarsa (Bayah) (Semen) berjarak **27.8 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-bagedur"
+    "slug": "pantai-bagedur",
+    "industri_relevan_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
+    "tipe_industri_relevan": "Semen",
+    "jarak_industri_relevan_km": 27.8,
+    "relevansi_industri": 0.6,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.37
   },
   "Pantai Karang Bolong": {
     "Kecamatan": "Cinangka",
@@ -215,7 +265,7 @@
     "industri_terdekat": "Pelabuhan Ciwandan",
     "tipe_industri": "Pelabuhan/Logistik",
     "jarak_industri_km": 14.01,
-    "kategori_dampak_industri": "SEDANG",
+    "kategori_dampak_industri": "RENDAH",
     "industri_terdekat_2": "PT Banten Energy",
     "tipe_industri_2": "Energi",
     "jarak_industri_2_km": 14.83,
@@ -231,7 +281,16 @@
     "Delta_Pct_Sehat": 0.2,
     "Tren_Kualitas": "STABIL",
     "penjelasan_kualitas": "Kualitas air di Pantai Karang Bolong (Cinangka) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.1691) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri Pelabuhan Ciwandan (Pelabuhan/Logistik) dalam radius **14.01 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-karang-bolong"
+    "slug": "pantai-karang-bolong",
+    "industri_relevan_terdekat": "Pelabuhan Ciwandan",
+    "tipe_industri_relevan": "Pelabuhan/Logistik",
+    "jarak_industri_relevan_km": 14.01,
+    "relevansi_industri": 0.5,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 12.33
   },
   "Pantai Ciputih": {
     "Kecamatan": "Sumur",
@@ -254,7 +313,7 @@
     "industri_terdekat": "PLTU Labuan (Banten 2)",
     "tipe_industri": "Pembangkit Listrik",
     "jarak_industri_km": 46.36,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "Pelabuhan Ciwandan",
     "tipe_industri_2": "Pelabuhan/Logistik",
     "jarak_industri_2_km": 84.72,
@@ -270,7 +329,16 @@
     "Delta_Pct_Sehat": -75.9,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Ciputih (Sumur) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.0725) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah PLTU Labuan (Banten 2) (Pembangkit Listrik) berjarak **46.36 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-ciputih"
+    "slug": "pantai-ciputih",
+    "industri_relevan_terdekat": "PLTU Labuan (Banten 2)",
+    "tipe_industri_relevan": "Pembangkit Listrik",
+    "jarak_industri_relevan_km": 46.36,
+    "relevansi_industri": 0.7,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.08
   },
   "Pantai Pulau Umang": {
     "Kecamatan": "Sumur",
@@ -293,7 +361,7 @@
     "industri_terdekat": "PLTU Labuan (Banten 2)",
     "tipe_industri": "Pembangkit Listrik",
     "jarak_industri_km": 39.99,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PT Banten Energy",
     "tipe_industri_2": "Energi",
     "jarak_industri_2_km": 79.06,
@@ -309,7 +377,16 @@
     "Delta_Pct_Sehat": -46.6,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Pulau Umang (Sumur) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.2545) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah PLTU Labuan (Banten 2) (Pembangkit Listrik) berjarak **39.99 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-pulau-umang"
+    "slug": "pantai-pulau-umang",
+    "industri_relevan_terdekat": "PLTU Labuan (Banten 2)",
+    "tipe_industri_relevan": "Pembangkit Listrik",
+    "jarak_industri_relevan_km": 39.99,
+    "relevansi_industri": 0.7,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.14
   },
   "Pantai Sambolo": {
     "Kecamatan": "Anyar",
@@ -348,7 +425,18 @@
     "Delta_Pct_Sehat": -29.9,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Sambolo (Anyar) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.1461) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri Pelabuhan Ciwandan (Pelabuhan/Logistik) dalam radius **9.6 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-sambolo"
+    "slug": "pantai-sambolo",
+    "industri_relevan_terdekat": "Pelabuhan Ciwandan",
+    "tipe_industri_relevan": "Pelabuhan/Logistik",
+    "jarak_industri_relevan_km": 9.6,
+    "relevansi_industri": 0.5,
+    "jumlah_industri_radius_10km": 1,
+    "kepadatan_industri": 0.0032,
+    "total_relevansi_radius": 0.5,
+    "daftar_industri_radius": [
+      "Pelabuhan Ciwandan"
+    ],
+    "indeks_dampak_industri": 18.75
   },
   "Pantai Pasir Putih Sirih": {
     "Kecamatan": "Anyar",
@@ -387,7 +475,16 @@
     "Delta_Pct_Sehat": -36.4,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Pasir Putih Sirih (Anyar) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.2081) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri Pelabuhan Ciwandan (Pelabuhan/Logistik) dalam radius **10.26 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-pasir-putih-sirih"
+    "slug": "pantai-pasir-putih-sirih",
+    "industri_relevan_terdekat": "Pelabuhan Ciwandan",
+    "tipe_industri_relevan": "Pelabuhan/Logistik",
+    "jarak_industri_relevan_km": 10.26,
+    "relevansi_industri": 0.5,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 17.54
   },
   "Pantai Marbella": {
     "Kecamatan": "Anyar",
@@ -426,7 +523,18 @@
     "Delta_Pct_Sehat": -27.6,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Marbella (Anyar) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.1547) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri Pelabuhan Ciwandan (Pelabuhan/Logistik) dalam radius **9.08 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-marbella"
+    "slug": "pantai-marbella",
+    "industri_relevan_terdekat": "Pelabuhan Ciwandan",
+    "tipe_industri_relevan": "Pelabuhan/Logistik",
+    "jarak_industri_relevan_km": 9.08,
+    "relevansi_industri": 0.5,
+    "jumlah_industri_radius_10km": 1,
+    "kepadatan_industri": 0.0032,
+    "total_relevansi_radius": 0.5,
+    "daftar_industri_radius": [
+      "Pelabuhan Ciwandan"
+    ],
+    "indeks_dampak_industri": 19.83
   },
   "Pantai Florida Indah": {
     "Kecamatan": "Cinangka",
@@ -465,7 +573,16 @@
     "Delta_Pct_Sehat": -27.8,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Florida Indah (Cinangka) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.1379) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah Pelabuhan Ciwandan (Pelabuhan/Logistik) berjarak **15.1 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-florida-indah"
+    "slug": "pantai-florida-indah",
+    "industri_relevan_terdekat": "Pelabuhan Ciwandan",
+    "tipe_industri_relevan": "Pelabuhan/Logistik",
+    "jarak_industri_relevan_km": 15.1,
+    "relevansi_industri": 0.5,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 11.29
   },
   "Pantai Jambu": {
     "Kecamatan": "Cinangka",
@@ -488,7 +605,7 @@
     "industri_terdekat": "Pelabuhan Ciwandan",
     "tipe_industri": "Pelabuhan/Logistik",
     "jarak_industri_km": 13.91,
-    "kategori_dampak_industri": "SEDANG",
+    "kategori_dampak_industri": "RENDAH",
     "industri_terdekat_2": "PT Banten Energy",
     "tipe_industri_2": "Energi",
     "jarak_industri_2_km": 14.58,
@@ -504,7 +621,16 @@
     "Delta_Pct_Sehat": 1.7,
     "Tren_Kualitas": "STABIL",
     "penjelasan_kualitas": "Kualitas air di Pantai Jambu (Cinangka) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.1962) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri Pelabuhan Ciwandan (Pelabuhan/Logistik) dalam radius **13.91 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-jambu"
+    "slug": "pantai-jambu",
+    "industri_relevan_terdekat": "Pelabuhan Ciwandan",
+    "tipe_industri_relevan": "Pelabuhan/Logistik",
+    "jarak_industri_relevan_km": 13.91,
+    "relevansi_industri": 0.5,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 12.48
   },
   "Pantai Lontar": {
     "Kecamatan": "Tirtayasa",
@@ -527,7 +653,7 @@
     "industri_terdekat": "Pelabuhan Perikanan Karangantu",
     "tipe_industri": "Perikanan",
     "jarak_industri_km": 15.6,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PT Asahimas Chemical",
     "tipe_industri_2": "Kimia",
     "jarak_industri_2_km": 30.95,
@@ -543,7 +669,16 @@
     "Delta_Pct_Sehat": -14.9,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Lontar (Tirtayasa) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.0724) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah Pelabuhan Perikanan Karangantu (Perikanan) berjarak **15.6 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-lontar"
+    "slug": "pantai-lontar",
+    "industri_relevan_terdekat": "PT Asahimas Chemical",
+    "tipe_industri_relevan": "Kimia",
+    "jarak_industri_relevan_km": 30.95,
+    "relevansi_industri": 1.0,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 3.56
   },
   "Pantai Tanjung Pasir": {
     "Kecamatan": "Teluknaga",
@@ -566,7 +701,7 @@
     "industri_terdekat": "Pelabuhan Perikanan Karangantu",
     "tipe_industri": "Perikanan",
     "jarak_industri_km": 56.98,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PT Asahimas Chemical",
     "tipe_industri_2": "Kimia",
     "jarak_industri_2_km": 73.54,
@@ -582,7 +717,16 @@
     "Delta_Pct_Sehat": 9.5,
     "Tren_Kualitas": "MEMBAIK",
     "penjelasan_kualitas": "Kualitas air di Pantai Tanjung Pasir (Teluknaga) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan penurunan baku mutu air laut pesisir. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah Pelabuhan Perikanan Karangantu (Perikanan) berjarak **56.98 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-tanjung-pasir"
+    "slug": "pantai-tanjung-pasir",
+    "industri_relevan_terdekat": "PT Asahimas Chemical",
+    "tipe_industri_relevan": "Kimia",
+    "jarak_industri_relevan_km": 73.54,
+    "relevansi_industri": 1.0,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.05
   },
   "Pantai Tanjung Kait": {
     "Kecamatan": "Mauk",
@@ -605,7 +749,7 @@
     "industri_terdekat": "Pelabuhan Perikanan Karangantu",
     "tipe_industri": "Perikanan",
     "jarak_industri_km": 31.21,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PT Asahimas Chemical",
     "tipe_industri_2": "Kimia",
     "jarak_industri_2_km": 47.78,
@@ -621,7 +765,16 @@
     "Delta_Pct_Sehat": -41.1,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Tanjung Kait (Mauk) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.1286) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah Pelabuhan Perikanan Karangantu (Perikanan) berjarak **31.21 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-tanjung-kait"
+    "slug": "pantai-tanjung-kait",
+    "industri_relevan_terdekat": "PT Asahimas Chemical",
+    "tipe_industri_relevan": "Kimia",
+    "jarak_industri_relevan_km": 47.78,
+    "relevansi_industri": 1.0,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.67
   },
   "Pantai Binuangeun": {
     "Kecamatan": "Wanasalam",
@@ -644,7 +797,7 @@
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
     "tipe_industri": "Semen",
     "jarak_industri_km": 41.64,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PLTU Labuan (Banten 2)",
     "tipe_industri_2": "Pembangkit Listrik",
     "jarak_industri_2_km": 52.33,
@@ -660,7 +813,16 @@
     "Delta_Pct_Sehat": 0.6,
     "Tren_Kualitas": "STABIL",
     "penjelasan_kualitas": "Kualitas air di Pantai Binuangeun (Wanasalam) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.6496) akibat limpasan sedimen darat dan kadar klorofil-a yang tinggi (NDCI: 0.5171) yang menandakan penumpukan nutrien/blooming alga. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah PT Indocement Tunggal Prakarsa (Bayah) (Semen) berjarak **41.64 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-binuangeun"
+    "slug": "pantai-binuangeun",
+    "industri_relevan_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
+    "tipe_industri_relevan": "Semen",
+    "jarak_industri_relevan_km": 41.64,
+    "relevansi_industri": 0.6,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.13
   },
   "Pantai Karang Taraje": {
     "Kecamatan": "Bayah",
@@ -683,7 +845,7 @@
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
     "tipe_industri": "Semen",
     "jarak_industri_km": 9.1,
-    "kategori_dampak_industri": "SEDANG",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PLTU Labuan (Banten 2)",
     "tipe_industri_2": "Pembangkit Listrik",
     "jarak_industri_2_km": 89.7,
@@ -699,7 +861,18 @@
     "Delta_Pct_Sehat": 1.6,
     "Tren_Kualitas": "STABIL",
     "penjelasan_kualitas": "Kualitas air di Pantai Karang Taraje (Bayah) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.4087) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri PT Indocement Tunggal Prakarsa (Bayah) (Semen) dalam radius **9.1 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-karang-taraje"
+    "slug": "pantai-karang-taraje",
+    "industri_relevan_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
+    "tipe_industri_relevan": "Semen",
+    "jarak_industri_relevan_km": 9.1,
+    "relevansi_industri": 0.6,
+    "jumlah_industri_radius_10km": 1,
+    "kepadatan_industri": 0.0032,
+    "total_relevansi_radius": 0.6,
+    "daftar_industri_radius": [
+      "PT Indocement Tunggal Prakarsa (Bayah)"
+    ],
+    "indeks_dampak_industri": 2.3
   },
   "Pantai Sangiang": {
     "Kecamatan": "Anyar",
@@ -738,7 +911,18 @@
     "Delta_Pct_Sehat": -13.3,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Sangiang (Anyar) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.0991) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri PLTU Suralaya (Pembangkit Listrik) dalam radius **9.97 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-sangiang"
+    "slug": "pantai-sangiang",
+    "industri_relevan_terdekat": "PLTU Suralaya",
+    "tipe_industri_relevan": "Pembangkit Listrik",
+    "jarak_industri_relevan_km": 9.97,
+    "relevansi_industri": 0.7,
+    "jumlah_industri_radius_10km": 1,
+    "kepadatan_industri": 0.0032,
+    "total_relevansi_radius": 0.7,
+    "daftar_industri_radius": [
+      "PLTU Suralaya"
+    ],
+    "indeks_dampak_industri": 17.38
   },
   "Pantai Pasir Putih Florida": {
     "Kecamatan": "Cinangka",
@@ -761,7 +945,7 @@
     "industri_terdekat": "Pelabuhan Ciwandan",
     "tipe_industri": "Pelabuhan/Logistik",
     "jarak_industri_km": 14.66,
-    "kategori_dampak_industri": "SEDANG",
+    "kategori_dampak_industri": "RENDAH",
     "industri_terdekat_2": "PT Banten Energy",
     "tipe_industri_2": "Energi",
     "jarak_industri_2_km": 15.21,
@@ -777,7 +961,16 @@
     "Delta_Pct_Sehat": -10.2,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Pasir Putih Florida (Cinangka) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.1584) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri Pelabuhan Ciwandan (Pelabuhan/Logistik) dalam radius **14.66 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-pasir-putih-florida"
+    "slug": "pantai-pasir-putih-florida",
+    "industri_relevan_terdekat": "Pelabuhan Ciwandan",
+    "tipe_industri_relevan": "Pelabuhan/Logistik",
+    "jarak_industri_relevan_km": 14.66,
+    "relevansi_industri": 0.5,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 11.69
   },
   "Pantai Karang Songsong": {
     "Kecamatan": "Cihara",
@@ -800,7 +993,7 @@
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
     "tipe_industri": "Semen",
     "jarak_industri_km": 18.0,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PLTU Labuan (Banten 2)",
     "tipe_industri_2": "Pembangkit Listrik",
     "jarak_industri_2_km": 66.07,
@@ -816,7 +1009,16 @@
     "Delta_Pct_Sehat": -16.3,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Karang Songsong (Cihara) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.3352) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah PT Indocement Tunggal Prakarsa (Bayah) (Semen) berjarak **18.0 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-karang-songsong"
+    "slug": "pantai-karang-songsong",
+    "industri_relevan_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
+    "tipe_industri_relevan": "Semen",
+    "jarak_industri_relevan_km": 18.0,
+    "relevansi_industri": 0.6,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.96
   },
   "Pantai Pulau Cangkir": {
     "Kecamatan": "Kronjo",
@@ -839,7 +1041,7 @@
     "industri_terdekat": "Pelabuhan Perikanan Karangantu",
     "tipe_industri": "Perikanan",
     "jarak_industri_km": 27.75,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PT Asahimas Chemical",
     "tipe_industri_2": "Kimia",
     "jarak_industri_2_km": 44.23,
@@ -855,7 +1057,16 @@
     "Delta_Pct_Sehat": 11.4,
     "Tren_Kualitas": "STABIL",
     "penjelasan_kualitas": "Kualitas air di Pantai Pulau Cangkir (Kronjo) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.0991) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah Pelabuhan Perikanan Karangantu (Perikanan) berjarak **27.75 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-pulau-cangkir"
+    "slug": "pantai-pulau-cangkir",
+    "industri_relevan_terdekat": "PT Asahimas Chemical",
+    "tipe_industri_relevan": "Kimia",
+    "jarak_industri_relevan_km": 44.23,
+    "relevansi_industri": 1.0,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.95
   },
   "Pantai Pasir Putih Cihara": {
     "Kecamatan": "Cihara",
@@ -878,7 +1089,7 @@
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
     "tipe_industri": "Semen",
     "jarak_industri_km": 24.0,
-    "kategori_dampak_industri": "RENDAH",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PLTU Labuan (Banten 2)",
     "tipe_industri_2": "Pembangkit Listrik",
     "jarak_industri_2_km": 60.2,
@@ -894,7 +1105,16 @@
     "Delta_Pct_Sehat": -0.2,
     "Tren_Kualitas": "STABIL",
     "penjelasan_kualitas": "Kualitas air di Pantai Pasir Putih Cihara (Cihara) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.3514) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Industri terdekat adalah PT Indocement Tunggal Prakarsa (Bayah) (Semen) berjarak **24.0 km** dengan kategori dampak **RENDAH**.",
-    "slug": "pantai-pasir-putih-cihara"
+    "slug": "pantai-pasir-putih-cihara",
+    "industri_relevan_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
+    "tipe_industri_relevan": "Semen",
+    "jarak_industri_relevan_km": 24.0,
+    "relevansi_industri": 0.6,
+    "jumlah_industri_radius_10km": 0,
+    "kepadatan_industri": 0.0,
+    "total_relevansi_radius": 0.0,
+    "daftar_industri_radius": [],
+    "indeks_dampak_industri": 0.54
   },
   "Pantai Tanjung Layar": {
     "Kecamatan": "Bayah",
@@ -917,7 +1137,7 @@
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
     "tipe_industri": "Semen",
     "jarak_industri_km": 7.17,
-    "kategori_dampak_industri": "SEDANG",
+    "kategori_dampak_industri": "SANGAT RENDAH",
     "industri_terdekat_2": "PLTU Labuan (Banten 2)",
     "tipe_industri_2": "Pembangkit Listrik",
     "jarak_industri_2_km": 88.31,
@@ -933,7 +1153,18 @@
     "Delta_Pct_Sehat": 0.3,
     "Tren_Kualitas": "STABIL",
     "penjelasan_kualitas": "Kualitas air di Pantai Tanjung Layar (Bayah) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.3455) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Terdapat fasilitas industri PT Indocement Tunggal Prakarsa (Bayah) (Semen) dalam radius **7.17 km** dengan kategori dampak **SEDANG**, yang berpotensi turut memengaruhi kondisi kualitas perairan.",
-    "slug": "pantai-tanjung-layar"
+    "slug": "pantai-tanjung-layar",
+    "industri_relevan_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
+    "tipe_industri_relevan": "Semen",
+    "jarak_industri_relevan_km": 7.17,
+    "relevansi_industri": 0.6,
+    "jumlah_industri_radius_10km": 1,
+    "kepadatan_industri": 0.0032,
+    "total_relevansi_radius": 0.6,
+    "daftar_industri_radius": [
+      "PT Indocement Tunggal Prakarsa (Bayah)"
+    ],
+    "indeks_dampak_industri": 2.79
   },
   "Pantai Caringin": {
     "Kecamatan": "Labuan",
@@ -956,7 +1187,7 @@
     "industri_terdekat": "PLTU Labuan (Banten 2)",
     "tipe_industri": "Pembangkit Listrik",
     "jarak_industri_km": 1.52,
-    "kategori_dampak_industri": "TINGGI",
+    "kategori_dampak_industri": "RENDAH",
     "industri_terdekat_2": "PT Banten Energy",
     "tipe_industri_2": "Energi",
     "jarak_industri_2_km": 38.18,
@@ -972,6 +1203,17 @@
     "Delta_Pct_Sehat": -8.3,
     "Tren_Kualitas": "MEMBURUK",
     "penjelasan_kualitas": "Kualitas air di Pantai Caringin (Labuan) tergolong **TIDAK SEHAT** (Tercemar). Analisis menunjukkan tingginya kekeruhan air (NDTI: 0.3406) akibat limpasan sedimen darat. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini. Lokasi ini berada dalam radius dampak **TINGGI** dari fasilitas industri PLTU Labuan (Banten 2) (Pembangkit Listrik) yang berjarak hanya **1.52 km**, sehingga potensi kontribusi polutan industri terhadap penurunan kualitas air sangat signifikan.",
-    "slug": "pantai-caringin"
+    "slug": "pantai-caringin",
+    "industri_relevan_terdekat": "PLTU Labuan (Banten 2)",
+    "tipe_industri_relevan": "Pembangkit Listrik",
+    "jarak_industri_relevan_km": 1.52,
+    "relevansi_industri": 0.7,
+    "jumlah_industri_radius_10km": 1,
+    "kepadatan_industri": 0.0032,
+    "total_relevansi_radius": 0.7,
+    "daftar_industri_radius": [
+      "PLTU Labuan (Banten 2)"
+    ],
+    "indeks_dampak_industri": 6.85
   }
 }

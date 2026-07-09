@@ -105,6 +105,37 @@ INDUSTRIES = [
 ]
 
 # ---------------------------------------------------------------------------
+# Relevansi Tipe Industri terhadap Kualitas Air Pesisir
+# Skor 0.0 - 1.0: semakin tinggi = semakin berdampak terhadap pencemaran air
+# ---------------------------------------------------------------------------
+
+INDUSTRY_RELEVANCE = {
+    # Tinggi — limbah cair/kimia langsung ke laut
+    "Petrokimia": 1.0,
+    "Kimia": 1.0,
+    "Baja/Logam": 0.9,
+    "Pulp & Paper": 0.9,
+    # Sedang — polusi termal/sedimen
+    "Pembangkit Listrik": 0.7,
+    "Energi": 0.7,
+    "Semen": 0.6,
+    # Rendah — polusi fisik/logistik
+    "Pelabuhan": 0.5,
+    "Pelabuhan/Logistik": 0.5,
+    "Perikanan": 0.3,
+}
+
+# Threshold relevansi minimum agar dianggap "relevan" terhadap kualitas air
+MIN_RELEVANCE_THRESHOLD = 0.5
+
+# Radius default (km) untuk menghitung kepadatan industri
+DENSITY_RADIUS_KM = 10.0
+
+# Decay rate (km) untuk perhitungan Indeks Dampak Industri (IDI)
+# Pada jarak = decay_rate, dampak turun ke ~37% dari dampak maksimal
+IDI_DECAY_RATE = 10.0
+
+# ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 
@@ -138,8 +169,26 @@ def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return round(R * c, 2)
 
 
+def get_dampak_category_by_index(index: float) -> str:
+    """Menentukan kategori dampak industri berdasarkan Indeks Dampak Industri (IDI).
+    
+    IDI 0-100: semakin tinggi = semakin terdampak industri.
+    5 level kategori untuk granularitas lebih baik.
+    """
+    if index >= 50:
+        return "SANGAT TINGGI"
+    elif index >= 30:
+        return "TINGGI"
+    elif index >= 15:
+        return "SEDANG"
+    elif index >= 5:
+        return "RENDAH"
+    else:
+        return "SANGAT RENDAH"
+
+
 def get_dampak_category(distance_km: float) -> str:
-    """Menentukan kategori dampak industri berdasarkan jarak."""
+    """Menentukan kategori dampak industri berdasarkan jarak (legacy, backward-compat)."""
     if distance_km < 5:
         return "TINGGI"
     elif distance_km <= 15:
@@ -153,10 +202,12 @@ def find_nearest_industries(lat: float, lon: float, top_n: int = 3) -> list:
     distances = []
     for industry in INDUSTRIES:
         dist = haversine(lat, lon, industry["latitude"], industry["longitude"])
+        relevance = INDUSTRY_RELEVANCE.get(industry["tipe"], 0.3)
         distances.append({
             "nama": industry["nama"],
             "tipe": industry["tipe"],
             "jarak_km": dist,
+            "relevansi": relevance,
             "lat": industry["latitude"],
             "lon": industry["longitude"]
         })
@@ -164,15 +215,109 @@ def find_nearest_industries(lat: float, lon: float, top_n: int = 3) -> list:
     return distances[:top_n]
 
 
+def find_nearest_relevant_industry(lat: float, lon: float) -> dict | None:
+    """Menemukan industri terdekat yang RELEVAN terhadap pencemaran air.
+    
+    Hanya industri dengan skor relevansi >= MIN_RELEVANCE_THRESHOLD yang dianggap relevan.
+    Ini mengecualikan industri berdampak rendah seperti pelabuhan perikanan.
+    """
+    best = None
+    best_dist = float("inf")
+    
+    for industry in INDUSTRIES:
+        relevance = INDUSTRY_RELEVANCE.get(industry["tipe"], 0.3)
+        if relevance < MIN_RELEVANCE_THRESHOLD:
+            continue
+        dist = haversine(lat, lon, industry["latitude"], industry["longitude"])
+        if dist < best_dist:
+            best_dist = dist
+            best = {
+                "nama": industry["nama"],
+                "tipe": industry["tipe"],
+                "jarak_km": dist,
+                "relevansi": relevance,
+            }
+    return best
+
+
+def count_industries_in_radius(lat: float, lon: float, radius_km: float = DENSITY_RADIUS_KM) -> dict:
+    """Menghitung jumlah dan kepadatan industri dalam radius tertentu dari titik koordinat.
+    
+    Returns:
+        dict dengan keys:
+        - jumlah: total industri dalam radius
+        - total_relevansi: jumlah skor relevansi industri dalam radius
+        - kepadatan: jumlah industri per km² (area lingkaran π×r²)
+        - daftar: list nama industri dalam radius
+    """
+    count = 0
+    total_relevance = 0.0
+    names = []
+    
+    for industry in INDUSTRIES:
+        dist = haversine(lat, lon, industry["latitude"], industry["longitude"])
+        if dist <= radius_km:
+            relevance = INDUSTRY_RELEVANCE.get(industry["tipe"], 0.3)
+            count += 1
+            total_relevance += relevance
+            names.append(industry["nama"])
+    
+    area_km2 = math.pi * radius_km ** 2
+    density = round(count / area_km2, 4) if area_km2 > 0 else 0.0
+    
+    return {
+        "jumlah": count,
+        "total_relevansi": round(total_relevance, 2),
+        "kepadatan": density,
+        "daftar": names,
+    }
+
+
+def compute_industry_impact_index(lat: float, lon: float) -> float:
+    """Menghitung Indeks Dampak Industri (IDI) skala 0-100.
+    
+    Menggunakan Inverse Distance Weighting (IDW) dengan bobot relevansi industri.
+    Memperhitungkan SEMUA industri sekaligus, bukan hanya yang terdekat.
+    
+    Formula: IDI = (Σ relevance_i × exp(-dist_i / decay_rate)) / max_theoretical × 100
+    
+    - decay_rate = IDI_DECAY_RATE km (pada jarak ini dampak turun ke ~37%)
+    - Industri dekat + relevan = kontribusi besar
+    - Industri jauh + tidak relevan = kontribusi kecil
+    """
+    total_impact = 0.0
+    
+    for industry in INDUSTRIES:
+        dist = haversine(lat, lon, industry["latitude"], industry["longitude"])
+        relevance = INDUSTRY_RELEVANCE.get(industry["tipe"], 0.3)
+        impact = relevance * math.exp(-dist / IDI_DECAY_RATE)
+        total_impact += impact
+    
+    # Normalisasi: max theoretical = semua industri di jarak 0
+    max_theoretical = sum(INDUSTRY_RELEVANCE.get(i["tipe"], 0.3) for i in INDUSTRIES)
+    if max_theoretical == 0:
+        return 0.0
+    
+    index = (total_impact / max_theoretical) * 100
+    return round(min(100.0, index), 2)
+
+
 def add_industry_fields(data: dict, lat: float, lon: float) -> dict:
-    """Menambahkan field-field jarak industri ke dictionary data."""
+    """Menambahkan semua field dampak industri ke dictionary data.
+    
+    Metrik yang ditambahkan:
+    1. Jarak ke industri terdekat (legacy) + 3 terdekat
+    2. Jarak ke industri terdekat yang RELEVAN
+    3. Kepadatan industri dalam radius
+    4. Indeks Dampak Industri (IDI) komposit
+    """
+    # --- Metrik Legacy: 3 industri terdekat ---
     nearest = find_nearest_industries(lat, lon, top_n=3)
     
     if nearest:
         data["industri_terdekat"] = nearest[0]["nama"]
         data["tipe_industri"] = nearest[0]["tipe"]
         data["jarak_industri_km"] = nearest[0]["jarak_km"]
-        data["kategori_dampak_industri"] = get_dampak_category(nearest[0]["jarak_km"])
     
     if len(nearest) >= 2:
         data["industri_terdekat_2"] = nearest[1]["nama"]
@@ -183,6 +328,26 @@ def add_industry_fields(data: dict, lat: float, lon: float) -> dict:
         data["industri_terdekat_3"] = nearest[2]["nama"]
         data["tipe_industri_3"] = nearest[2]["tipe"]
         data["jarak_industri_3_km"] = nearest[2]["jarak_km"]
+    
+    # --- Metrik 1: Industri relevan terdekat ---
+    relevant = find_nearest_relevant_industry(lat, lon)
+    if relevant:
+        data["industri_relevan_terdekat"] = relevant["nama"]
+        data["tipe_industri_relevan"] = relevant["tipe"]
+        data["jarak_industri_relevan_km"] = relevant["jarak_km"]
+        data["relevansi_industri"] = relevant["relevansi"]
+    
+    # --- Metrik 2: Kepadatan industri dalam radius ---
+    density_info = count_industries_in_radius(lat, lon, DENSITY_RADIUS_KM)
+    data["jumlah_industri_radius_10km"] = density_info["jumlah"]
+    data["kepadatan_industri"] = density_info["kepadatan"]
+    data["total_relevansi_radius"] = density_info["total_relevansi"]
+    data["daftar_industri_radius"] = density_info["daftar"]
+    
+    # --- Metrik 3: Indeks Dampak Industri (IDI) komposit ---
+    idi = compute_industry_impact_index(lat, lon)
+    data["indeks_dampak_industri"] = idi
+    data["kategori_dampak_industri"] = get_dampak_category_by_index(idi)
     
     return data
 
@@ -356,9 +521,12 @@ def save_kecamatan_csv(kec_data: dict):
         "Luas_Air_2017_Ha", "Sehat_2017_Ha", "Pct_Sehat_2017",
         "Mean_NDTI_2017", "Mean_NDCI_2017", "Status_Kualitas_2017",
         "Delta_Pct_Sehat", "Tren_Kualitas",
-        "industri_terdekat", "tipe_industri", "jarak_industri_km", "kategori_dampak_industri",
+        "industri_terdekat", "tipe_industri", "jarak_industri_km",
         "industri_terdekat_2", "tipe_industri_2", "jarak_industri_2_km",
         "industri_terdekat_3", "tipe_industri_3", "jarak_industri_3_km",
+        "industri_relevan_terdekat", "tipe_industri_relevan", "jarak_industri_relevan_km", "relevansi_industri",
+        "jumlah_industri_radius_10km", "kepadatan_industri", "total_relevansi_radius",
+        "indeks_dampak_industri", "kategori_dampak_industri",
         "penjelasan_kualitas"
     ]
     
@@ -383,9 +551,12 @@ def save_beach_csv(beach_data: dict):
         "Luas_Air_2017_Ha", "Sehat_2017_Ha", "Pct_Sehat_2017",
         "Mean_NDTI_2017", "Mean_NDCI_2017", "Status_Kualitas_2017",
         "Delta_Pct_Sehat", "Tren_Kualitas",
-        "industri_terdekat", "tipe_industri", "jarak_industri_km", "kategori_dampak_industri",
+        "industri_terdekat", "tipe_industri", "jarak_industri_km",
         "industri_terdekat_2", "tipe_industri_2", "jarak_industri_2_km",
         "industri_terdekat_3", "tipe_industri_3", "jarak_industri_3_km",
+        "industri_relevan_terdekat", "tipe_industri_relevan", "jarak_industri_relevan_km", "relevansi_industri",
+        "jumlah_industri_radius_10km", "kepadatan_industri", "total_relevansi_radius",
+        "indeks_dampak_industri", "kategori_dampak_industri",
         "penjelasan_kualitas"
     ]
     
@@ -435,14 +606,19 @@ if __name__ == "__main__":
     print(f"  Pantai terupdate   : {beach_count}")
     print(f"  Jumlah industri    : {len(INDUSTRIES)}")
     
-    # Statistik kategori dampak
+    # Statistik kategori dampak (5 level baru)
     for label, dataset in [("Kecamatan", kec_data), ("Pantai", beach_data)]:
         cats = {}
+        idis = []
         for v in dataset.values():
             cat = v.get("kategori_dampak_industri", "N/A")
             cats[cat] = cats.get(cat, 0) + 1
+            idi = v.get("indeks_dampak_industri", 0)
+            idis.append(idi)
         print(f"\n  Kategori Dampak Industri ({label}):")
-        for cat in ["TINGGI", "SEDANG", "RENDAH"]:
+        for cat in ["SANGAT TINGGI", "TINGGI", "SEDANG", "RENDAH", "SANGAT RENDAH"]:
             print(f"    {cat}: {cats.get(cat, 0)}")
+        if idis:
+            print(f"  IDI range: {min(idis)} — {max(idis)} (mean: {sum(idis)/len(idis):.2f})")
     
     print("\nDone!")
