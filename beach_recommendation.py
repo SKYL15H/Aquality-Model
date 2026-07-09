@@ -27,120 +27,12 @@ from typing import Any
 # Konstanta bobot parameter untuk skor komposit (v2.0)
 # ---------------------------------------------------------------------------
 
-# Klasifikasi energi gelombang pantai berdasarkan kecamatan
-# HIGH  = Samudra Hindia (pantai selatan) — ombak besar, turbulensi alami tinggi
-# MEDIUM = Selat Sunda (pantai barat) — ombak sedang
-# LOW   = Laut Jawa / Teluk Jakarta (pantai utara) — perairan tenang
-COASTAL_ENERGY = {
-    # Pantai Selatan — Samudra Hindia (HIGH energy)
-    "Bayah": "HIGH",
-    "Cihara": "HIGH",
-    "Malingping": "HIGH",
-    "Wanasalam": "HIGH",
-    "Panggarangan": "HIGH",
-    # Pantai Barat — Selat Sunda (MEDIUM energy)
-    "Sumur": "MEDIUM",
-    "Panimbang": "MEDIUM",
-    "Carita": "MEDIUM",
-    "Cinangka": "MEDIUM",
-    "Anyar": "MEDIUM",
-    "Labuan": "MEDIUM",
-    # Pantai Utara — Laut Jawa / Teluk Jakarta (LOW energy)
-    "Teluknaga": "LOW",
-    "Mauk": "LOW",
-    "Kronjo": "LOW",
-    "Tirtayasa": "LOW",
-    "Pontang": "LOW",
-    "Tanara": "LOW",
-    "Kasemen": "LOW",
-    "Bojonegara": "LOW",
-    "Kramatwatu": "LOW",
-    "Pulomerak": "LOW",
-    "Ciwandan": "LOW",
-    "Grogol": "LOW",
-}
-
-# Faktor koreksi NDTI berdasarkan energi gelombang pantai.
-# Pada pantai berenergi tinggi, sebagian besar kekeruhan bersifat alami
-# (turbulensi ombak mengaduk pasir dasar), bukan polusi.
-NDTI_CORRECTION = {
-    "HIGH": 0.35,    # Hanya 35% NDTI bersifat antropogenik; 65% turbulensi alami
-    "MEDIUM": 0.70,  # 30% turbulensi alami
-    "LOW": 1.00,     # Tidak dikoreksi — NDTI mencerminkan kondisi sebenarnya
-}
-
-# Koreksi kompensasi Pct_Sehat berdasarkan energi pantai.
-# Pct_Sehat_2026 dihitung oleh model RF yang menggunakan NDTI mentah,
-# sehingga pantai berenergi tinggi dirugikan secara sistematis.
-PCT_SEHAT_BOOST = {
-    "HIGH": 15.0,    # Tambah 15 pp sebagai kompensasi bias RF
-    "MEDIUM": 5.0,   # Koreksi ringan
-    "LOW": 0.0,      # Tidak dikoreksi
-}
-
-# Risiko polusi urban/antropogenik per kecamatan (0 = pristine, 1 = sangat tercemar).
-# Parameter proxy berdasarkan kepadatan penduduk, aktivitas industri, jarak dari
-# pusat urban, dan keberadaan muara sungai yang membawa limbah domestik.
-URBAN_POLLUTION_RISK = {
-    # Pantai Utara — dekat Jakarta/Tangerang urban sprawl
-    "Teluknaga": 0.90,   # Suburban Tangerang, sangat dekat Jakarta
-    "Mauk": 0.75,        # Pesisir Tangerang, urban sedang
-    "Kronjo": 0.65,      # Semi-urban Tangerang
-    # Pesisir industri Cilegon
-    "Pulomerak": 0.85,   # Industri berat + Pelabuhan Merak
-    "Ciwandan": 0.90,    # Hub industri baja/kimia
-    "Grogol": 0.75,      # Industri utara Cilegon
-    "Bojonegara": 0.80,  # Galangan kapal + industri
-    # Pesisir Serang
-    "Kasemen": 0.70,     # Pelabuhan ikan + tambak padat
-    "Kramatwatu": 0.65,  # Dekat zona industri
-    "Tirtayasa": 0.50,   # Tambak pedesaan
-    "Pontang": 0.55,     # Muara sungai + tambak
-    "Tanara": 0.50,      # Limpasan pertanian
-    # Pantai Barat — zona wisata
-    "Anyar": 0.45,       # Pariwisata, pembangunan sedang
-    "Cinangka": 0.40,    # Pariwisata sedang
-    "Carita": 0.40,      # Pariwisata
-    "Labuan": 0.55,      # Pelabuhan ikan + PLTU Labuan
-    # Barat daya — kurang berkembang
-    "Panimbang": 0.30,   # KEK pariwisata berkembang
-    "Sumur": 0.15,       # Penyangga TN Ujung Kulon, pristine
-    # Pantai Selatan — terpencil dan alami
-    "Bayah": 0.25,       # Terpencil, ada pertambangan semen
-    "Cihara": 0.15,      # Sangat terpencil
-    "Malingping": 0.20,  # Terpencil
-    "Wanasalam": 0.35,   # Pelabuhan ikan Binuangeun
-    "Panggarangan": 0.20, # Terpencil, tambang rakyat
-}
-
-# Skor sirkulasi perairan berdasarkan energi gelombang.
-# Prinsip oseanografi: energi gelombang tinggi = sirkulasi lebih baik = dilusi
-# polutan lebih cepat = perairan lebih bersih secara alami.
-SIRKULASI_SCORES = {
-    "HIGH": 1.0,     # Sirkulasi sangat baik
-    "MEDIUM": 0.6,   # Sirkulasi cukup
-    "LOW": 0.2,      # Sirkulasi lemah, polutan terakumulasi
-}
-
-# Bobot setiap parameter dalam perhitungan Health Score v3.0 (total = 1.0)
+# Bobot setiap parameter dalam perhitungan Health Score v4.0 (total = 1.0)
+# Murni berbasis data spasial darat & human footprint (tidak menggunakan Sentinel-2)
 WEIGHTS = {
-    "pct_sehat": 0.20,          # Persentase area sehat (terkoreksi bias pantai)
-    "ndti_inv": 0.15,           # Kekeruhan (terkoreksi energi gelombang)
-    "ndci_inv": 0.10,           # Klorofil-a (inverted)
-    "tss_inv": 0.05,            # TSS (inverted)
-    "cdom_inv": 0.05,           # CDOM (inverted)
-    "tren": 0.10,               # Tren kualitas historis
-    "industri_inv": 0.10,       # Dampak industri terdekat (inverted - IDI)
-    "kepadatan_penduduk_inv": 0.10, # Kepadatan penduduk kecamatan (inverted - semakin padat = semakin berisiko)
-    "pengaruh_urban_inv": 0.10,     # Indeks Pengaruh Urban (inverted - semakin dekat kota = semakin berisiko)
-    "sirkulasi_pantai": 0.05,   # Bonus sirkulasi perairan (tinggi = bagus)
-}
-
-# Skor kualitatif untuk tren kualitas
-TREN_SCORES = {
-    "MEMBAIK": 1.0,
-    "STABIL": 0.5,
-    "MEMBURUK": 0.0,
+    "industri_inv": 0.40,           # Indeks Dampak Industri (IDI) Inverted (40%)
+    "kepadatan_penduduk_inv": 0.30, # Kepadatan penduduk kecamatan Inverted (30%)
+    "pengaruh_urban_inv": 0.30,     # Indeks Pengaruh Urban (IPU) Inverted (30%)
 }
 
 # Skor kualitatif untuk kategori dampak industri (inverted: rendah = baik)
