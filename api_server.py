@@ -205,8 +205,27 @@ def _build_industry_text(stats: dict) -> str:
     return text
 
 
+def _build_demographic_and_urban_text(stats: dict) -> str:
+    """Membangun teks penjelasan untuk kepadatan penduduk dan indeks pengaruh urban."""
+    density = stats.get("kepadatan_penduduk_kecamatan")
+    ipu = stats.get("indeks_pengaruh_urban")
+    kec = stats.get("Kecamatan", "pesisir Banten")
+    
+    if density is None or ipu is None:
+        return ""
+        
+    text = f" Wilayah ini memiliki kepadatan penduduk **{density:,.0f} jiwa/km²**."
+    if ipu >= 60:
+        text += f" Indeks Pengaruh Urban bernilai **TINGGI** ({ipu}/100) akibat dekatnya perairan dengan sprawl metropolitan/pusat aktivitas perkotaan utama."
+    elif ipu >= 30:
+        text += f" Indeks Pengaruh Urban bernilai **SEDANG** ({ipu}/100) dengan kontribusi limpasan domestik perkotaan sedang."
+    else:
+        text += f" Indeks Pengaruh Urban bernilai **RENDAH** ({ipu}/100) karena lokasinya relatif terpencil dari aglomerasi perkotaan utama."
+    return text
+
+
 def generate_explanation(kec_name: str, stats: dict) -> str:
-    """Menghasilkan narasi penjelasan kualitas air yang menggabungkan parameter satelit, profil wilayah, dan jarak industri."""
+    """Menghasilkan narasi penjelasan kualitas air yang menggabungkan parameter satelit, profil wilayah, kepadatan penduduk, dan jarak industri."""
     name_lower = kec_name.lower()
     status = stats.get("Status_Kualitas_2026", "TIDAK SEHAT")
     ndti = stats.get("Mean_NDTI_2026", 0.0)
@@ -224,8 +243,9 @@ def generate_explanation(kec_name: str, stats: dict) -> str:
         context_text = f"Kecamatan {kec_name} terletak di wilayah pesisir {kab}. "
         sources_text = "Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir."
 
-    # Teks jarak industri
+    # Teks jarak industri & demografi/urban
     industry_text = _build_industry_text(stats)
+    demo_urban_text = _build_demographic_and_urban_text(stats)
 
     if status == "TIDAK SEHAT":
         reason = (
@@ -246,21 +266,21 @@ def generate_explanation(kec_name: str, stats: dict) -> str:
         else:
             reason += f"Hasil analisis menunjukkan akumulasi parameter fisik-kimiawi air (TSS/CDOM) melampaui baku mutu optimal. "
             
-        reason += sources_text + industry_text
+        reason += sources_text + demo_urban_text + industry_text
         
     elif status == "SEDANG":
         reason = (
             f"Kualitas air pesisir di {kec_name} berada dalam kondisi **SEDANG**. {context_text}"
             f"Meskipun parameter kekeruhan (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) masih berada dalam tingkat toleransi wajar, "
             f"tetap diperlukan pengawasan karena adanya kontribusi polusi dari {', '.join(profile['sources']) if profile else 'aktivitas antropogenik lokal'}."
-            f"{industry_text}"
+            f"{demo_urban_text}{industry_text}"
         )
     else: # SEHAT
         reason = (
             f"Kualitas air pesisir di {kec_name} diklasifikasikan sebagai **SEHAT** (Optimum). {context_text}"
             f"Kondisi fisik perairan terpantau sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan kadar klorofil-a (NDCI: {ndci:.4f}) yang seimbang, "
             f"menunjukkan sirkulasi perairan yang baik serta minimnya dampak negatif dari {', '.join(profile['sources']) if profile else 'limbah domestik perkotaan'}."
-            f"{industry_text}"
+            f"{demo_urban_text}{industry_text}"
         )
         
     return reason
@@ -391,6 +411,8 @@ def get_leaderboard():
             "kepadatan_industri": stats.get("kepadatan_industri"),
             "industri_relevan_terdekat": stats.get("industri_relevan_terdekat"),
             "jarak_industri_relevan_km": stats.get("jarak_industri_relevan_km"),
+            "kepadatan_penduduk_kecamatan": stats.get("kepadatan_penduduk_kecamatan"),
+            "indeks_pengaruh_urban": stats.get("indeks_pengaruh_urban"),
             "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar")
         })
         
@@ -432,28 +454,29 @@ def get_district_water_quality(name: str):
 
 
 def generate_beach_explanation(beach_name: str, stats: dict) -> str:
-    """Menghasilkan narasi penjelasan kualitas air tingkat pantai dengan konteks jarak industri."""
+    """Menghasilkan narasi penjelasan kualitas air tingkat pantai dengan konteks demografi, urban, dan jarak industri."""
     status = stats.get("Status_Kualitas_2026", "TIDAK SEHAT")
     ndti = stats.get("Mean_NDTI_2026", 0.0)
     ndci = stats.get("Mean_NDCI_2026", 0.0)
     kec_name = stats.get("Kecamatan", "pesisir Banten")
     
-    # Teks jarak industri
+    # Teks jarak industri & demografi/urban
     industry_text = _build_industry_text(stats)
+    demo_urban_text = _build_demographic_and_urban_text(stats)
     
     if status == "SEHAT":
         return (
             f"Kualitas air di {beach_name} ({kec_name}) tergolong **SEHAT** (Bersih). "
             f"Kondisi perairan pantai sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) yang normal, "
             f"menjadikannya sangat aman dan nyaman untuk kegiatan pariwisata atau berenang."
-            f"{industry_text}"
+            f"{demo_urban_text}{industry_text}"
         )
     elif status == "SEDANG":
         return (
             f"Kualitas air di {beach_name} ({kec_name}) berada dalam kondisi **SEDANG**. "
             f"Perairan pantai cukup bersih namun tingkat kekeruhan (NDTI: {ndti:.4f}) atau klorofil-a (NDCI: {ndci:.4f}) menunjukkan nilai ambang batas wajar. "
             f"Pengunjung dihimbau tetap menjaga kebersihan pantai sekitar."
-            f"{industry_text}"
+            f"{demo_urban_text}{industry_text}"
         )
     else: # TIDAK SEHAT
         reasons = []
@@ -465,7 +488,7 @@ def generate_beach_explanation(beach_name: str, stats: dict) -> str:
         return (
             f"Kualitas air di {beach_name} ({kec_name}) tergolong **TIDAK SEHAT** (Tercemar). "
             f"Analisis menunjukkan {reason_str}. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini."
-            f"{industry_text}"
+            f"{demo_urban_text}{industry_text}"
         )
 
 
@@ -497,6 +520,8 @@ def get_beach_leaderboard():
             "kepadatan_industri": stats.get("kepadatan_industri"),
             "industri_relevan_terdekat": stats.get("industri_relevan_terdekat"),
             "jarak_industri_relevan_km": stats.get("jarak_industri_relevan_km"),
+            "kepadatan_penduduk_kecamatan": stats.get("kepadatan_penduduk_kecamatan"),
+            "indeks_pengaruh_urban": stats.get("indeks_pengaruh_urban"),
             "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar")
         })
         

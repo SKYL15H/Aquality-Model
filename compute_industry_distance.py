@@ -370,14 +370,39 @@ def compute_industry_impact_index(lat: float, lon: float) -> float:
     return round(min(100.0, index), 2)
 
 
-def add_industry_fields(data: dict, lat: float, lon: float) -> dict:
-    """Menambahkan semua field dampak industri ke dictionary data.
+def compute_urban_influence_index(lat: float, lon: float) -> float:
+    """Menghitung Indeks Pengaruh Urban (IPU) skala 0-100.
+    
+    Menggunakan IDW (Inverse Distance Weighting) ke pusat-pusat kota utama.
+    Mencerminkan sebaran pemukiman padat dan limpasan limbah domestik perkotaan.
+    
+    Formula: IPU = (Σ weight_i × exp(-dist_i / decay_rate)) / max_theoretical × 100
+    - decay_rate = URBAN_DECAY_RATE (15 km)
+    """
+    total_influence = 0.0
+    for center in URBAN_CENTERS:
+        dist = haversine(lat, lon, center["latitude"], center["longitude"])
+        influence = center["weight"] * math.exp(-dist / URBAN_DECAY_RATE)
+        total_influence += influence
+        
+    max_theoretical = sum(c["weight"] for c in URBAN_CENTERS)
+    if max_theoretical == 0:
+        return 0.0
+        
+    index = (total_influence / max_theoretical) * 100
+    return round(min(100.0, index), 2)
+
+
+def add_industry_fields(data: dict, lat: float, lon: float, kecamatan_name: str = "") -> dict:
+    """Menambahkan semua field dampak industri, kepadatan penduduk, dan pengaruh urban ke data.
     
     Metrik yang ditambahkan:
-    1. Jarak ke industri terdekat (legacy) + 3 terdekat
+    1. Jarak ke industri terdekat + 3 terdekat (legacy)
     2. Jarak ke industri terdekat yang RELEVAN
     3. Kepadatan industri dalam radius
     4. Indeks Dampak Industri (IDI) komposit
+    5. Kepadatan penduduk kecamatan (jiwa/km2)
+    6. Indeks Pengaruh Urban (IPU)
     """
     # --- Metrik Legacy: 3 industri terdekat ---
     nearest = find_nearest_industries(lat, lon, top_n=3)
@@ -416,6 +441,16 @@ def add_industry_fields(data: dict, lat: float, lon: float) -> dict:
     idi = compute_industry_impact_index(lat, lon)
     data["indeks_dampak_industri"] = idi
     data["kategori_dampak_industri"] = get_dampak_category_by_index(idi)
+
+    # --- Metrik Baru: Demografi & Urban ---
+    # Kepadatan Penduduk (lookup dari dictionary)
+    kec_key = kecamatan_name or data.get("Kecamatan", "")
+    density = DISTRICT_POPULATION_DENSITY.get(kec_key, 500.0) # default 500 jiwa/km2 jika tidak ditemukan
+    data["kepadatan_penduduk_kecamatan"] = density
+    
+    # Indeks Pengaruh Urban
+    ipu = compute_urban_influence_index(lat, lon)
+    data["indeks_pengaruh_urban"] = ipu
     
     return data
 
@@ -512,7 +547,7 @@ def process_kecamatan():
             # Tambahkan centroid ke data
             stats["centroid_latitude"] = lat
             stats["centroid_longitude"] = lon
-            add_industry_fields(stats, lat, lon)
+            add_industry_fields(stats, lat, lon, kecamatan_name=kec_name)
             updated_count += 1
             
             nearest = stats.get("industri_terdekat", "?")
@@ -555,7 +590,7 @@ def process_beaches():
         lon = stats.get("longitude")
         
         if lat is not None and lon is not None:
-            add_industry_fields(stats, lat, lon)
+            add_industry_fields(stats, lat, lon, kecamatan_name=stats.get("Kecamatan", ""))
             
             nearest = stats.get("industri_terdekat", "?")
             dist = stats.get("jarak_industri_km", "?")
@@ -595,6 +630,7 @@ def save_kecamatan_csv(kec_data: dict):
         "industri_relevan_terdekat", "tipe_industri_relevan", "jarak_industri_relevan_km", "relevansi_industri",
         "jumlah_industri_radius_10km", "kepadatan_industri", "total_relevansi_radius",
         "indeks_dampak_industri", "kategori_dampak_industri",
+        "kepadatan_penduduk_kecamatan", "indeks_pengaruh_urban",
         "penjelasan_kualitas"
     ]
     
@@ -625,6 +661,7 @@ def save_beach_csv(beach_data: dict):
         "industri_relevan_terdekat", "tipe_industri_relevan", "jarak_industri_relevan_km", "relevansi_industri",
         "jumlah_industri_radius_10km", "kepadatan_industri", "total_relevansi_radius",
         "indeks_dampak_industri", "kategori_dampak_industri",
+        "kepadatan_penduduk_kecamatan", "indeks_pengaruh_urban",
         "penjelasan_kualitas"
     ]
     

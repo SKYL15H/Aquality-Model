@@ -49,7 +49,9 @@
       "PT Lotte Chemical Indonesia",
       "PT Sulfindo Adiusaha"
     ],
-    "indeks_dampak_industri": 36.82
+    "indeks_dampak_industri": 36.82,
+    "kepadatan_penduduk_kecamatan": 2500.0,
+    "indeks_pengaruh_urban": 23.99
   },
   "Citangkil": {
     "Kabupaten_Kota": "Cilegon",
@@ -104,7 +106,9 @@
       "Pelabuhan Ciwandan",
       "PT Sulfindo Adiusaha"
     ],
-    "indeks_dampak_industri": 59.16
+    "indeks_dampak_industri": 59.16,
+    "kepadatan_penduduk_kecamatan": 2200.0,
+    "indeks_pengaruh_urban": 25.01
   },
   "Ciwandan": {
     "Kabupaten_Kota": "Cilegon",
@@ -158,7 +162,9 @@
       "Pelabuhan Ciwandan",
       "PT Sulfindo Adiusaha"
     ],
-    "indeks_dampak_industri": 47.44
+    "indeks_dampak_industri": 47.44,
+    "kepadatan_penduduk_kecamatan": 1100.0,
+    "indeks_pengaruh_urban": 19.5
   },
   "Grogol": {
     "Kabupaten_Kota": "Cilegon",
@@ -215,7 +221,9 @@
       "Pelabuhan Ciwandan",
       "PT Sulfindo Adiusaha"
     ],
-    "indeks_dampak_industri": 47.55
+    "indeks_dampak_industri": 47.55,
+    "kepadatan_penduduk_kecamatan": 1300.0,
+    "indeks_pengaruh_urban": 19.49
   },
   "Jombang": {
     "Kabupaten_Kota": "Cilegon",
@@ -267,7 +275,9 @@
       "PT Lotte Chemical Indonesia",
       "PT Sulfindo Adiusaha"
     ],
-    "indeks_dampak_industri": 39.04
+    "indeks_dampak_industri": 39.04,
+    "kepadatan_penduduk_kecamatan": 4500.0,
+    "indeks_pengaruh_urban": 22.67
   },
   "Pulomerak": {
     "Kabupaten_Kota": "Cilegon",
@@ -318,7 +328,9 @@
       "PT Indonesia Power Suralaya",
       "Pelabuhan Merak"
     ],
-    "indeks_dampak_industri": 35.21
+    "indeks_dampak_industri": 35.21,
+    "kepadatan_penduduk_kecamatan": 1800.0,
+    "indeks_pengaruh_urban": 13.6
   },
   "Kasemen": {
     "Kabupaten_Kota": "Kota Serang",
@@ -365,7 +377,9 @@
     "daftar_industri_radius": [
       "Pelabuhan Perikanan Karangantu"
     ],
-    "indeks_dampak_industri": 11.81
+    "indeks_dampak_industri": 11.81,
+    "kepadatan_penduduk_kecamatan": 1200.0,
+    "indeks_pengaruh_urban": 21.39
   },
   "Bayah": {
     "Kabupaten_Kota": "Lebak",
@@ -412,7 +426,9 @@
     "daftar_industri_radius": [
       "PT Indocement Tunggal Prakarsa (Bayah)"
     ],
-    "indeks_dampak_industri": 3.06
+    "indeks_dampak_industri": 3.06,
+    "kepadatan_penduduk_kecamatan": 350.0,
+    "indeks_pengaruh_urban": 0.44
   },
   "Cihara": {
     "Kabupaten_Kota": "Lebak",
@@ -457,7 +473,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.86
+    "indeks_dampak_industri": 0.86,
+    "kepadatan_penduduk_kecamatan": 180.0,
+    "indeks_pengaruh_urban": 0.82
   },
   "Cilograng": {
     "Kabupaten_Kota": "Lebak",
@@ -502,7 +520,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 1.56
+    "indeks_dampak_industri": 1.56,
+    "kepadatan_penduduk_kecamatan": 150.0,
+    "indeks_pengaruh_urban": 0.36
   },
   "Malingping": {
     "Kabupaten_Kota": "Lebak",
@@ -547,7 +567,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.24
+    "indeks_dampak_industri": 0.24,
+    "kepadatan_penduduk_kecamatan": 700.0,
+    "indeks_pengaruh_urban": 1.55
   },
   "Panggarangan": {
     "Kabupaten_Kota": "Lebak",
@@ -592,7 +614,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 1.34
+    "indeks_dampak_industri": 1.34,
+    "kepadatan_penduduk_kecamatan": 200.0,
+    "indeks_pengaruh_urban": 0.85
   },
   "Wanasalam": {
     "Kabupaten_Kota": "Lebak",
@@ -637,7 +661,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.17
+    "indeks_dampak_industri": 0.17,
+    "kepadatan_penduduk_kecamatan": 400.0,
+    "indeks_pengaruh_urban": 1.61
   },
   "Carita": {
     "Kabupaten_Kota": "Pandeglang",
@@ -682,7 +708,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 5.1
+    "indeks_dampak_industri": 5.1,
+    "kepadatan_penduduk_kecamatan": 550.0,
+    "indeks_pengaruh_urban": 18.76
   },
   "Cibitung": {
     "Kabupaten_Kota": "Pandeglang",
@@ -727,7 +755,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.07
+    "indeks_dampak_industri": 0.07,
+    "kepadatan_penduduk_kecamatan": 120.0,
+    "indeks_pengaruh_urban": 0.94
   },
   "Cigeulis": {
     "Kabupaten_Kota": "Pandeglang",
@@ -772,7 +802,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.34
+    "indeks_dampak_industri": 0.34,
+    "kepadatan_penduduk_kecamatan": 200.0,
+    "indeks_pengaruh_urban": 2.75
   },
   "Cikeusik": {
     "Kabupaten_Kota": "Pandeglang",
@@ -817,7 +849,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.12
+    "indeks_dampak_industri": 0.12,
+    "kepadatan_penduduk_kecamatan": 500.0,
+    "indeks_pengaruh_urban": 1.31
   },
   "Cimanggu": {
     "Kabupaten_Kota": "Pandeglang",
@@ -862,7 +896,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.08
+    "indeks_dampak_industri": 0.08,
+    "kepadatan_penduduk_kecamatan": 150.0,
+    "indeks_pengaruh_urban": 1.08
   },
   "Jiput": {
     "Kabupaten_Kota": "Pandeglang",
@@ -909,7 +945,9 @@
     "daftar_industri_radius": [
       "PLTU Labuan (Banten 2)"
     ],
-    "indeks_dampak_industri": 4.76
+    "indeks_dampak_industri": 4.76,
+    "kepadatan_penduduk_kecamatan": 700.0,
+    "indeks_pengaruh_urban": 18.82
   },
   "Labuan": {
     "Kabupaten_Kota": "Pandeglang",
@@ -956,7 +994,9 @@
     "daftar_industri_radius": [
       "PLTU Labuan (Banten 2)"
     ],
-    "indeks_dampak_industri": 6.31
+    "indeks_dampak_industri": 6.31,
+    "kepadatan_penduduk_kecamatan": 1600.0,
+    "indeks_pengaruh_urban": 20.0
   },
   "Pagelaran": {
     "Kabupaten_Kota": "Pandeglang",
@@ -1003,7 +1043,9 @@
     "daftar_industri_radius": [
       "PLTU Labuan (Banten 2)"
     ],
-    "indeks_dampak_industri": 3.5
+    "indeks_dampak_industri": 3.5,
+    "kepadatan_penduduk_kecamatan": 600.0,
+    "indeks_pengaruh_urban": 14.11
   },
   "Panimbang": {
     "Kabupaten_Kota": "Pandeglang",
@@ -1048,7 +1090,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.96
+    "indeks_dampak_industri": 0.96,
+    "kepadatan_penduduk_kecamatan": 300.0,
+    "indeks_pengaruh_urban": 5.43
   },
   "Patia": {
     "Kabupaten_Kota": "Pandeglang",
@@ -1093,7 +1137,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 2.08
+    "indeks_dampak_industri": 2.08,
+    "kepadatan_penduduk_kecamatan": 350.0,
+    "indeks_pengaruh_urban": 10.3
   },
   "Sobang": {
     "Kabupaten_Kota": "Pandeglang",
@@ -1138,7 +1184,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.61
+    "indeks_dampak_industri": 0.61,
+    "kepadatan_penduduk_kecamatan": 180.0,
+    "indeks_pengaruh_urban": 4.22
   },
   "Sukaresmi": {
     "Kabupaten_Kota": "Pandeglang",
@@ -1183,7 +1231,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 1.75
+    "indeks_dampak_industri": 1.75,
+    "kepadatan_penduduk_kecamatan": 450.0,
+    "indeks_pengaruh_urban": 8.7
   },
   "Sumur": {
     "Kabupaten_Kota": "Pandeglang",
@@ -1228,7 +1278,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.01
+    "indeks_dampak_industri": 0.01,
+    "kepadatan_penduduk_kecamatan": 90.0,
+    "indeks_pengaruh_urban": 0.3
   },
   "Anyar": {
     "Kabupaten_Kota": "Serang",
@@ -1276,7 +1328,9 @@
       "PT Banten Energy",
       "Pelabuhan Ciwandan"
     ],
-    "indeks_dampak_industri": 24.92
+    "indeks_dampak_industri": 24.92,
+    "kepadatan_penduduk_kecamatan": 800.0,
+    "indeks_pengaruh_urban": 15.26
   },
   "Bojonegara": {
     "Kabupaten_Kota": "Serang",
@@ -1326,7 +1380,9 @@
       "PT Indah Kiat Pulp & Paper (Merak)",
       "Pelabuhan Merak"
     ],
-    "indeks_dampak_industri": 28.25
+    "indeks_dampak_industri": 28.25,
+    "kepadatan_penduduk_kecamatan": 950.0,
+    "indeks_pengaruh_urban": 16.95
   },
   "Cinangka": {
     "Kabupaten_Kota": "Serang",
@@ -1371,7 +1427,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 9.04
+    "indeks_dampak_industri": 9.04,
+    "kepadatan_penduduk_kecamatan": 450.0,
+    "indeks_pengaruh_urban": 14.11
   },
   "Kramatwatu": {
     "Kabupaten_Kota": "Serang",
@@ -1418,7 +1476,9 @@
     "daftar_industri_radius": [
       "Pelabuhan Perikanan Karangantu"
     ],
-    "indeks_dampak_industri": 22.94
+    "indeks_dampak_industri": 22.94,
+    "kepadatan_penduduk_kecamatan": 1400.0,
+    "indeks_pengaruh_urban": 23.46
   },
   "Pontang": {
     "Kabupaten_Kota": "Serang",
@@ -1463,7 +1523,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 5.28
+    "indeks_dampak_industri": 5.28,
+    "kepadatan_penduduk_kecamatan": 750.0,
+    "indeks_pengaruh_urban": 12.73
   },
   "Puloampel": {
     "Kabupaten_Kota": "Serang",
@@ -1508,7 +1570,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 20.04
+    "indeks_dampak_industri": 20.04,
+    "kepadatan_penduduk_kecamatan": 900.0,
+    "indeks_pengaruh_urban": 12.82
   },
   "Tanara": {
     "Kabupaten_Kota": "Serang",
@@ -1553,7 +1617,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 1.86
+    "indeks_dampak_industri": 1.86,
+    "kepadatan_penduduk_kecamatan": 650.0,
+    "indeks_pengaruh_urban": 9.19
   },
   "Tirtayasa": {
     "Kabupaten_Kota": "Serang",
@@ -1598,7 +1664,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 3.21
+    "indeks_dampak_industri": 3.21,
+    "kepadatan_penduduk_kecamatan": 600.0,
+    "indeks_pengaruh_urban": 8.92
   },
   "Kemiri": {
     "Kabupaten_Kota": "Tangerang",
@@ -1643,7 +1711,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.55
+    "indeks_dampak_industri": 0.55,
+    "kepadatan_penduduk_kecamatan": 1200.0,
+    "indeks_pengaruh_urban": 10.32
   },
   "Kosambi": {
     "Kabupaten_Kota": "Tangerang",
@@ -1688,7 +1758,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.05
+    "indeks_dampak_industri": 0.05,
+    "kepadatan_penduduk_kecamatan": 3200.0,
+    "indeks_pengaruh_urban": 12.51
   },
   "Kronjo": {
     "Kabupaten_Kota": "Tangerang",
@@ -1733,7 +1805,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.81
+    "indeks_dampak_industri": 0.81,
+    "kepadatan_penduduk_kecamatan": 1100.0,
+    "indeks_pengaruh_urban": 9.57
   },
   "Mauk": {
     "Kabupaten_Kota": "Tangerang",
@@ -1778,7 +1852,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.28
+    "indeks_dampak_industri": 0.28,
+    "kepadatan_penduduk_kecamatan": 1500.0,
+    "indeks_pengaruh_urban": 10.07
   },
   "Mekarbaru": {
     "Kabupaten_Kota": "Tangerang",
@@ -1823,7 +1899,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 1.33
+    "indeks_dampak_industri": 1.33,
+    "kepadatan_penduduk_kecamatan": 1000.0,
+    "indeks_pengaruh_urban": 9.45
   },
   "Pakuhaji": {
     "Kabupaten_Kota": "Tangerang",
@@ -1868,7 +1946,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.12
+    "indeks_dampak_industri": 0.12,
+    "kepadatan_penduduk_kecamatan": 1900.0,
+    "indeks_pengaruh_urban": 12.28
   },
   "Sukadiri": {
     "Kabupaten_Kota": "Tangerang",
@@ -1913,7 +1993,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.2
+    "indeks_dampak_industri": 0.2,
+    "kepadatan_penduduk_kecamatan": 2100.0,
+    "indeks_pengaruh_urban": 11.52
   },
   "Teluknaga": {
     "Kabupaten_Kota": "Tangerang",
@@ -1958,6 +2040,8 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.06
+    "indeks_dampak_industri": 0.06,
+    "kepadatan_penduduk_kecamatan": 2800.0,
+    "indeks_pengaruh_urban": 10.98
   }
 }

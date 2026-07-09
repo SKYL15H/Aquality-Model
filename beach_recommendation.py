@@ -122,16 +122,17 @@ SIRKULASI_SCORES = {
     "LOW": 0.2,      # Sirkulasi lemah, polutan terakumulasi
 }
 
-# Bobot setiap parameter dalam perhitungan Health Score v2.0 (total = 1.0)
+# Bobot setiap parameter dalam perhitungan Health Score v3.0 (total = 1.0)
 WEIGHTS = {
-    "pct_sehat": 0.25,          # Persentase area sehat (terkoreksi bias pantai)
+    "pct_sehat": 0.20,          # Persentase area sehat (terkoreksi bias pantai)
     "ndti_inv": 0.15,           # Kekeruhan (terkoreksi energi gelombang)
     "ndci_inv": 0.10,           # Klorofil-a (inverted)
     "tss_inv": 0.05,            # TSS (inverted)
     "cdom_inv": 0.05,           # CDOM (inverted)
     "tren": 0.10,               # Tren kualitas historis
-    "industri_inv": 0.10,       # Dampak industri terdekat (inverted)
-    "polusi_urban_inv": 0.15,   # Risiko polusi urban (inverted — rendah = bagus)
+    "industri_inv": 0.10,       # Dampak industri terdekat (inverted - IDI)
+    "kepadatan_penduduk_inv": 0.10, # Kepadatan penduduk kecamatan (inverted - semakin padat = semakin berisiko)
+    "pengaruh_urban_inv": 0.10,     # Indeks Pengaruh Urban (inverted - semakin dekat kota = semakin berisiko)
     "sirkulasi_pantai": 0.05,   # Bonus sirkulasi perairan (tinggi = bagus)
 }
 
@@ -239,12 +240,16 @@ class BeachRecommender:
         ndci_vals = [abs(b.get("Mean_NDCI_2026", 0.0)) for b in beaches.values()]
         tss_vals = [b.get("Mean_TSS_2026", 0.0) for b in beaches.values()]
         cdom_vals = [b.get("Mean_CDOM_2026", 0.0) for b in beaches.values()]
+        density_vals = [b.get("kepadatan_penduduk_kecamatan", 500.0) for b in beaches.values()]
+        influence_vals = [b.get("indeks_pengaruh_urban", 0.0) for b in beaches.values()]
 
         min_pct, max_pct = min(pct_vals), max(pct_vals)
         min_ndti, max_ndti = min(ndti_vals), max(ndti_vals)
         min_ndci, max_ndci = min(ndci_vals), max(ndci_vals)
         min_tss, max_tss = min(tss_vals), max(tss_vals)
         min_cdom, max_cdom = min(cdom_vals), max(cdom_vals)
+        min_density, max_density = min(density_vals), max(density_vals)
+        min_influence, max_influence = min(influence_vals), max(influence_vals)
 
         results = []
         for name, stats in beaches.items():
@@ -260,9 +265,8 @@ class BeachRecommender:
             tren = stats.get("Tren_Kualitas", "STABIL")
             kategori_industri = stats.get("kategori_dampak_industri", "RENDAH")
             idi_raw = stats.get("indeks_dampak_industri", 0.0)  # IDI 0-100
-
-            # Risiko polusi urban (0-1, 0 = pristine)
-            polusi_urban = URBAN_POLLUTION_RISK.get(kec, 0.40)
+            density_val = stats.get("kepadatan_penduduk_kecamatan", 500.0)
+            influence_val = stats.get("indeks_pengaruh_urban", 0.0)
 
             # Normalisasi parameter ke skala 0-100
             s_pct = self._normalize(pct_sehat, min_pct, max_pct)
@@ -271,17 +275,17 @@ class BeachRecommender:
             s_tss = self._normalize(tss, min_tss, max_tss, invert=True)
             s_cdom = self._normalize(cdom, min_cdom, max_cdom, invert=True)
             s_tren = TREN_SCORES.get(tren, 0.5) * 100.0
-            # Gunakan IDI kontinu jika tersedia, fallback ke kategorikal
+            
             if idi_raw > 0:
-                s_industri = max(0.0, 100.0 - idi_raw)  # Inverted: IDI tinggi = skor rendah
+                s_industri = max(0.0, 100.0 - idi_raw)
             else:
                 s_industri = INDUSTRI_SCORES.get(kategori_industri, 0.5) * 100.0
-            # Polusi urban inverted: risiko rendah (0) → skor tinggi (100)
-            s_polusi_urban = (1.0 - polusi_urban) * 100.0
-            # Sirkulasi pantai berdasarkan energi gelombang
+                
+            s_density = self._normalize(density_val, min_density, max_density, invert=True)
+            s_influence = self._normalize(influence_val, min_influence, max_influence, invert=True)
             s_sirkulasi = SIRKULASI_SCORES.get(energy_type, 0.5) * 100.0
 
-            # Hitung skor komposit (weighted sum) v2.0
+            # Hitung skor komposit (weighted sum) v3.0
             health_score = (
                 WEIGHTS["pct_sehat"] * s_pct
                 + WEIGHTS["ndti_inv"] * s_ndti
@@ -290,7 +294,8 @@ class BeachRecommender:
                 + WEIGHTS["cdom_inv"] * s_cdom
                 + WEIGHTS["tren"] * s_tren
                 + WEIGHTS["industri_inv"] * s_industri
-                + WEIGHTS["polusi_urban_inv"] * s_polusi_urban
+                + WEIGHTS["kepadatan_penduduk_inv"] * s_density
+                + WEIGHTS["pengaruh_urban_inv"] * s_influence
                 + WEIGHTS["sirkulasi_pantai"] * s_sirkulasi
             )
             health_score = round(health_score, 2)
@@ -312,7 +317,6 @@ class BeachRecommender:
                 "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar"),
                 "health_score": health_score,
                 "label_rekomendasi": label,
-                # Parameter individual
                 "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
                 "pct_sehat_terkoreksi": round(pct_sehat, 1),
                 "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
@@ -330,10 +334,9 @@ class BeachRecommender:
                 "jarak_industri_relevan_km": stats.get("jarak_industri_relevan_km"),
                 "jumlah_industri_radius_10km": stats.get("jumlah_industri_radius_10km", 0),
                 "kepadatan_industri": stats.get("kepadatan_industri", 0),
-                # Parameter baru v2.0
+                "kepadatan_penduduk_kecamatan": density_val,
+                "indeks_pengaruh_urban": influence_val,
                 "tipe_pantai": energy_type,
-                "risiko_polusi_urban": round(polusi_urban, 2),
-                # Breakdown skor per parameter (untuk transparansi)
                 "skor_detail": {
                     "skor_pct_sehat": round(s_pct, 2),
                     "skor_kekeruhan": round(s_ndti, 2),
@@ -342,14 +345,13 @@ class BeachRecommender:
                     "skor_cdom": round(s_cdom, 2),
                     "skor_tren": round(s_tren, 2),
                     "skor_industri": round(s_industri, 2),
-                    "skor_polusi_urban": round(s_polusi_urban, 2),
+                    "skor_kepadatan_penduduk": round(s_density, 2),
+                    "skor_pengaruh_urban": round(s_influence, 2),
                     "skor_sirkulasi": round(s_sirkulasi, 2),
                 },
             })
 
-        # Urutkan berdasarkan Health Score tertinggi
         results.sort(key=lambda x: x["health_score"], reverse=True)
-
         # Tambahkan ranking
         for i, r in enumerate(results, start=1):
             r["ranking"] = i
@@ -415,7 +417,8 @@ class BeachRecommender:
         idi = beach_entry.get("indeks_dampak_industri", 0)
         n_industri = beach_entry.get("jumlah_industri_radius_10km", 0)
         tipe_pantai = beach_entry.get("tipe_pantai", "MEDIUM")
-        polusi_urban = beach_entry.get("risiko_polusi_urban", 0.4)
+        density = beach_entry.get("kepadatan_penduduk_kecamatan", 500.0)
+        ipu = beach_entry.get("indeks_pengaruh_urban", 0.0)
 
         if label == "SANGAT DIREKOMENDASIKAN":
             intro = (
@@ -457,13 +460,14 @@ class BeachRecommender:
         }
         tipe_text = f" Pantai ini termasuk kategori {tipe_labels.get(tipe_pantai, 'pantai pesisir')}."
 
-        # Konteks polusi urban
-        if polusi_urban >= 0.70:
-            polusi_text = f" Risiko polusi antropogenik **TINGGI** (skor risiko: {polusi_urban:.0%}) karena kedekatan dengan pusat urban padat dan/atau kawasan industri."
-        elif polusi_urban >= 0.40:
-            polusi_text = f" Risiko polusi antropogenik **SEDANG** (skor risiko: {polusi_urban:.0%}) dari aktivitas pariwisata dan pemukiman sekitar."
+        # Konteks Kepadatan Penduduk & Urban Influence
+        demografi_text = f" Kecamatan {kec} memiliki kepadatan penduduk **{density:,.0f} jiwa/km²**."
+        if ipu >= 60:
+            urban_text = f" Indeks Pengaruh Urban pantai ini sangat **TINGGI** ({ipu}/100) karena dekat dengan metropolitan/pusat kota utama Banten, yang berpotensi menyumbang limpasan limbah domestik urban."
+        elif ipu >= 30:
+            urban_text = f" Indeks Pengaruh Urban bersifat **SEDANG** ({ipu}/100) dari aktivitas pemukiman perkotaan sekitar."
         else:
-            polusi_text = f" Risiko polusi antropogenik **RENDAH** (skor risiko: {polusi_urban:.0%}) karena lokasi terpencil dan minim aktivitas urban."
+            urban_text = f" Indeks Pengaruh Urban pantai ini **RENDAH** ({ipu}/100) karena lokasinya yang terisolasi dari pusat perkotaan utama."
 
         # Konteks dampak industri (3 metrik baru)
         kategori_industri = beach_entry.get("kategori_dampak_industri", "RENDAH")
@@ -496,8 +500,8 @@ class BeachRecommender:
             "skor_cdom": "bahan organik terlarut",
             "skor_tren": "tren historis",
             "skor_industri": "jarak dari industri",
-            "skor_polusi_urban": "rendahnya polusi urban",
-            "skor_sirkulasi": "sirkulasi perairan",
+            "skor_kepadatan_penduduk": "skor kepadatan penduduk",
+            "skor_pengaruh_urban": "skor pengaruh urban",
         }
 
         param_text = (
@@ -506,7 +510,7 @@ class BeachRecommender:
             f"{param_names.get(worst_param[0], worst_param[0])} (skor: {worst_param[1]})."
         )
 
-        return intro + tipe_text + industri_text + polusi_text + tren_text + param_text
+        return intro + tipe_text + demografi_text + urban_text + industri_text + tren_text + param_text
 
     def save_to_json(self, output_path: str) -> None:
         """Menyimpan hasil rekomendasi lengkap ke file JSON."""

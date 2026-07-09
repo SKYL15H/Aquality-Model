@@ -48,7 +48,9 @@
       "PT Banten Energy",
       "Pelabuhan Ciwandan"
     ],
-    "indeks_dampak_industri": 21.63
+    "indeks_dampak_industri": 21.63,
+    "kepadatan_penduduk_kecamatan": 800.0,
+    "indeks_pengaruh_urban": 12.4
   },
   "Pantai Carita": {
     "Kecamatan": "Carita",
@@ -96,7 +98,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 9.61
+    "indeks_dampak_industri": 9.61,
+    "kepadatan_penduduk_kecamatan": 550.0,
+    "indeks_pengaruh_urban": 11.52
   },
   "Pantai Tanjung Lesung": {
     "Kecamatan": "Panimbang",
@@ -144,7 +148,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.89
+    "indeks_dampak_industri": 0.89,
+    "kepadatan_penduduk_kecamatan": 300.0,
+    "indeks_pengaruh_urban": 5.03
   },
   "Pantai Sawarna": {
     "Kecamatan": "Bayah",
@@ -194,7 +200,9 @@
     "daftar_industri_radius": [
       "PT Indocement Tunggal Prakarsa (Bayah)"
     ],
-    "indeks_dampak_industri": 2.57
+    "indeks_dampak_industri": 2.57,
+    "kepadatan_penduduk_kecamatan": 350.0,
+    "indeks_pengaruh_urban": 0.24
   },
   "Pantai Bagedur": {
     "Kecamatan": "Malingping",
@@ -242,7 +250,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.37
+    "indeks_dampak_industri": 0.37,
+    "kepadatan_penduduk_kecamatan": 700.0,
+    "indeks_pengaruh_urban": 0.55
   },
   "Pantai Karang Bolong": {
     "Kecamatan": "Cinangka",
@@ -290,7 +300,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 12.33
+    "indeks_dampak_industri": 12.33,
+    "kepadatan_penduduk_kecamatan": 450.0,
+    "indeks_pengaruh_urban": 11.7
   },
   "Pantai Ciputih": {
     "Kecamatan": "Sumur",
@@ -338,7 +350,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.08
+    "indeks_dampak_industri": 0.08,
+    "kepadatan_penduduk_kecamatan": 90.0,
+    "indeks_pengaruh_urban": 0.99
   },
   "Pantai Pulau Umang": {
     "Kecamatan": "Sumur",
@@ -386,7 +400,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.14
+    "indeks_dampak_industri": 0.14,
+    "kepadatan_penduduk_kecamatan": 90.0,
+    "indeks_pengaruh_urban": 1.51
   },
   "Pantai Sambolo": {
     "Kecamatan": "Anyar",
@@ -436,7 +452,9 @@
     "daftar_industri_radius": [
       "Pelabuhan Ciwandan"
     ],
-    "indeks_dampak_industri": 18.75
+    "indeks_dampak_industri": 18.75,
+    "kepadatan_penduduk_kecamatan": 800.0,
+    "indeks_pengaruh_urban": 12.49
   },
   "Pantai Pasir Putih Sirih": {
     "Kecamatan": "Anyar",
@@ -484,7 +502,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 17.54
+    "indeks_dampak_industri": 17.54,
+    "kepadatan_penduduk_kecamatan": 800.0,
+    "indeks_pengaruh_urban": 12.58
   },
   "Pantai Marbella": {
     "Kecamatan": "Anyar",
@@ -534,7 +554,9 @@
     "daftar_industri_radius": [
       "Pelabuhan Ciwandan"
     ],
-    "indeks_dampak_industri": 19.83
+    "indeks_dampak_industri": 19.83,
+    "kepadatan_penduduk_kecamatan": 800.0,
+    "indeks_pengaruh_urban": 12.46
   },
   "Pantai Florida Indah": {
     "Kecamatan": "Cinangka",
@@ -582,7 +604,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 11.29
+    "indeks_dampak_industri": 11.29,
+    "kepadatan_penduduk_kecamatan": 450.0,
+    "indeks_pengaruh_urban": 12.61
   },
   "Pantai Jambu": {
     "Kecamatan": "Cinangka",
@@ -630,7 +654,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 12.48
+    "indeks_dampak_industri": 12.48,
+    "kepadatan_penduduk_kecamatan": 450.0,
+    "indeks_pengaruh_urban": 12.16
   },
   "Pantai Lontar": {
     "Kecamatan": "Tirtayasa",
@@ -678,7 +704,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 3.56
+    "indeks_dampak_industri": 3.56,
+    "kepadatan_penduduk_kecamatan": 600.0,
+    "indeks_pengaruh_urban": 9.09
   },
   "Pantai Tanjung Pasir": {
     "Kecamatan": "Teluknaga",
@@ -726,7 +754,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.05
+    "indeks_dampak_industri": 0.05,
+    "kepadatan_penduduk_kecamatan": 2800.0,
+    "indeks_pengaruh_urban": 7.93
   },
   "Pantai Tanjung Kait": {
     "Kecamatan": "Mauk",
@@ -774,7 +804,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.67
+    "indeks_dampak_industri": 0.67,
+    "kepadatan_penduduk_kecamatan": 1500.0,
+    "indeks_pengaruh_urban": 7.92
   },
   "Pantai Binuangeun": {
     "Kecamatan": "Wanasalam",
@@ -822,7 +854,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.13
+    "indeks_dampak_industri": 0.13,
+    "kepadatan_penduduk_kecamatan": 400.0,
+    "indeks_pengaruh_urban": 0.91
   },
   "Pantai Karang Taraje": {
     "Kecamatan": "Bayah",
@@ -872,7 +906,9 @@
     "daftar_industri_radius": [
       "PT Indocement Tunggal Prakarsa (Bayah)"
     ],
-    "indeks_dampak_industri": 2.3
+    "indeks_dampak_industri": 2.3,
+    "kepadatan_penduduk_kecamatan": 350.0,
+    "indeks_pengaruh_urban": 0.24
   },
   "Pantai Sangiang": {
     "Kecamatan": "Anyar",
@@ -922,7 +958,9 @@
     "daftar_industri_radius": [
       "PLTU Suralaya"
     ],
-    "indeks_dampak_industri": 17.38
+    "indeks_dampak_industri": 17.38,
+    "kepadatan_penduduk_kecamatan": 800.0,
+    "indeks_pengaruh_urban": 8.33
   },
   "Pantai Pasir Putih Florida": {
     "Kecamatan": "Cinangka",
@@ -970,7 +1008,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 11.69
+    "indeks_dampak_industri": 11.69,
+    "kepadatan_penduduk_kecamatan": 450.0,
+    "indeks_pengaruh_urban": 12.36
   },
   "Pantai Karang Songsong": {
     "Kecamatan": "Cihara",
@@ -1018,7 +1058,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.96
+    "indeks_dampak_industri": 0.96,
+    "kepadatan_penduduk_kecamatan": 180.0,
+    "indeks_pengaruh_urban": 0.61
   },
   "Pantai Pulau Cangkir": {
     "Kecamatan": "Kronjo",
@@ -1066,7 +1108,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.95
+    "indeks_dampak_industri": 0.95,
+    "kepadatan_penduduk_kecamatan": 1100.0,
+    "indeks_pengaruh_urban": 7.7
   },
   "Pantai Pasir Putih Cihara": {
     "Kecamatan": "Cihara",
@@ -1114,7 +1158,9 @@
     "kepadatan_industri": 0.0,
     "total_relevansi_radius": 0.0,
     "daftar_industri_radius": [],
-    "indeks_dampak_industri": 0.54
+    "indeks_dampak_industri": 0.54,
+    "kepadatan_penduduk_kecamatan": 180.0,
+    "indeks_pengaruh_urban": 0.8
   },
   "Pantai Tanjung Layar": {
     "Kecamatan": "Bayah",
@@ -1164,7 +1210,9 @@
     "daftar_industri_radius": [
       "PT Indocement Tunggal Prakarsa (Bayah)"
     ],
-    "indeks_dampak_industri": 2.79
+    "indeks_dampak_industri": 2.79,
+    "kepadatan_penduduk_kecamatan": 350.0,
+    "indeks_pengaruh_urban": 0.24
   },
   "Pantai Caringin": {
     "Kecamatan": "Labuan",
@@ -1214,6 +1262,8 @@
     "daftar_industri_radius": [
       "PLTU Labuan (Banten 2)"
     ],
-    "indeks_dampak_industri": 6.85
+    "indeks_dampak_industri": 6.85,
+    "kepadatan_penduduk_kecamatan": 1600.0,
+    "indeks_pengaruh_urban": 20.16
   }
 }
