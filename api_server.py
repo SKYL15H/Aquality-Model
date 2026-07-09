@@ -598,16 +598,10 @@ def get_beach_recommendations(
 ):
     """Mengembalikan daftar rekomendasi pantai tersehat di Banten, diurutkan berdasarkan Health Score tertinggi.
     
-    Health Score dihitung dari kombinasi multi-parameter:
-    - 25% Persentase area air sehat (terkoreksi bias pantai)
-    - 15% Kejernihan air (terkoreksi energi gelombang pantai)
-    - 10% Kadar klorofil-a (1 - NDCI, inverted)
-    - 5%  Kandungan padatan tersuspensi (1 - TSS, inverted)
-    - 5%  Bahan organik terlarut (1 - CDOM, inverted)
-    - 10% Tren kualitas historis (MEMBAIK > STABIL > MEMBURUK)
-    - 10% Dampak industri terdekat (RENDAH > SEDANG > TINGGI)
-    - 15% Risiko polusi urban (rendah = bagus)
-    - 5%  Bonus sirkulasi perairan (energi gelombang tinggi = bagus)
+    Health Score dihitung dari kombinasi multi-parameter darat (Terrestrial WSM v4.0):
+    - 40% Indeks Dampak Industri (IDI) Inverted
+    - 30% Kepadatan Penduduk Kecamatan Inverted
+    - 30% Indeks Pengaruh Urban (IPU) Inverted
     """
     if BEACH_RECOMMENDER is None:
         raise HTTPException(
@@ -630,7 +624,7 @@ def get_beach_recommendations(
     
     return {
         "total": len(enriched),
-        "model": "Multi-Criteria Weighted Health Score v2.0",
+        "model": "Multi-Criteria Weighted Terrestrial Health Score v4.0",
         "recommendations": enriched
     }
 

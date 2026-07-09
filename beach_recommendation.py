@@ -162,14 +162,7 @@ class BeachRecommender:
                 "kepadatan_industri": stats.get("kepadatan_industri", 0),
                 "kepadatan_penduduk_kecamatan": density_val,
                 "indeks_pengaruh_urban": influence_val,
-                # Legacy metadata
-                "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
-                "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
-                "mean_ndti_2026": stats.get("Mean_NDTI_2026", 0.0),
-                "mean_ndci_2026": stats.get("Mean_NDCI_2026", 0.0),
-                "mean_tss_2026": stats.get("Mean_TSS_2026", 0.0),
-                "mean_cdom_2026": stats.get("Mean_CDOM_2026", 0.0),
-                "tren_kualitas": stats.get("Tren_Kualitas", "STABIL"),
+                # Skor detail
                 "skor_detail": {
                     "skor_industri": round(s_industri, 2),
                     "skor_kepadatan_penduduk": round(s_density, 2),
