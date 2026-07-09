@@ -136,6 +136,74 @@ DENSITY_RADIUS_KM = 10.0
 IDI_DECAY_RATE = 10.0
 
 # ---------------------------------------------------------------------------
+# Data Kepadatan Penduduk & Aktivitas Manusia Banten (BPS Banten)
+# ---------------------------------------------------------------------------
+
+# Kepadatan Penduduk per Kecamatan (jiwa/km2)
+DISTRICT_POPULATION_DENSITY = {
+    # Tangerang Kab (Sangat Padat / Urban Sprawl)
+    "Kosambi": 3200.0,
+    "Teluknaga": 2800.0,
+    "Sukadiri": 2100.0,
+    "Pakuhaji": 1900.0,
+    "Mauk": 1500.0,
+    "Kemiri": 1200.0,
+    "Kronjo": 1100.0,
+    "Mekarbaru": 1000.0,
+    # Cilegon (Padat / Industri)
+    "Jombang": 4500.0,
+    "Cibeber": 2500.0,
+    "Citangkil": 2200.0,
+    "Pulomerak": 1800.0,
+    "Ciwandan": 1100.0,
+    "Grogol": 1300.0,
+    # Serang Kota & Kab (Sedang)
+    "Kramatwatu": 1400.0,
+    "Bojonegara": 950.0,
+    "Anyar": 800.0,
+    "Kasemen": 1200.0,
+    "Puloampel": 900.0,
+    "Pontang": 750.0,
+    "Tirtayasa": 600.0,
+    "Tanara": 650.0,
+    "Cinangka": 450.0,
+    # Pandeglang (Rendah - Sedang)
+    "Labuan": 1600.0,
+    "Jiput": 700.0,
+    "Carita": 550.0,
+    "Pagelaran": 600.0,
+    "Sukaresmi": 450.0,
+    "Patia": 350.0,
+    "Panimbang": 300.0,
+    "Cigeulis": 200.0,
+    "Sobang": 180.0,
+    "Cimanggu": 150.0,
+    "Cibitung": 120.0,
+    "Sumur": 90.0,
+    # Lebak (Sangat Rendah / Terpencil)
+    "Malingping": 700.0,
+    "Wanasalam": 400.0,
+    "Bayah": 350.0,
+    "Panggarangan": 200.0,
+    "Cihara": 180.0,
+    "Cilograng": 150.0,
+}
+
+# Pusat Kota Utama & Metropolitan Area (Urban Centers)
+# Weight: skala 0.0 - 1.0 (bobot/ukuran aktivitas perkotaan)
+URBAN_CENTERS = [
+    {"nama": "Metropolitan Tangerang/Jakarta", "latitude": -6.1783, "longitude": 106.6319, "weight": 1.0},
+    {"nama": "Kota Serang", "latitude": -6.1149, "longitude": 106.1502, "weight": 0.8},
+    {"nama": "Kota Cilegon", "latitude": -6.0174, "longitude": 106.0182, "weight": 0.7},
+    {"nama": "Rangkasbitung", "latitude": -6.3533, "longitude": 106.2483, "weight": 0.5},
+    {"nama": "Pandeglang Kota", "latitude": -6.3084, "longitude": 105.8394, "weight": 0.5},
+    {"nama": "Labuan", "latitude": -6.3784, "longitude": 105.8267, "weight": 0.4},
+]
+
+# Jarak peluruhan (km) pengaruh polusi domestik perkotaan
+URBAN_DECAY_RATE = 15.0
+
+# ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 
