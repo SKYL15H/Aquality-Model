@@ -96,99 +96,41 @@ class BeachRecommender:
     # ------------------------------------------------------------------
 
     def _compute_all_scores(self) -> None:
-        """Menghitung Health Score v2.0 untuk seluruh pantai.
+        """Menghitung Health Score v4.0 untuk seluruh pantai.
         
-        Perbedaan dari v1.0:
-        - NDTI dikoreksi berdasarkan energi gelombang pantai (HIGH/MEDIUM/LOW)
-        - Pct_Sehat mendapat kompensasi boost untuk pantai berenergi tinggi
-        - Ditambahkan parameter risiko polusi urban/antropogenik
-        - Ditambahkan bonus sirkulasi perairan
+        Sistem di-upgrade murni berbasis terrestrial & human footprint:
+        - Indeks Dampak Industri (IDI)
+        - Kepadatan Penduduk Kecamatan
+        - Indeks Pengaruh Urban (IPU)
         """
         beaches = self.raw_data
 
-        # 1. Tentukan tipe pantai dan koreksi NDTI untuk setiap pantai
-        corrected_data = {}
-        for name, stats in beaches.items():
-            kec = stats.get("Kecamatan", "")
-            energy_type = COASTAL_ENERGY.get(kec, "MEDIUM")
-            correction = NDTI_CORRECTION.get(energy_type, 1.0)
-            boost = PCT_SEHAT_BOOST.get(energy_type, 0.0)
-
-            raw_ndti = abs(stats.get("Mean_NDTI_2026", 0.0))
-            corrected_ndti = raw_ndti * correction  # Koreksi NDTI
-
-            raw_pct = stats.get("Pct_Sehat_2026", 0.0)
-            corrected_pct = min(100.0, raw_pct + boost)  # Kompensasi Pct_Sehat
-
-            corrected_data[name] = {
-                "energy_type": energy_type,
-                "corrected_ndti": corrected_ndti,
-                "corrected_pct": corrected_pct,
-            }
-
-        # 2. Kumpulkan nilai terkoreksi untuk normalisasi min-max
-        pct_vals = [v["corrected_pct"] for v in corrected_data.values()]
-        ndti_vals = [v["corrected_ndti"] for v in corrected_data.values()]
-        ndci_vals = [abs(b.get("Mean_NDCI_2026", 0.0)) for b in beaches.values()]
-        tss_vals = [b.get("Mean_TSS_2026", 0.0) for b in beaches.values()]
-        cdom_vals = [b.get("Mean_CDOM_2026", 0.0) for b in beaches.values()]
+        # 1. Kumpulkan nilai untuk normalisasi min-max
         density_vals = [b.get("kepadatan_penduduk_kecamatan", 500.0) for b in beaches.values()]
         influence_vals = [b.get("indeks_pengaruh_urban", 0.0) for b in beaches.values()]
+        idi_vals = [b.get("indeks_dampak_industri", 0.0) for b in beaches.values()]
 
-        min_pct, max_pct = min(pct_vals), max(pct_vals)
-        min_ndti, max_ndti = min(ndti_vals), max(ndti_vals)
-        min_ndci, max_ndci = min(ndci_vals), max(ndci_vals)
-        min_tss, max_tss = min(tss_vals), max(tss_vals)
-        min_cdom, max_cdom = min(cdom_vals), max(cdom_vals)
         min_density, max_density = min(density_vals), max(density_vals)
         min_influence, max_influence = min(influence_vals), max(influence_vals)
+        min_idi, max_idi = min(idi_vals), max(idi_vals)
 
         results = []
         for name, stats in beaches.items():
             kec = stats.get("Kecamatan", "")
-            cd = corrected_data[name]
-            energy_type = cd["energy_type"]
-
-            pct_sehat = cd["corrected_pct"]
-            ndti = cd["corrected_ndti"]
-            ndci = abs(stats.get("Mean_NDCI_2026", 0.0))
-            tss = stats.get("Mean_TSS_2026", 0.0)
-            cdom = stats.get("Mean_CDOM_2026", 0.0)
-            tren = stats.get("Tren_Kualitas", "STABIL")
-            kategori_industri = stats.get("kategori_dampak_industri", "RENDAH")
-            idi_raw = stats.get("indeks_dampak_industri", 0.0)  # IDI 0-100
+            idi_raw = stats.get("indeks_dampak_industri", 0.0)
             density_val = stats.get("kepadatan_penduduk_kecamatan", 500.0)
             influence_val = stats.get("indeks_pengaruh_urban", 0.0)
 
-            # Normalisasi parameter ke skala 0-100
-            s_pct = self._normalize(pct_sehat, min_pct, max_pct)
-            s_ndti = self._normalize(ndti, min_ndti, max_ndti, invert=True)
-            s_ndci = self._normalize(ndci, min_ndci, max_ndci, invert=True)
-            s_tss = self._normalize(tss, min_tss, max_tss, invert=True)
-            s_cdom = self._normalize(cdom, min_cdom, max_cdom, invert=True)
-            s_tren = TREN_SCORES.get(tren, 0.5) * 100.0
-            
-            if idi_raw > 0:
-                s_industri = max(0.0, 100.0 - idi_raw)
-            else:
-                s_industri = INDUSTRI_SCORES.get(kategori_industri, 0.5) * 100.0
-                
+            # Normalisasi parameter ke skala 0-100 (Inverted: semakin tinggi = semakin buruk)
+            s_industri = self._normalize(idi_raw, min_idi, max_idi, invert=True)
             s_density = self._normalize(density_val, min_density, max_density, invert=True)
             s_influence = self._normalize(influence_val, min_influence, max_influence, invert=True)
-            s_sirkulasi = SIRKULASI_SCORES.get(energy_type, 0.5) * 100.0
 
-            # Hitung skor komposit (weighted sum) v3.0
+            # Hitung skor komposit (weighted sum) murni darat v4.0
             health_score = (
-                WEIGHTS["pct_sehat"] * s_pct
-                + WEIGHTS["ndti_inv"] * s_ndti
-                + WEIGHTS["ndci_inv"] * s_ndci
-                + WEIGHTS["tss_inv"] * s_tss
-                + WEIGHTS["cdom_inv"] * s_cdom
-                + WEIGHTS["tren"] * s_tren
-                + WEIGHTS["industri_inv"] * s_industri
+                WEIGHTS["industri_inv"] * s_industri
                 + WEIGHTS["kepadatan_penduduk_inv"] * s_density
                 + WEIGHTS["pengaruh_urban_inv"] * s_influence
-                + WEIGHTS["sirkulasi_pantai"] * s_sirkulasi
             )
             health_score = round(health_score, 2)
 
@@ -209,18 +151,10 @@ class BeachRecommender:
                 "url_gambar": stats.get("Url_gambar") or stats.get("url_gambar"),
                 "health_score": health_score,
                 "label_rekomendasi": label,
-                "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
-                "pct_sehat_terkoreksi": round(pct_sehat, 1),
-                "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
-                "mean_ndti_2026": stats.get("Mean_NDTI_2026", 0.0),
-                "ndti_terkoreksi": round(ndti, 4),
-                "mean_ndci_2026": stats.get("Mean_NDCI_2026", 0.0),
-                "mean_tss_2026": stats.get("Mean_TSS_2026", 0.0),
-                "mean_cdom_2026": stats.get("Mean_CDOM_2026", 0.0),
-                "tren_kualitas": tren,
+                # Terrestrial & Human footprint parameters
                 "industri_terdekat": stats.get("industri_terdekat"),
                 "jarak_industri_km": stats.get("jarak_industri_km"),
-                "kategori_dampak_industri": kategori_industri,
+                "kategori_dampak_industri": stats.get("kategori_dampak_industri"),
                 "indeks_dampak_industri": idi_raw,
                 "industri_relevan_terdekat": stats.get("industri_relevan_terdekat"),
                 "jarak_industri_relevan_km": stats.get("jarak_industri_relevan_km"),
@@ -228,18 +162,18 @@ class BeachRecommender:
                 "kepadatan_industri": stats.get("kepadatan_industri", 0),
                 "kepadatan_penduduk_kecamatan": density_val,
                 "indeks_pengaruh_urban": influence_val,
-                "tipe_pantai": energy_type,
+                # Legacy metadata
+                "pct_sehat_2026": stats.get("Pct_Sehat_2026", 0.0),
+                "status_kualitas_2026": stats.get("Status_Kualitas_2026"),
+                "mean_ndti_2026": stats.get("Mean_NDTI_2026", 0.0),
+                "mean_ndci_2026": stats.get("Mean_NDCI_2026", 0.0),
+                "mean_tss_2026": stats.get("Mean_TSS_2026", 0.0),
+                "mean_cdom_2026": stats.get("Mean_CDOM_2026", 0.0),
+                "tren_kualitas": stats.get("Tren_Kualitas", "STABIL"),
                 "skor_detail": {
-                    "skor_pct_sehat": round(s_pct, 2),
-                    "skor_kekeruhan": round(s_ndti, 2),
-                    "skor_klorofil": round(s_ndci, 2),
-                    "skor_tss": round(s_tss, 2),
-                    "skor_cdom": round(s_cdom, 2),
-                    "skor_tren": round(s_tren, 2),
                     "skor_industri": round(s_industri, 2),
                     "skor_kepadatan_penduduk": round(s_density, 2),
                     "skor_pengaruh_urban": round(s_influence, 2),
-                    "skor_sirkulasi": round(s_sirkulasi, 2),
                 },
             })
 
@@ -296,102 +230,76 @@ class BeachRecommender:
         }
 
     def generate_recommendation_text(self, beach_entry: dict[str, Any]) -> str:
-        """Menghasilkan narasi rekomendasi v2.0 untuk satu pantai."""
+        """Menghasilkan narasi rekomendasi kelayakan pantai berdasarkan model terrestrial/human footprint."""
         name = beach_entry["pantai"]
         kec = beach_entry.get("kecamatan", "")
         score = beach_entry["health_score"]
         label = beach_entry["label_rekomendasi"]
         ranking = beach_entry["ranking"]
         total = len(self._scores)
-        pct = beach_entry.get("pct_sehat_2026", 0)
-        tren = beach_entry.get("tren_kualitas", "STABIL")
         detail = beach_entry.get("skor_detail", {})
         idi = beach_entry.get("indeks_dampak_industri", 0)
         n_industri = beach_entry.get("jumlah_industri_radius_10km", 0)
-        tipe_pantai = beach_entry.get("tipe_pantai", "MEDIUM")
         density = beach_entry.get("kepadatan_penduduk_kecamatan", 500.0)
         ipu = beach_entry.get("indeks_pengaruh_urban", 0.0)
 
         if label == "SANGAT DIREKOMENDASIKAN":
             intro = (
                 f"**{name}** ({kec}) menduduki peringkat **#{ranking}** dari {total} pantai "
-                f"dengan Health Score **{score}/100** — **SANGAT DIREKOMENDASIKAN** untuk dikunjungi. "
-                f"Perairan pantai ini memiliki tingkat kebersihan tertinggi di antara pantai-pantai yang dianalisis "
-                f"dengan {pct}% area laut dalam kondisi sehat."
+                f"dengan skor kelayakan lingkungan **{score}/100** — **SANGAT DIREKOMENDASIKAN**. "
+                f"Kawasan pesisir pantai ini memiliki tekanan antropogenik paling minimal dan kondisi lingkungan darat yang paling asri."
             )
         elif label == "DIREKOMENDASIKAN":
             intro = (
                 f"**{name}** ({kec}) berada di peringkat **#{ranking}** dari {total} pantai "
-                f"dengan Health Score **{score}/100** — **DIREKOMENDASIKAN**. "
-                f"Kondisi perairan cukup baik dengan {pct}% area sehat, menjadikannya pilihan layak untuk wisata pantai."
+                f"dengan skor kelayakan lingkungan **{score}/100** — **DIREKOMENDASIKAN**. "
+                f"Kondisi lingkungan sekitar pantai tergolong baik untuk tujuan rekreasi karena minimnya polusi."
             )
         elif label == "CUKUP DIREKOMENDASIKAN":
             intro = (
                 f"**{name}** ({kec}) berada di peringkat **#{ranking}** dari {total} pantai "
-                f"dengan Health Score **{score}/100** — **CUKUP DIREKOMENDASIKAN**. "
-                f"Kualitas air berada di tingkat menengah ({pct}% area sehat). Pengunjung disarankan tetap berhati-hati."
+                f"dengan skor kelayakan lingkungan **{score}/100** — **CUKUP DIREKOMENDASIKAN**. "
+                f"Lingkungan pesisir berada di tingkat kelayakan menengah. Pengunjung disarankan tetap memperhatikan kebersihan sekitar."
             )
         elif label == "KURANG DIREKOMENDASIKAN":
             intro = (
                 f"**{name}** ({kec}) mendapat peringkat **#{ranking}** dari {total} pantai "
-                f"dengan Health Score **{score}/100** — **KURANG DIREKOMENDASIKAN**. "
-                f"Hanya {pct}% area perairan yang tergolong sehat. Disarankan untuk membatasi aktivitas berenang."
+                f"dengan skor kelayakan lingkungan **{score}/100** — **KURANG DIREKOMENDASIKAN**. "
+                f"Tekanan dari aktivitas perkotaan atau industri sekitar cukup terasa di wilayah pesisir ini."
             )
         else:
             intro = (
                 f"**{name}** ({kec}) berada di peringkat terbawah **#{ranking}** dari {total} pantai "
-                f"dengan Health Score **{score}/100** — **TIDAK DIREKOMENDASIKAN** untuk aktivitas air. "
-                f"Perairan pantai ini hanya memiliki {pct}% area sehat."
+                f"dengan skor kelayakan lingkungan **{score}/100** — **TIDAK DIREKOMENDASIKAN** untuk aktivitas wisata. "
+                f"Tekanan antropogenik (industri/perkotaan) di pesisir ini sangat tinggi."
             )
-
-        # Konteks tipe pantai
-        tipe_labels = {
-            "HIGH": "pantai berenergi tinggi menghadap Samudra Hindia dengan sirkulasi perairan yang sangat baik",
-            "MEDIUM": "pantai berenergi sedang di Selat Sunda dengan sirkulasi perairan cukup baik",
-            "LOW": "pantai berenergi rendah di Laut Jawa/Teluk Jakarta dengan sirkulasi perairan terbatas",
-        }
-        tipe_text = f" Pantai ini termasuk kategori {tipe_labels.get(tipe_pantai, 'pantai pesisir')}."
 
         # Konteks Kepadatan Penduduk & Urban Influence
         demografi_text = f" Kecamatan {kec} memiliki kepadatan penduduk **{density:,.0f} jiwa/km²**."
         if ipu >= 60:
-            urban_text = f" Indeks Pengaruh Urban pantai ini sangat **TINGGI** ({ipu}/100) karena dekat dengan metropolitan/pusat kota utama Banten, yang berpotensi menyumbang limpasan limbah domestik urban."
+            urban_text = f" Indeks Pengaruh Urban pantai ini sangat **TINGGI** ({ipu}/100) karena lokasinya yang dekat dengan aglomerasi metropolitan utama Banten."
         elif ipu >= 30:
-            urban_text = f" Indeks Pengaruh Urban bersifat **SEDANG** ({ipu}/100) dari aktivitas pemukiman perkotaan sekitar."
+            urban_text = f" Indeks Pengaruh Urban bersifat **SEDANG** ({ipu}/100) dengan pengaruh limpasan urban moderat."
         else:
-            urban_text = f" Indeks Pengaruh Urban pantai ini **RENDAH** ({ipu}/100) karena lokasinya yang terisolasi dari pusat perkotaan utama."
+            urban_text = f" Indeks Pengaruh Urban pantai ini **RENDAH** ({ipu}/100) karena lokasinya yang terisolasi secara alami dari pusat perkotaan."
 
         # Konteks dampak industri (3 metrik baru)
         kategori_industri = beach_entry.get("kategori_dampak_industri", "RENDAH")
         if idi >= 30:
-            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — terdapat {n_industri} industri dalam radius 10 km yang secara kumulatif memberikan tekanan signifikan terhadap kualitas perairan."
+            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — terdapat {n_industri} industri dalam radius 10 km yang secara kumulatif memberikan dampak tekanan tinggi di wilayah ini."
         elif idi >= 15:
-            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — pengaruh industri terhadap perairan bersifat moderat dengan {n_industri} industri dalam radius 10 km."
+            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — pengaruh kawasan industri bersifat moderat dengan {n_industri} industri dalam radius 10 km."
         elif idi >= 5:
             industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — dampak industri relatif rendah ({n_industri} industri dalam radius 10 km)."
         else:
-            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — pantai ini sangat jauh dari kawasan industri sehingga dampak industri terhadap kualitas air sangat minimal."
-
-        # Tambahkan insight tren
-        if tren == "MEMBAIK":
-            tren_text = " Tren kualitas air **MEMBAIK** dibandingkan tahun 2017."
-        elif tren == "MEMBURUK":
-            tren_text = " Perlu diperhatikan bahwa kualitas air menunjukkan tren **MEMBURUK** sejak 2017."
-        else:
-            tren_text = " Kualitas air **STABIL** dibandingkan kondisi tahun 2017."
+            industri_text = f" Indeks Dampak Industri **{idi}/100** ({kategori_industri}) — pantai ini sangat jauh dari kawasan industri sehingga dampak polusi industri sangat minimal."
 
         # Insight parameter dominan
         best_param = max(detail.items(), key=lambda x: x[1])
         worst_param = min(detail.items(), key=lambda x: x[1])
 
         param_names = {
-            "skor_pct_sehat": "persentase area sehat",
-            "skor_kekeruhan": "kejernihan air",
-            "skor_klorofil": "kadar klorofil-a",
-            "skor_tss": "kandungan padatan tersuspensi",
-            "skor_cdom": "bahan organik terlarut",
-            "skor_tren": "tren historis",
-            "skor_industri": "jarak dari industri",
+            "skor_industri": "indeks dampak industri",
             "skor_kepadatan_penduduk": "skor kepadatan penduduk",
             "skor_pengaruh_urban": "skor pengaruh urban",
         }
@@ -402,7 +310,7 @@ class BeachRecommender:
             f"{param_names.get(worst_param[0], worst_param[0])} (skor: {worst_param[1]})."
         )
 
-        return intro + tipe_text + demografi_text + urban_text + industri_text + tren_text + param_text
+        return intro + demografi_text + urban_text + industri_text + param_text
 
     def save_to_json(self, output_path: str) -> None:
         """Menyimpan hasil rekomendasi lengkap ke file JSON."""
@@ -456,8 +364,6 @@ if __name__ == "__main__":
         print(f"\n  #{beach['ranking']}  {beach['pantai']} ({beach['kecamatan']}, {beach['kabupaten_kota']})")
         print(f"      Health Score  : {beach['health_score']}/100")
         print(f"      Label         : {beach['label_rekomendasi']}")
-        print(f"      Pct Sehat     : {beach['pct_sehat_2026']}%")
-        print(f"      Tren          : {beach['tren_kualitas']}")
         print(f"      Industri      : {beach['industri_terdekat']} ({beach['jarak_industri_km']} km, {beach['kategori_dampak_industri']})")
 
     print("\n" + "-" * 70)
