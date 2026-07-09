@@ -225,11 +225,8 @@ def _build_demographic_and_urban_text(stats: dict) -> str:
 
 
 def generate_explanation(kec_name: str, stats: dict) -> str:
-    """Menghasilkan narasi penjelasan kualitas air yang menggabungkan parameter satelit, profil wilayah, kepadatan penduduk, dan jarak industri."""
+    """Menghasilkan narasi penjelasan tingkat kelayakan pesisir berdasarkan kepadatan penduduk, urbanisasi, dan industri."""
     name_lower = kec_name.lower()
-    status = stats.get("Status_Kualitas_2026", "TIDAK SEHAT")
-    ndti = stats.get("Mean_NDTI_2026", 0.0)
-    ndci = stats.get("Mean_NDCI_2026", 0.0)
     
     # Ambil profil daerah
     profile = DISTRICT_CONTEXTS.get(name_lower)
@@ -241,45 +238,32 @@ def generate_explanation(kec_name: str, stats: dict) -> str:
         # Fallback berdasarkan kabupaten
         kab = stats.get("Kabupaten_Kota", "Banten")
         context_text = f"Kecamatan {kec_name} terletak di wilayah pesisir {kab}. "
-        sources_text = "Kondisi ini dipengaruhi oleh aktivitas domestik dan limpasan permukaan sekitar perairan pesisir."
+        sources_text = "Kondisi ini dipengaruhi oleh aktivitas domestik dan kepadatan penduduk sekitar pesisir."
 
     # Teks jarak industri & demografi/urban
     industry_text = _build_industry_text(stats)
     demo_urban_text = _build_demographic_and_urban_text(stats)
-
-    if status == "TIDAK SEHAT":
+    
+    # Tentukan kelayakan umum berdasarkan Indeks Dampak Industri (IDI) dan Indeks Pengaruh Urban (IPU)
+    idi = stats.get("indeks_dampak_industri", 0.0)
+    ipu = stats.get("indeks_pengaruh_urban", 0.0)
+    
+    if idi >= 30 or ipu >= 60:
         reason = (
-            f"Status Kualitas Air di {kec_name} diklasifikasikan sebagai **TIDAK SEHAT**. {context_text}"
-        )
-        param_reasons = []
-        if ndti > 0.05:
-            param_reasons.append(
-                f"tingkat kekeruhan air (NDTI: {ndti:.4f}) melebihi ambang batas aman 0.05 yang menandakan sedimentasi pantai yang tinggi"
-            )
-        if ndci > 0.08:
-            param_reasons.append(
-                f"konsentrasi klorofil-a (NDCI: {ndci:.4f}) melampaui batas aman 0.08 yang mengindikasikan adanya blooming alga (eutrofikasi) akibat penumpukan zat hara/nutrien"
-            )
-            
-        if param_reasons:
-            reason += "Hal ini terbukti secara ilmiah melalui analisis citra Sentinel-2 di mana " + " dan ".join(param_reasons) + ". "
-        else:
-            reason += f"Hasil analisis menunjukkan akumulasi parameter fisik-kimiawi air (TSS/CDOM) melampaui baku mutu optimal. "
-            
-        reason += sources_text + demo_urban_text + industry_text
-        
-    elif status == "SEDANG":
-        reason = (
-            f"Kualitas air pesisir di {kec_name} berada dalam kondisi **SEDANG**. {context_text}"
-            f"Meskipun parameter kekeruhan (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) masih berada dalam tingkat toleransi wajar, "
-            f"tetap diperlukan pengawasan karena adanya kontribusi polusi dari {', '.join(profile['sources']) if profile else 'aktivitas antropogenik lokal'}."
+            f"Kawasan pesisir di {kec_name} dinilai memiliki **TEKANAN LINGKUNGAN TINGGI**. {context_text}"
+            f"Tingginya aktivitas industri dan/atau kepadatan pemukiman urban di wilayah ini memberikan kontribusi polutan antropogenik yang signifikan ke perairan pesisir."
             f"{demo_urban_text}{industry_text}"
         )
-    else: # SEHAT
+    elif idi >= 15 or ipu >= 30:
         reason = (
-            f"Kualitas air pesisir di {kec_name} diklasifikasikan sebagai **SEHAT** (Optimum). {context_text}"
-            f"Kondisi fisik perairan terpantau sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan kadar klorofil-a (NDCI: {ndci:.4f}) yang seimbang, "
-            f"menunjukkan sirkulasi perairan yang baik serta minimnya dampak negatif dari {', '.join(profile['sources']) if profile else 'limbah domestik perkotaan'}."
+            f"Kawasan pesisir di {kec_name} berada dalam kondisi kelayakan lingkungan **SEDANG**. {context_text}"
+            f"Terdapat tekanan antropogenik menengah dari pemukiman domestik atau area industri regional."
+            f"{demo_urban_text}{industry_text}"
+        )
+    else:
+        reason = (
+            f"Kawasan pesisir di {kec_name} diklasifikasikan memiliki kelayakan lingkungan **SANGAT BAIK (Lestari)**. {context_text}"
+            f"Kondisi alam sekitar terjaga dengan kepadatan penduduk yang minim serta jarak yang sangat jauh dari kawasan industri berat."
             f"{demo_urban_text}{industry_text}"
         )
         
@@ -454,40 +438,32 @@ def get_district_water_quality(name: str):
 
 
 def generate_beach_explanation(beach_name: str, stats: dict) -> str:
-    """Menghasilkan narasi penjelasan kualitas air tingkat pantai dengan konteks demografi, urban, dan jarak industri."""
-    status = stats.get("Status_Kualitas_2026", "TIDAK SEHAT")
-    ndti = stats.get("Mean_NDTI_2026", 0.0)
-    ndci = stats.get("Mean_NDCI_2026", 0.0)
+    """Menghasilkan narasi penjelasan kelayakan pantai berdasarkan demografi, urban, dan jarak industri."""
     kec_name = stats.get("Kecamatan", "pesisir Banten")
     
     # Teks jarak industri & demografi/urban
     industry_text = _build_industry_text(stats)
     demo_urban_text = _build_demographic_and_urban_text(stats)
     
-    if status == "SEHAT":
+    idi = stats.get("indeks_dampak_industri", 0.0)
+    ipu = stats.get("indeks_pengaruh_urban", 0.0)
+    
+    if idi >= 30 or ipu >= 60:
         return (
-            f"Kualitas air di {beach_name} ({kec_name}) tergolong **SEHAT** (Bersih). "
-            f"Kondisi perairan pantai sangat bersih dengan kekeruhan rendah (NDTI: {ndti:.4f}) dan klorofil-a (NDCI: {ndci:.4f}) yang normal, "
-            f"menjadikannya sangat aman dan nyaman untuk kegiatan pariwisata atau berenang."
+            f"Kawasan pesisir di {beach_name} ({kec_name}) dinilai memiliki **TEKANAN LINGKUNGAN TINGGI**. "
+            f"Hal ini dipengaruhi oleh tingginya aktivitas manusia perkotaan atau letaknya yang dekat dengan pusat industri."
             f"{demo_urban_text}{industry_text}"
         )
-    elif status == "SEDANG":
+    elif idi >= 15 or ipu >= 30:
         return (
-            f"Kualitas air di {beach_name} ({kec_name}) berada dalam kondisi **SEDANG**. "
-            f"Perairan pantai cukup bersih namun tingkat kekeruhan (NDTI: {ndti:.4f}) atau klorofil-a (NDCI: {ndci:.4f}) menunjukkan nilai ambang batas wajar. "
-            f"Pengunjung dihimbau tetap menjaga kebersihan pantai sekitar."
+            f"Kawasan pesisir di {beach_name} ({kec_name}) berada dalam kondisi kelayakan lingkungan **SEDANG**. "
+            f"Terdapat pengaruh antropogenik menengah dari pemukiman perkotaan sekitar atau aktivitas pelabuhan/industri regional."
             f"{demo_urban_text}{industry_text}"
         )
-    else: # TIDAK SEHAT
-        reasons = []
-        if ndti > 0.05:
-            reasons.append(f"tingginya kekeruhan air (NDTI: {ndti:.4f}) akibat limpasan sedimen darat")
-        if ndci > 0.08:
-            reasons.append(f"kadar klorofil-a yang tinggi (NDCI: {ndci:.4f}) yang menandakan penumpukan nutrien/blooming alga")
-        reason_str = " dan ".join(reasons) if reasons else "penurunan baku mutu air laut pesisir"
+    else:
         return (
-            f"Kualitas air di {beach_name} ({kec_name}) tergolong **TIDAK SEHAT** (Tercemar). "
-            f"Analisis menunjukkan {reason_str}. Disarankan untuk membatasi aktivitas kontak langsung seperti berenang di sekitar perairan pantai ini."
+            f"Kawasan pesisir di {beach_name} ({kec_name}) diklasifikasikan memiliki kelayakan lingkungan **SANGAT BAIK (Lestari)**. "
+            f"Wilayah pantai sangat bersih dari pencemaran darat karena kepadatan penduduk lokal sangat rendah dan jauh dari kawasan industri berat."
             f"{demo_urban_text}{industry_text}"
         )
 
