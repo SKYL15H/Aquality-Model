@@ -393,17 +393,82 @@ def compute_urban_influence_index(lat: float, lon: float) -> float:
     return round(min(100.0, index), 2)
 
 
-def add_industry_fields(data: dict, lat: float, lon: float, kecamatan_name: str = "") -> dict:
-    """Menambahkan semua field dampak industri, kepadatan penduduk, dan pengaruh urban ke data.
+def generate_terrestrial_explanation(name: str, stats: dict, is_beach: bool = False) -> str:
+    """Menghasilkan penjelasan kelayakan lingkungan berbasis parameter darat secara dinamis."""
+    kec_name = stats.get("Kecamatan", name) if is_beach else name
     
-    Metrik yang ditambahkan:
-    1. Jarak ke industri terdekat + 3 terdekat (legacy)
-    2. Jarak ke industri terdekat yang RELEVAN
-    3. Kepadatan industri dalam radius
-    4. Indeks Dampak Industri (IDI) komposit
-    5. Kepadatan penduduk kecamatan (jiwa/km2)
-    6. Indeks Pengaruh Urban (IPU)
-    """
+    # 1. Teks Kepadatan Penduduk & IPU
+    density = stats.get("kepadatan_penduduk_kecamatan", 500.0)
+    ipu = stats.get("indeks_pengaruh_urban", 0.0)
+    
+    demo_urban_text = f" Wilayah ini memiliki kepadatan penduduk **{density:,.0f} jiwa/km²**."
+    if ipu >= 60:
+        demo_urban_text += f" Indeks Pengaruh Urban bernilai **TINGGI** ({ipu:.2f}/100) akibat dekatnya dengan sprawl metropolitan/pusat kota utama."
+    elif ipu >= 30:
+        demo_urban_text += f" Indeks Pengaruh Urban bernilai **SEDANG** ({ipu:.2f}/100) dengan pengaruh limpasan domestik perkotaan sedang."
+    else:
+        demo_urban_text += f" Indeks Pengaruh Urban bernilai **RENDAH** ({ipu:.2f}/100) karena lokasinya relatif terpencil dari aglomerasi perkotaan utama."
+        
+    # 2. Teks Dampak Industri
+    idi = stats.get("indeks_dampak_industri", 0.0)
+    kategori = stats.get("kategori_dampak_industri", "RENDAH")
+    industri = stats.get("industri_terdekat", "")
+    tipe = stats.get("tipe_industri", "")
+    jarak = stats.get("jarak_industri_km")
+    n_radius = stats.get("jumlah_industri_radius_10km", 0)
+    industri_relevan = stats.get("industri_relevan_terdekat")
+    jarak_relevan = stats.get("jarak_industri_relevan_km")
+    
+    industry_text = ""
+    if industri and jarak is not None:
+        if idi >= 30:
+            industry_text = (
+                f" Indeks Dampak Industri di wilayah ini **{idi:.2f}/100** (kategori **{kategori}**) "
+                f"dengan {n_radius} fasilitas industri dalam radius 10 km."
+            )
+            if industri_relevan and jarak_relevan:
+                industry_text += f" Industri paling relevan terhadap pencemaran air adalah {industri_relevan} berjarak **{jarak_relevan:.2f} km**."
+            industry_text += " Tekanan kumulatif industri terhadap kualitas perairan sangat signifikan."
+        elif idi >= 15:
+            industry_text = (
+                f" Indeks Dampak Industri **{idi:.2f}/100** ({kategori}) dengan {n_radius} industri dalam radius 10 km. "
+                f"Industri terdekat: {industri} ({tipe}) berjarak **{jarak:.2f} km**. "
+                f"Pengaruh industri terhadap kualitas perairan bersifat moderat."
+            )
+        elif idi >= 5:
+            industry_text = (
+                f" Indeks Dampak Industri **{idi:.2f}/100** ({kategori}). "
+                f"Industri terdekat adalah {industri} ({tipe}) berjarak **{jarak:.2f} km** "
+                f"dengan dampak relatif rendah terhadap kualitas air."
+            )
+        else:
+            industry_text = (
+                f" Indeks Dampak Industri sangat rendah (**{idi:.2f}/100**). "
+                f"Industri terdekat ({industri}) berjarak **{jarak:.2f} km** — "
+                f"dampak industri terhadap kualitas air sangat minimal."
+            )
+            
+    # 3. Gabungkan narasi kelayakan
+    if is_beach:
+        if idi >= 30 or ipu >= 60:
+            intro = f"Kawasan pesisir di {name} ({kec_name}) dinilai memiliki **TEKANAN LINGKUNGAN TINGGI**. Hal ini dipengaruhi oleh tingginya aktivitas manusia perkotaan atau letaknya yang dekat dengan pusat industri."
+        elif idi >= 15 or ipu >= 30:
+            intro = f"Kawasan pesisir di {name} ({kec_name}) berada dalam kondisi kelayakan lingkungan **SEDANG**. Terdapat pengaruh antropogenik menengah dari pemukiman perkotaan sekitar atau aktivitas pelabuhan/industri regional."
+        else:
+            intro = f"Kawasan pesisir di {name} ({kec_name}) diklasifikasikan memiliki kelayakan lingkungan **SANGAT BAIK (Lestari)**. Wilayah pantai sangat bersih dari pencemaran darat karena kepadatan penduduk lokal sangat rendah dan jauh dari kawasan industri berat."
+    else:
+        if idi >= 30 or ipu >= 60:
+            intro = f"Kawasan pesisir di Kecamatan {name} dinilai memiliki **TEKANAN LINGKUNGAN TINGGI**. Tingginya aktivitas industri dan/atau kepadatan pemukiman urban di wilayah ini memberikan kontribusi polutan antropogenik yang signifikan ke perairan pesisir."
+        elif idi >= 15 or ipu >= 30:
+            intro = f"Kawasan pesisir di Kecamatan {name} berada dalam kondisi kelayakan lingkungan **SEDANG**. Terdapat tekanan antropogenik menengah dari pemukiman domestik atau area industri regional."
+        else:
+            intro = f"Kawasan pesisir di Kecamatan {name} diklasifikasikan memiliki kelayakan lingkungan **SANGAT BAIK (Lestari)**. Kondisi alam sekitar terjaga dengan kepadatan penduduk yang minim serta jarak yang sangat jauh dari kawasan industri berat."
+            
+    return f"{intro}{demo_urban_text}{industry_text}"
+
+
+def add_industry_fields(data: dict, lat: float, lon: float, kecamatan_name: str = "", is_beach: bool = False) -> dict:
+    """Menambahkan semua field dampak industri, kepadatan penduduk, dan pengaruh urban ke data."""
     # --- Metrik Legacy: 3 industri terdekat ---
     nearest = find_nearest_industries(lat, lon, top_n=3)
     
@@ -443,14 +508,17 @@ def add_industry_fields(data: dict, lat: float, lon: float, kecamatan_name: str 
     data["kategori_dampak_industri"] = get_dampak_category_by_index(idi)
 
     # --- Metrik Baru: Demografi & Urban ---
-    # Kepadatan Penduduk (lookup dari dictionary)
+    # Kepadatan Penduduk
     kec_key = kecamatan_name or data.get("Kecamatan", "")
-    density = DISTRICT_POPULATION_DENSITY.get(kec_key, 500.0) # default 500 jiwa/km2 jika tidak ditemukan
+    density = DISTRICT_POPULATION_DENSITY.get(kec_key, 500.0)
     data["kepadatan_penduduk_kecamatan"] = density
     
     # Indeks Pengaruh Urban
     ipu = compute_urban_influence_index(lat, lon)
     data["indeks_pengaruh_urban"] = ipu
+    
+    # Penjelasan Kualitas Kelayakan Terestrial
+    data["penjelasan_kualitas"] = generate_terrestrial_explanation(data.get("Pantai", kecamatan_name), data, is_beach=is_beach)
     
     return data
 
@@ -547,7 +615,7 @@ def process_kecamatan():
             # Tambahkan centroid ke data
             stats["centroid_latitude"] = lat
             stats["centroid_longitude"] = lon
-            add_industry_fields(stats, lat, lon, kecamatan_name=kec_name)
+            add_industry_fields(stats, lat, lon, kecamatan_name=kec_name, is_beach=False)
             updated_count += 1
             
             nearest = stats.get("industri_terdekat", "?")
@@ -590,7 +658,8 @@ def process_beaches():
         lon = stats.get("longitude")
         
         if lat is not None and lon is not None:
-            add_industry_fields(stats, lat, lon, kecamatan_name=stats.get("Kecamatan", ""))
+            stats["Pantai"] = beach_name
+            add_industry_fields(stats, lat, lon, kecamatan_name=stats.get("Kecamatan", ""), is_beach=True)
             
             nearest = stats.get("industri_terdekat", "?")
             dist = stats.get("jarak_industri_km", "?")
@@ -617,13 +686,6 @@ def save_kecamatan_csv(kec_data: dict):
     fieldnames = [
         "Kabupaten_Kota", "Kecamatan",
         "centroid_latitude", "centroid_longitude",
-        "Luas_Air_2026_Ha", "Sehat_2026_Ha", "Sedang_2026_Ha", "TidakSehat_2026_Ha",
-        "Pct_Sehat_2026", "Pct_Sedang_2026", "Pct_TidakSehat_2026",
-        "Mean_NDTI_2026", "Mean_NDCI_2026", "Mean_TSS_2026", "Mean_CDOM_2026",
-        "Status_Kualitas_2026",
-        "Luas_Air_2017_Ha", "Sehat_2017_Ha", "Pct_Sehat_2017",
-        "Mean_NDTI_2017", "Mean_NDCI_2017", "Status_Kualitas_2017",
-        "Delta_Pct_Sehat", "Tren_Kualitas",
         "industri_terdekat", "tipe_industri", "jarak_industri_km",
         "industri_terdekat_2", "tipe_industri_2", "jarak_industri_2_km",
         "industri_terdekat_3", "tipe_industri_3", "jarak_industri_3_km",
@@ -648,13 +710,6 @@ def save_beach_csv(beach_data: dict):
     fieldnames = [
         "Pantai", "Kecamatan", "Kabupaten_Kota",
         "latitude", "longitude",
-        "Luas_Air_2026_Ha", "Sehat_2026_Ha", "Sedang_2026_Ha", "TidakSehat_2026_Ha",
-        "Pct_Sehat_2026", "Pct_Sedang_2026", "Pct_TidakSehat_2026",
-        "Mean_NDTI_2026", "Mean_NDCI_2026", "Mean_TSS_2026", "Mean_CDOM_2026",
-        "Status_Kualitas_2026",
-        "Luas_Air_2017_Ha", "Sehat_2017_Ha", "Pct_Sehat_2017",
-        "Mean_NDTI_2017", "Mean_NDCI_2017", "Status_Kualitas_2017",
-        "Delta_Pct_Sehat", "Tren_Kualitas",
         "industri_terdekat", "tipe_industri", "jarak_industri_km",
         "industri_terdekat_2", "tipe_industri_2", "jarak_industri_2_km",
         "industri_terdekat_3", "tipe_industri_3", "jarak_industri_3_km",
