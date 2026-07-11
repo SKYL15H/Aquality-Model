@@ -495,50 +495,6 @@ def generate_beach_explanation(beach_name: str, stats: dict) -> str:
         )
 
 
-@app.get("/api/water-quality/beach/explore", tags=["Water Quality - Beach"])
-def get_beach_leaderboard():
-    """Mengembalikan daftar pantai terbersih di pesisir Banten diurutkan berdasarkan Health Score secara descending."""
-    if not BEACH_RECOMMENDER:
-        raise HTTPException(
-            status_code=404,
-            detail="Beach recommender not initialized. Please load statistics first."
-        )
-    
-    leaderboard = BEACH_RECOMMENDER.get_recommendations()
-    return {
-        "total": len(leaderboard),
-        "leaderboard": leaderboard
-    }
-
-
-@app.get("/api/water-quality/beach/{name}", tags=["Water Quality - Beach"])
-def get_beach_water_quality(name: str):
-    """Mengembalikan statistik rinci untuk satu pantai di Banten beserta penjelasan semantiknya."""
-    matched_key = None
-    for key in BANTEN_BEACH_STATS:
-        if key.lower() == name.lower():
-            matched_key = key
-            break
-            
-    if matched_key is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Pantai '{name}' tidak ditemukan di data Banten. Gunakan daftar di leaderboard."
-        )
-        
-    stats = BANTEN_BEACH_STATS[matched_key]
-    explanation = generate_beach_explanation(matched_key, stats)
-    
-    response_data = dict(stats)
-    response_data["pantai"] = matched_key
-    response_data["slug"] = stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in matched_key.lower().strip()).replace(" ", "-").replace("--", "-")
-    response_data["penjelasan_kualitas"] = explanation
-    response_data["geojson"] = BANTEN_BEACH_GEOJSON.get(matched_key.lower())
-    
-    return response_data
-
-
-@app.get("/analyze/{slug}", tags=["Water Quality - Beach"])
 @app.get("/api/analyze/{slug}", tags=["Water Quality - Beach"])
 def analyze_beach_by_slug(slug: str):
     """Mengembalikan analisis kualitas air rinci untuk satu pantai berdasarkan slug-nya (contoh: 'pantai-carita')."""
