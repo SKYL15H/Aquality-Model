@@ -343,6 +343,7 @@ def root():
             "water_quality_beach": "/api/water-quality/beach/{name}",
             "analyze_beach_by_slug": "/api/analyze/{slug}",
             "industries": "/api/industries",
+            "industries_geojson": "/api/industries/geojson",
             "recommendation_beaches": "/api/recommendation/beaches?top_n=5",
             "recommendation_beach_detail": "/api/recommendation/beaches/{name}",
             "recommendation_summary": "/api/recommendation/summary",
@@ -540,6 +541,43 @@ def get_industries():
     return {
         "total": len(BANTEN_INDUSTRIES),
         "industries": BANTEN_INDUSTRIES
+    }
+
+
+@app.get("/api/industries/geojson", tags=["Model & Industry Data"])
+def get_industries_geojson():
+    """Mengembalikan industri Banten dalam format GeoJSON FeatureCollection.
+
+    Setiap Feature mengandung:
+    - industry_id, industry_name, tipe, relevansi
+    - distance_to_coast_km: jarak ke garis pantai terdekat (km)
+    - risk_score: skor risiko komposit 0-100
+    """
+    features = []
+    for ind in BANTEN_INDUSTRIES:
+        feature = {
+            "type": "Feature",
+            "properties": {
+                "industry_id": ind.get("industry_id", ""),
+                "industry_name": ind.get("nama", ""),
+                "tipe": ind.get("tipe", ""),
+                "relevansi": ind.get("relevansi", 0),
+                "distance_to_coast_km": ind.get("distance_to_coast_km", 0),
+                "risk_score": ind.get("risk_score", 0),
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    ind.get("longitude", 0),
+                    ind.get("latitude", 0),
+                ],
+            },
+        }
+        features.append(feature)
+
+    return {
+        "type": "FeatureCollection",
+        "features": features,
     }
 
 

@@ -216,6 +216,7 @@ KECAMATAN_CSV = os.path.join(OUTPUT_DIR, "banten_water_quality_kecamatan.csv")
 BEACH_JSON = os.path.join(OUTPUT_DIR, "banten_water_quality_beach.json")
 BEACH_CSV = os.path.join(OUTPUT_DIR, "banten_water_quality_beach.csv")
 INDUSTRIES_JSON = os.path.join(OUTPUT_DIR, "banten_industries.json")
+WATER_GEOJSON = os.path.join(OUTPUT_DIR, "banten_coastal_kecamatan_water.geojson")
 
 
 # ---------------------------------------------------------------------------
@@ -729,10 +730,105 @@ def save_beach_csv(beach_data: dict):
             writer.writerow(row)
 
 
+def _extract_water_boundary_points(geojson_path: str) -> list[tuple[float, float]]:
+    """Mengekstrak semua titik batas dari polygon air di GeoJSON pesisir.
+
+    Mengembalikan list of (lat, lon) yang merepresentasikan garis pantai.
+    """
+    if not os.path.exists(geojson_path):
+        print(f"  WARNING: Water GeoJSON tidak ditemukan: {geojson_path}")
+        return []
+
+    with open(geojson_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    points: list[tuple[float, float]] = []
+    for feature in data.get("features", []):
+        geom = feature.get("geometry", {})
+        geom_type = geom.get("type", "")
+        coords = geom.get("coordinates", [])
+
+        if geom_type == "Polygon":
+            for ring in coords:
+                for lon, lat, *_ in ring:
+                    points.append((lat, lon))
+        elif geom_type == "MultiPolygon":
+            for polygon in coords:
+                for ring in polygon:
+                    for lon, lat, *_ in ring:
+                        points.append((lat, lon))
+    return points
+
+
+def compute_distance_to_coast(lat: float, lon: float,
+                              coastline_points: list[tuple[float, float]]) -> float:
+    """Menghitung jarak minimum (km) dari suatu titik ke garis pantai terdekat.
+
+    Menggunakan Haversine terhadap semua titik batas polygon air pesisir.
+    """
+    if not coastline_points:
+        return 0.0
+
+    min_dist = float("inf")
+    for clat, clon in coastline_points:
+        d = haversine(lat, lon, clat, clon)
+        if d < min_dist:
+            min_dist = d
+    return round(min_dist, 2)
+
+
+def compute_risk_score(distance_to_coast_km: float, relevance: float) -> float:
+    """Menghitung skor risiko industri (0-100) terhadap pesisir.
+
+    Formula menggabungkan dua faktor:
+    1. Proximity — semakin dekat ke pantai, semakin berbahaya.
+       Industri <= 1 km mendapat proximity = 1.0 (maksimal).
+       Di luar 1 km, proximity turun secara eksponensial (half-life ~8 km).
+    2. Relevansi polusi — bobot tipe industri (0.0-1.0).
+
+    risk_score = relevance × proximity × 100, di-cap pada 100.
+    """
+    if distance_to_coast_km <= 1.0:
+        proximity = 1.0
+    else:
+        proximity = math.exp(-0.0866 * (distance_to_coast_km - 1.0))  # ~50% at 8 km
+
+    risk = relevance * proximity * 100.0
+    return round(min(100.0, max(0.0, risk)), 1)
+
+
 def save_industries_json():
-    """Menyimpan daftar industri ke JSON terpisah untuk referensi API."""
+    """Menyimpan daftar industri ke JSON terpisah untuk referensi API.
+
+    Menambahkan field: industry_id, relevansi, distance_to_coast_km, risk_score.
+    """
+    # Ekstrak titik batas air (garis pantai)
+    coastline_pts = _extract_water_boundary_points(WATER_GEOJSON)
+    print(f"\n  -> Coastline points extracted: {len(coastline_pts)}")
+
+    enriched = []
+    for idx, industry in enumerate(INDUSTRIES, start=1):
+        rel = INDUSTRY_RELEVANCE.get(industry["tipe"], 0.3)
+        dist_coast = compute_distance_to_coast(
+            industry["latitude"], industry["longitude"], coastline_pts
+        )
+        risk = compute_risk_score(dist_coast, rel)
+
+        enriched.append({
+            "industry_id": f"IND{idx:03d}",
+            "nama": industry["nama"],
+            "tipe": industry["tipe"],
+            "latitude": industry["latitude"],
+            "longitude": industry["longitude"],
+            "relevansi": rel,
+            "distance_to_coast_km": dist_coast,
+            "risk_score": risk,
+        })
+        print(f"    {enriched[-1]['industry_id']}  {industry['nama']:<42s}  "
+              f"coast={dist_coast:6.2f} km  risk={risk:5.1f}")
+
     with open(INDUSTRIES_JSON, "w", encoding="utf-8") as f:
-        json.dump(INDUSTRIES, f, indent=2, ensure_ascii=False)
+        json.dump(enriched, f, indent=2, ensure_ascii=False)
     print(f"\n  -> Daftar industri disimpan: {INDUSTRIES_JSON}")
 
 

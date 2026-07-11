@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Heatmap Kepadatan & Dampak Industri — Pesisir Banten</title>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+
+    <!-- Leaflet Heat -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%; height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0e1a;
+            color: #e0e6f0;
+            overflow: hidden;
+        }
+
+        #map {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        /* ─── Header Bar ─── */
+        .header-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 24px;
+            background: rgba(10, 14, 26, 0.82);
+            backdrop-filter: blur(24px) saturate(1.6);
+            -webkit-backdrop-filter: blur(24px) saturate(1.6);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .header-bar .logo {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 16px; color: #fff;
+            flex-shrink: 0;
+        }
+        .header-bar h1 {
+            font-size: 15px; font-weight: 700;
+            background: linear-gradient(90deg, #a5b4fc, #f9a8d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .header-bar .subtitle {
+            font-size: 11px; font-weight: 400;
+            color: rgba(255,255,255,0.45);
+        }
+
+        /* ─── Layer Toggle Panel ─── */
+        .panel {
+            position: fixed;
+            top: 80px; left: 16px;
+            z-index: 1000;
+            width: 290px;
+            background: rgba(15, 20, 38, 0.88);
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .panel h2 {
+            font-size: 13px; font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 14px;
+        }
+
+        /* Toggle buttons */
+        .toggle-group {
+            display: flex; flex-direction: column; gap: 8px;
+            margin-bottom: 16px;
+        }
+        .toggle-btn {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+        .toggle-btn:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .toggle-btn.active {
+            border-color: rgba(99, 102, 241, 0.5);
+            background: rgba(99, 102, 241, 0.12);
+        }
+        .toggle-btn .dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: box-shadow 0.25s;
+        }
+        .toggle-btn.active .dot { box-shadow: 0 0 8px 2px currentColor; }
+        .toggle-btn .label {
+            font-size: 13px; font-weight: 600;
+        }
+        .toggle-btn .desc {
+            font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 2px;
+        }
+
+        /* Opacity slider */
+        .slider-row {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 6px;
+        }
+        .slider-row label {
+            font-size: 11px; color: rgba(255,255,255,0.5);
+            flex-shrink: 0; width: 50px;
+        }
+        .slider-row input[type="range"] {
+            flex: 1; height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255,255,255,0.12);
+            border-radius: 4px;
+            outline: none;
+        }
+        .slider-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: #6366f1;
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(99,102,241,0.5);
+        }
+
+        /* Checkbox for markers */
+        .check-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 0 0;
+        }
+        .check-row input[type="checkbox"] {
+            accent-color: #6366f1;
+            width: 15px; height: 15px;
+        }
+        .check-row label {
+            font-size: 12px; color: rgba(255,255,255,0.6);
+            cursor: pointer;
+        }
+
+        /* ─── Legend ─── */
+        .legend-panel {
+            position: fixed;
+            bottom: 24px; left: 16px;
+            z-index: 1000;
+            width: 290px;
+            background: rgba(15, 20, 38, 0.88);
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .legend-panel h3 {
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 10px;
+        }
+        .gradient-bar {
+            height: 12px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+        .gradient-labels {
+            display: flex; justify-content: space-between;
+            font-size: 10px; color: rgba(255,255,255,0.5);
+            margin-bottom: 14px;
+        }
+        .legend-items { display: flex; flex-direction: column; gap: 6px; }
+        .legend-item {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 11px;
+        }
+        .legend-item .swatch {
+            width: 14px; height: 14px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ─── Info Card (bottom-right) ─── */
+        .info-card {
+            position: fixed;
+            bottom: 24px; right: 16px;
+            z-index: 1000;
+            width: 320px;
+            max-height: 320px;
+            overflow-y: auto;
+            background: rgba(15, 20, 38, 0.92);
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            display: none;
+        }
+        .info-card.visible { display: block; }
+        .info-card h3 {
+            font-size: 15px; font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .info-card .kabkota {
+            font-size: 11px; color: rgba(255,255,255,0.4);
+            margin-bottom: 12px;
+        }
+        .info-row {
+            display: flex; justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 12px;
+        }
+        .info-row .key { color: rgba(255,255,255,0.5); }
+        .info-row .val { font-weight: 600; text-align: right; }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .badge-danger  { background: rgba(239,68,68,0.2); color: #f87171; }
+        .badge-warning { background: rgba(245,158,11,0.2); color: #fbbf24; }
+        .badge-medium  { background: rgba(251,191,36,0.2); color: #fcd34d; }
+        .badge-low     { background: rgba(34,197,94,0.2);  color: #4ade80; }
+        .badge-safe    { background: rgba(96,165,250,0.2); color: #93c5fd; }
+
+        /* ─── Stats bar ─── */
+        .stats-bar {
+            position: fixed;
+            top: 80px; right: 16px;
+            z-index: 1000;
+            display: flex; gap: 8px;
+        }
+        .stat-chip {
+            padding: 10px 16px;
+            background: rgba(15, 20, 38, 0.88);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-chip .num {
+            font-size: 20px; font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-chip .lbl {
+            font-size: 10px; color: rgba(255,255,255,0.4);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* Scrollbar */
+        .info-card::-webkit-scrollbar { width: 4px; }
+        .info-card::-webkit-scrollbar-track { background: transparent; }
+        .info-card::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+        /* Leaflet popup override */
+        .leaflet-popup-content-wrapper {
+            background: rgba(15, 20, 38, 0.95) !important;
+            color: #e0e6f0 !important;
+            border-radius: 12px !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+        }
+        .leaflet-popup-tip { background: rgba(15, 20, 38, 0.95) !important; }
+        .leaflet-popup-content { font-family: 'Inter', sans-serif !important; font-size: 12px !important; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .panel, .legend-panel { width: 240px; }
+            .stats-bar { flex-direction: column; width: 110px; }
+            .info-card { width: 260px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header-bar">
+    <div class="logo">🏭</div>
+    <div>
+        <h1>Heatmap Kepadatan & Dampak Industri</h1>
+        <div class="subtitle">Pesisir Banten — Aquality Analysis</div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+    <div class="stat-chip"><div class="num">14</div><div class="lbl">Industri</div></div>
+    <div class="stat-chip"><div class="num">38</div><div class="lbl">Kecamatan</div></div>
+    <div class="stat-chip"><div class="num">16</div><div class="lbl">Pantai</div></div>
+</div>
+
+<!-- Control Panel -->
+<div class="panel" id="controlPanel">
+    <h2>Layer Heatmap</h2>
+    <div class="toggle-group">
+        <div class="toggle-btn active" id="btnDensity" onclick="toggleLayer('density')">
+            <div class="dot" style="background:#f59e0b; color:#f59e0b;"></div>
+            <div>
+                <div class="label">Kepadatan Industri</div>
+                <div class="desc">Jumlah industri dalam radius 10 km</div>
+            </div>
+        </div>
+        <div class="toggle-btn" id="btnImpact" onclick="toggleLayer('impact')">
+            <div class="dot" style="background:#ef4444; color:#ef4444;"></div>
+            <div>
+                <div class="label">Dampak Industri (IDI)</div>
+                <div class="desc">Indeks komposit IDW 0-100</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-row">
+        <label>Radius</label>
+        <input type="range" id="sliderRadius" min="10" max="60" value="30" oninput="updateRadius(this.value)"/>
+    </div>
+    <div class="slider-row" style="margin-bottom:12px;">
+        <label>Intensitas</label>
+        <input type="range" id="sliderIntensity" min="0.1" max="1" step="0.05" value="0.7" oninput="updateIntensity(this.value)"/>
+    </div>
+
+    <div class="check-row">
+        <input type="checkbox" id="chkMarkers" checked onchange="toggleMarkers(this.checked)"/>
+        <label for="chkMarkers">Tampilkan marker industri</label>
+    </div>
+    <div class="check-row">
+        <input type="checkbox" id="chkKec" checked onchange="toggleKec(this.checked)"/>
+        <label for="chkKec">Tampilkan titik kecamatan</label>
+    </div>
+</div>
+
+<!-- Legend -->
+<div class="legend-panel">
+    <h3 id="legendTitle">Legenda — Kepadatan Industri</h3>
+    <div class="gradient-bar" id="gradientBar" style="background: linear-gradient(90deg, #1a1a2e, #f59e0b, #ef4444);"></div>
+    <div class="gradient-labels" id="gradientLabels">
+        <span>0 industri</span>
+        <span>5-6</span>
+        <span>11 industri</span>
+    </div>
+    <h3 style="margin-top:8px;">Marker Industri</h3>
+    <div class="legend-items">
+        <div class="legend-item"><div class="swatch" style="background:#ef4444;"></div><span>Petrokimia / Kimia (Relevansi 1.0)</span></div>
+        <div class="legend-item"><div class="swatch" style="background:#f97316;"></div><span>Baja / Pulp & Paper (0.9)</span></div>
+        <div class="legend-item"><div class="swatch" style="background:#eab308;"></div><span>Pembangkit / Energi (0.7)</span></div>
+        <div class="legend-item"><div class="swatch" style="background:#22c55e;"></div><span>Semen / Pelabuhan (0.5-0.6)</span></div>
+        <div class="legend-item"><div class="swatch" style="background:#3b82f6;"></div><span>Perikanan (0.3)</span></div>
+    </div>
+</div>
+
+<!-- Info Card -->
+<div class="info-card" id="infoCard"></div>
+
+<!-- Map -->
+<div id="map"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────
+
+const INDUSTRIES = [
+    { nama: "PT Krakatau Steel", tipe: "Baja/Logam", lat: -6.0048, lon: 106.0148, relevansi: 0.9 },
+    { nama: "PT Chandra Asri Petrochemical", tipe: "Petrokimia", lat: -6.0200, lon: 106.0050, relevansi: 1.0 },
+    { nama: "PT Asahimas Chemical", tipe: "Kimia", lat: -6.0120, lon: 106.0200, relevansi: 1.0 },
+    { nama: "PLTU Suralaya", tipe: "Pembangkit Listrik", lat: -5.9320, lon: 105.9440, relevansi: 0.7 },
+    { nama: "PT Indah Kiat Pulp & Paper (Merak)", tipe: "Pulp & Paper", lat: -5.9550, lon: 106.0000, relevansi: 0.9 },
+    { nama: "PT Indonesia Power Suralaya", tipe: "Energi", lat: -5.9350, lon: 105.9460, relevansi: 0.7 },
+    { nama: "PT Banten Energy", tipe: "Energi", lat: -6.0450, lon: 105.9750, relevansi: 0.7 },
+    { nama: "Pelabuhan Merak", tipe: "Pelabuhan", lat: -5.9350, lon: 106.0000, relevansi: 0.5 },
+    { nama: "PT Lotte Chemical Indonesia", tipe: "Kimia", lat: -6.0380, lon: 106.0100, relevansi: 1.0 },
+    { nama: "PLTU Labuan (Banten 2)", tipe: "Pembangkit Listrik", lat: -6.3660, lon: 105.8180, relevansi: 0.7 },
+    { nama: "PT Indocement Tunggal Prakarsa (Bayah)", tipe: "Semen", lat: -6.9500, lon: 106.2600, relevansi: 0.6 },
+    { nama: "Pelabuhan Ciwandan", tipe: "Pelabuhan/Logistik", lat: -6.0350, lon: 105.9600, relevansi: 0.5 },
+    { nama: "PT Sulfindo Adiusaha", tipe: "Kimia", lat: -6.0150, lon: 106.0080, relevansi: 1.0 },
+    { nama: "Pelabuhan Perikanan Karangantu", tipe: "Perikanan", lat: -6.0310, lon: 106.1700, relevansi: 0.3 }
+];
+
+// Kecamatan data (from JSON)
+const KECAMATAN = [
+    { nama: "Cibeber", kab: "Cilegon", lat: -6.043111, lon: 106.058757, jumlah: 6, kepadatan: 0.0191, idi: 36.82, kategori: "TINGGI" },
+    { nama: "Citangkil", kab: "Cilegon", lat: -6.014606, lon: 106.010489, jumlah: 9, kepadatan: 0.0286, idi: 59.16, kategori: "SANGAT TINGGI" },
+    { nama: "Ciwandan", kab: "Cilegon", lat: -6.031094, lon: 105.967279, jumlah: 8, kepadatan: 0.0255, idi: 47.44, kategori: "TINGGI" },
+    { nama: "Grogol", kab: "Cilegon", lat: -5.971752, lon: 106.01866, jumlah: 11, kepadatan: 0.035, idi: 47.55, kategori: "TINGGI" },
+    { nama: "Jombang", kab: "Cilegon", lat: -6.010072, lon: 106.061569, jumlah: 6, kepadatan: 0.0191, idi: 39.04, kategori: "TINGGI" },
+    { nama: "Pulomerak", kab: "Cilegon", lat: -5.921117, lon: 106.010137, jumlah: 5, kepadatan: 0.0159, idi: 35.21, kategori: "TINGGI" },
+    { nama: "Kasemen", kab: "Kota Serang", lat: -6.062136, lon: 106.18028, jumlah: 1, kepadatan: 0.0032, idi: 11.81, kategori: "RENDAH" },
+    { nama: "Bayah", kab: "Lebak", lat: -6.909335, lon: 106.299045, jumlah: 1, kepadatan: 0.0032, idi: 3.06, kategori: "SANGAT RENDAH" },
+    { nama: "Cihara", kab: "Lebak", lat: -6.839636, lon: 106.127101, jumlah: 0, kepadatan: 0.0, idi: 0.86, kategori: "SANGAT RENDAH" },
+    { nama: "Cilograng", kab: "Lebak", lat: -6.923037, lon: 106.374606, jumlah: 0, kepadatan: 0.0, idi: 1.56, kategori: "SANGAT RENDAH" },
+    { nama: "Malingping", kab: "Lebak", lat: -6.752439, lon: 106.004818, jumlah: 0, kepadatan: 0.0, idi: 0.24, kategori: "SANGAT RENDAH" },
+    { nama: "Panggarangan", kab: "Lebak", lat: -6.825321, lon: 106.217919, jumlah: 0, kepadatan: 0.0, idi: 1.34, kategori: "SANGAT RENDAH" },
+    { nama: "Wanasalam", kab: "Lebak", lat: -6.747551, lon: 105.908894, jumlah: 0, kepadatan: 0.0, idi: 0.17, kategori: "SANGAT RENDAH" },
+    { nama: "Carita", kab: "Pandeglang", lat: -6.279965, lon: 105.867597, jumlah: 0, kepadatan: 0.0, idi: 5.1, kategori: "RENDAH" },
+    { nama: "Cibitung", kab: "Pandeglang", lat: -6.789494, lon: 105.715872, jumlah: 0, kepadatan: 0.0, idi: 0.07, kategori: "SANGAT RENDAH" },
+    { nama: "Cigeulis", kab: "Pandeglang", lat: -6.614356, lon: 105.686158, jumlah: 0, kepadatan: 0.0, idi: 0.2, kategori: "SANGAT RENDAH" },
+    { nama: "Cimanggu", kab: "Pandeglang", lat: -6.700000, lon: 105.650000, jumlah: 0, kepadatan: 0.0, idi: 0.05, kategori: "SANGAT RENDAH" },
+    { nama: "Labuan", kab: "Pandeglang", lat: -6.378400, lon: 105.826700, jumlah: 1, kepadatan: 0.0032, idi: 6.8, kategori: "RENDAH" },
+    { nama: "Panimbang", kab: "Pandeglang", lat: -6.478500, lon: 105.656500, jumlah: 0, kepadatan: 0.0, idi: 0.89, kategori: "SANGAT RENDAH" },
+    { nama: "Sobang", kab: "Pandeglang", lat: -6.550000, lon: 105.700000, jumlah: 0, kepadatan: 0.0, idi: 0.15, kategori: "SANGAT RENDAH" },
+    { nama: "Sumur", kab: "Pandeglang", lat: -6.657500, lon: 105.518000, jumlah: 0, kepadatan: 0.0, idi: 0.08, kategori: "SANGAT RENDAH" },
+    { nama: "Sukaresmi", kab: "Pandeglang", lat: -6.520000, lon: 105.750000, jumlah: 0, kepadatan: 0.0, idi: 0.4, kategori: "SANGAT RENDAH" },
+    { nama: "Anyar", kab: "Serang", lat: -6.082500, lon: 105.880500, jumlah: 2, kepadatan: 0.0064, idi: 18.75, kategori: "SEDANG" },
+    { nama: "Bojonegara", kab: "Serang", lat: -6.030000, lon: 106.090000, jumlah: 3, kepadatan: 0.0096, idi: 25.0, kategori: "SEDANG" },
+    { nama: "Cinangka", kab: "Serang", lat: -6.115800, lon: 105.864000, jumlah: 0, kepadatan: 0.0, idi: 12.33, kategori: "RENDAH" },
+    { nama: "Kramatwatu", kab: "Serang", lat: -6.060000, lon: 106.110000, jumlah: 2, kepadatan: 0.0064, idi: 16.5, kategori: "SEDANG" },
+    { nama: "Pontang", kab: "Serang", lat: -6.050000, lon: 106.220000, jumlah: 1, kepadatan: 0.0032, idi: 8.5, kategori: "RENDAH" },
+    { nama: "Puloampel", kab: "Serang", lat: -6.000000, lon: 106.090000, jumlah: 4, kepadatan: 0.0127, idi: 28.0, kategori: "SEDANG" },
+    { nama: "Tanara", kab: "Serang", lat: -6.040000, lon: 106.260000, jumlah: 0, kepadatan: 0.0, idi: 5.2, kategori: "RENDAH" },
+    { nama: "Tirtayasa", kab: "Serang", lat: -5.969000, lon: 106.296000, jumlah: 0, kepadatan: 0.0, idi: 3.56, kategori: "SANGAT RENDAH" },
+    { nama: "Kosambi", kab: "Tangerang", lat: -6.115000, lon: 106.680000, jumlah: 0, kepadatan: 0.0, idi: 0.03, kategori: "SANGAT RENDAH" },
+    { nama: "Teluknaga", kab: "Tangerang", lat: -6.100000, lon: 106.640000, jumlah: 0, kepadatan: 0.0, idi: 0.04, kategori: "SANGAT RENDAH" },
+    { nama: "Pakuhaji", kab: "Tangerang", lat: -6.070000, lon: 106.560000, jumlah: 0, kepadatan: 0.0, idi: 0.05, kategori: "SANGAT RENDAH" },
+    { nama: "Sukadiri", kab: "Tangerang", lat: -6.100000, lon: 106.580000, jumlah: 0, kepadatan: 0.0, idi: 0.04, kategori: "SANGAT RENDAH" },
+    { nama: "Mauk", kab: "Tangerang", lat: -6.019500, lon: 106.452000, jumlah: 0, kepadatan: 0.0, idi: 0.12, kategori: "SANGAT RENDAH" },
+    { nama: "Kemiri", kab: "Tangerang", lat: -6.080000, lon: 106.500000, jumlah: 0, kepadatan: 0.0, idi: 0.07, kategori: "SANGAT RENDAH" },
+    { nama: "Kronjo", kab: "Tangerang", lat: -6.060000, lon: 106.480000, jumlah: 0, kepadatan: 0.0, idi: 0.08, kategori: "SANGAT RENDAH" },
+    { nama: "Mekarbaru", kab: "Tangerang", lat: -6.090000, lon: 106.530000, jumlah: 0, kepadatan: 0.0, idi: 0.05, kategori: "SANGAT RENDAH" }
+];
+
+
+// ─── MAP INITIALIZATION ─────────────────────────────────────────
+
+const map = L.map('map', {
+    center: [-6.25, 105.95],
+    zoom: 9,
+    zoomControl: false,
+    attributionControl: false
+});
+
+L.control.zoom({ position: 'topright' }).addTo(map);
+
+// Dark tile layer
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+}).addTo(map);
+
+
+// ─── HEATMAP LAYERS ─────────────────────────────────────────────
+
+// Density Heatmap: weight = jumlah industri dalam radius 10km (0-11)
+const densityPoints = [];
+KECAMATAN.forEach(k => {
+    if (k.jumlah > 0) {
+        densityPoints.push([k.lat, k.lon, k.jumlah / 11]); // normalized
+    }
+});
+// Add industry locations themselves as high-intensity points
+INDUSTRIES.forEach(ind => {
+    densityPoints.push([ind.lat, ind.lon, 0.9]);
+});
+
+const heatDensity = L.heatLayer(densityPoints, {
+    radius: 30,
+    blur: 20,
+    maxZoom: 13,
+    max: 1.0,
+    gradient: {
+        0.0: '#0a0e2a',
+        0.2: '#1e1b4b',
+        0.4: '#f59e0b',
+        0.6: '#f97316',
+        0.8: '#ef4444',
+        1.0: '#fef08a'
+    }
+}).addTo(map);
+
+// Impact Heatmap: weight = IDI (0-100) normalized
+const impactPoints = [];
+KECAMATAN.forEach(k => {
+    impactPoints.push([k.lat, k.lon, k.idi / 60]); // cap at 60 for visual
+});
+INDUSTRIES.forEach(ind => {
+    impactPoints.push([ind.lat, ind.lon, ind.relevansi]);
+});
+
+const heatImpact = L.heatLayer(impactPoints, {
+    radius: 30,
+    blur: 20,
+    maxZoom: 13,
+    max: 1.0,
+    gradient: {
+        0.0: '#0a0e2a',
+        0.15: '#312e81',
+        0.3: '#7c3aed',
+        0.5: '#ec4899',
+        0.7: '#ef4444',
+        0.9: '#f97316',
+        1.0: '#fef08a'
+    }
+});
+
+
+// ─── INDUSTRY MARKERS ───────────────────────────────────────────
+
+function getIndustryColor(tipe) {
+    if (['Petrokimia', 'Kimia'].includes(tipe)) return '#ef4444';
+    if (['Baja/Logam', 'Pulp & Paper'].includes(tipe)) return '#f97316';
+    if (['Pembangkit Listrik', 'Energi'].includes(tipe)) return '#eab308';
+    if (['Semen', 'Pelabuhan', 'Pelabuhan/Logistik'].includes(tipe)) return '#22c55e';
+    return '#3b82f6';
+}
+
+function getIndustryIcon(tipe) {
+    if (['Petrokimia', 'Kimia'].includes(tipe)) return '⚗️';
+    if (['Baja/Logam'].includes(tipe)) return '🔩';
+    if (['Pulp & Paper'].includes(tipe)) return '📄';
+    if (['Pembangkit Listrik', 'Energi'].includes(tipe)) return '⚡';
+    if (['Semen'].includes(tipe)) return '🏗️';
+    if (['Pelabuhan', 'Pelabuhan/Logistik'].includes(tipe)) return '🚢';
+    return '🐟';
+}
+
+const industryGroup = L.layerGroup();
+INDUSTRIES.forEach(ind => {
+    const color = getIndustryColor(ind.tipe);
+    const icon = L.divIcon({
+        html: `<div style="
+            width:32px; height:32px;
+            border-radius:50%;
+            background: radial-gradient(circle, ${color}dd, ${color}55);
+            border: 2px solid ${color};
+            display:flex; align-items:center; justify-content:center;
+            font-size:14px;
+            box-shadow: 0 0 12px ${color}88;
+            animation: pulse 2s ease-in-out infinite;
+        ">${getIndustryIcon(ind.tipe)}</div>`,
+        className: '',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+    });
+
+    const marker = L.marker([ind.lat, ind.lon], { icon }).addTo(industryGroup);
+    marker.bindPopup(`
+        <div style="min-width:180px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:4px;">${ind.nama}</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:8px;">${ind.tipe}</div>
+            <div style="display:flex; justify-content:space-between; font-size:11px;">
+                <span style="color:rgba(255,255,255,0.5);">Relevansi Polusi</span>
+                <span style="font-weight:700; color:${color};">${(ind.relevansi * 100).toFixed(0)}%</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:4px;">
+                <span style="color:rgba(255,255,255,0.5);">Koordinat</span>
+                <span style="font-weight:500;">${ind.lat.toFixed(4)}, ${ind.lon.toFixed(4)}</span>
+            </div>
+        </div>
+    `);
+});
+industryGroup.addTo(map);
+
+
+// ─── KECAMATAN MARKERS ──────────────────────────────────────────
+
+function getKategoriColor(k) {
+    switch (k) {
+        case 'SANGAT TINGGI': return '#ef4444';
+        case 'TINGGI': return '#f97316';
+        case 'SEDANG': return '#eab308';
+        case 'RENDAH': return '#22c55e';
+        default: return '#3b82f6';
+    }
+}
+function getKategoriBadge(k) {
+    switch (k) {
+        case 'SANGAT TINGGI': return 'badge-danger';
+        case 'TINGGI': return 'badge-warning';
+        case 'SEDANG': return 'badge-medium';
+        case 'RENDAH': return 'badge-low';
+        default: return 'badge-safe';
+    }
+}
+
+const kecGroup = L.layerGroup();
+KECAMATAN.forEach(kec => {
+    const color = getKategoriColor(kec.kategori);
+    const circle = L.circleMarker([kec.lat, kec.lon], {
+        radius: 5 + Math.min(kec.jumlah, 11) * 1.2,
+        fillColor: color,
+        color: 'rgba(255,255,255,0.3)',
+        weight: 1,
+        fillOpacity: 0.7
+    }).addTo(kecGroup);
+
+    circle.on('click', () => showInfoCard(kec));
+    circle.bindTooltip(`<b>${kec.nama}</b><br>${kec.kab}<br>IDI: ${kec.idi}`, { className: '' });
+});
+kecGroup.addTo(map);
+
+
+// ─── INFO CARD ──────────────────────────────────────────────────
+
+function showInfoCard(kec) {
+    const card = document.getElementById('infoCard');
+    const badgeClass = getKategoriBadge(kec.kategori);
+    card.innerHTML = `
+        <h3>${kec.nama}</h3>
+        <div class="kabkota">${kec.kab}, Banten</div>
+        <div class="info-row"><span class="key">Industri dlm 10km</span><span class="val">${kec.jumlah}</span></div>
+        <div class="info-row"><span class="key">Kepadatan Industri</span><span class="val">${kec.kepadatan.toFixed(4)} /km²</span></div>
+        <div class="info-row"><span class="key">Indeks Dampak (IDI)</span><span class="val" style="font-size:16px; color:${getKategoriColor(kec.kategori)};">${kec.idi}</span></div>
+        <div class="info-row"><span class="key">Kategori Dampak</span><span class="val"><span class="badge ${badgeClass}">${kec.kategori}</span></span></div>
+    `;
+    card.classList.add('visible');
+}
+
+map.on('click', (e) => {
+    // If click not on a marker, hide info card
+    document.getElementById('infoCard').classList.remove('visible');
+});
+
+
+// ─── LAYER TOGGLES ──────────────────────────────────────────────
+
+let currentLayer = 'density';
+
+function toggleLayer(layer) {
+    currentLayer = layer;
+
+    if (layer === 'density') {
+        map.addLayer(heatDensity);
+        map.removeLayer(heatImpact);
+        document.getElementById('btnDensity').classList.add('active');
+        document.getElementById('btnImpact').classList.remove('active');
+        document.getElementById('legendTitle').textContent = 'Legenda — Kepadatan Industri';
+        document.getElementById('gradientBar').style.background = 'linear-gradient(90deg, #0a0e2a, #1e1b4b, #f59e0b, #f97316, #ef4444, #fef08a)';
+        document.getElementById('gradientLabels').innerHTML = '<span>0 industri</span><span>5-6</span><span>11 industri</span>';
+    } else {
+        map.removeLayer(heatDensity);
+        map.addLayer(heatImpact);
+        document.getElementById('btnImpact').classList.add('active');
+        document.getElementById('btnDensity').classList.remove('active');
+        document.getElementById('legendTitle').textContent = 'Legenda — Dampak Industri (IDI)';
+        document.getElementById('gradientBar').style.background = 'linear-gradient(90deg, #0a0e2a, #312e81, #7c3aed, #ec4899, #ef4444, #f97316, #fef08a)';
+        document.getElementById('gradientLabels').innerHTML = '<span>IDI 0</span><span>IDI 30</span><span>IDI 60+</span>';
+    }
+}
+
+function updateRadius(val) {
+    heatDensity.setOptions({ radius: parseInt(val) });
+    heatImpact.setOptions({ radius: parseInt(val) });
+}
+
+function updateIntensity(val) {
+    heatDensity.setOptions({ max: parseFloat(val) });
+    heatImpact.setOptions({ max: parseFloat(val) });
+}
+
+function toggleMarkers(show) {
+    if (show) map.addLayer(industryGroup);
+    else map.removeLayer(industryGroup);
+}
+
+function toggleKec(show) {
+    if (show) map.addLayer(kecGroup);
+    else map.removeLayer(kecGroup);
+}
+
+
+// ─── PULSE ANIMATION ────────────────────────────────────────────
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.15); opacity: 0.85; }
+    }
+`;
+document.head.appendChild(style);
+
+</script>
+</body>
+</html>

@@ -1,86 +1,142 @@
 [
   {
+    "industry_id": "IND001",
     "nama": "PT Krakatau Steel",
     "tipe": "Baja/Logam",
     "latitude": -6.0048,
-    "longitude": 106.0148
+    "longitude": 106.0148,
+    "relevansi": 0.9,
+    "distance_to_coast_km": 3.41,
+    "risk_score": 73.0
   },
   {
+    "industry_id": "IND002",
     "nama": "PT Chandra Asri Petrochemical",
     "tipe": "Petrokimia",
     "latitude": -6.02,
-    "longitude": 106.005
+    "longitude": 106.005,
+    "relevansi": 1.0,
+    "distance_to_coast_km": 3.26,
+    "risk_score": 82.2
   },
   {
+    "industry_id": "IND003",
     "nama": "PT Asahimas Chemical",
     "tipe": "Kimia",
     "latitude": -6.012,
-    "longitude": 106.02
+    "longitude": 106.02,
+    "relevansi": 1.0,
+    "distance_to_coast_km": 4.2,
+    "risk_score": 75.8
   },
   {
+    "industry_id": "IND004",
     "nama": "PLTU Suralaya",
     "tipe": "Pembangkit Listrik",
     "latitude": -5.932,
-    "longitude": 105.944
+    "longitude": 105.944,
+    "relevansi": 0.7,
+    "distance_to_coast_km": 0.72,
+    "risk_score": 70.0
   },
   {
+    "industry_id": "IND005",
     "nama": "PT Indah Kiat Pulp & Paper (Merak)",
     "tipe": "Pulp & Paper",
     "latitude": -5.955,
-    "longitude": 106.0
+    "longitude": 106.0,
+    "relevansi": 0.9,
+    "distance_to_coast_km": 0.22,
+    "risk_score": 90.0
   },
   {
+    "industry_id": "IND006",
     "nama": "PT Indonesia Power Suralaya",
     "tipe": "Energi",
     "latitude": -5.935,
-    "longitude": 105.946
+    "longitude": 105.946,
+    "relevansi": 0.7,
+    "distance_to_coast_km": 0.57,
+    "risk_score": 70.0
   },
   {
+    "industry_id": "IND007",
     "nama": "PT Banten Energy",
     "tipe": "Energi",
     "latitude": -6.045,
-    "longitude": 105.975
+    "longitude": 105.975,
+    "relevansi": 0.7,
+    "distance_to_coast_km": 3.26,
+    "risk_score": 57.6
   },
   {
+    "industry_id": "IND008",
     "nama": "Pelabuhan Merak",
     "tipe": "Pelabuhan",
     "latitude": -5.935,
-    "longitude": 106.0
+    "longitude": 106.0,
+    "relevansi": 0.5,
+    "distance_to_coast_km": 0.08,
+    "risk_score": 50.0
   },
   {
+    "industry_id": "IND009",
     "nama": "PT Lotte Chemical Indonesia",
     "tipe": "Kimia",
     "latitude": -6.038,
-    "longitude": 106.01
+    "longitude": 106.01,
+    "relevansi": 1.0,
+    "distance_to_coast_km": 5.18,
+    "risk_score": 69.6
   },
   {
+    "industry_id": "IND010",
     "nama": "PLTU Labuan (Banten 2)",
     "tipe": "Pembangkit Listrik",
     "latitude": -6.366,
-    "longitude": 105.818
+    "longitude": 105.818,
+    "relevansi": 0.7,
+    "distance_to_coast_km": 0.19,
+    "risk_score": 70.0
   },
   {
+    "industry_id": "IND011",
     "nama": "PT Indocement Tunggal Prakarsa (Bayah)",
     "tipe": "Semen",
     "latitude": -6.95,
-    "longitude": 106.26
+    "longitude": 106.26,
+    "relevansi": 0.6,
+    "distance_to_coast_km": 1.28,
+    "risk_score": 58.6
   },
   {
+    "industry_id": "IND012",
     "nama": "Pelabuhan Ciwandan",
     "tipe": "Pelabuhan/Logistik",
     "latitude": -6.035,
-    "longitude": 105.96
+    "longitude": 105.96,
+    "relevansi": 0.5,
+    "distance_to_coast_km": 1.68,
+    "risk_score": 47.1
   },
   {
+    "industry_id": "IND013",
     "nama": "PT Sulfindo Adiusaha",
     "tipe": "Kimia",
     "latitude": -6.015,
-    "longitude": 106.008
+    "longitude": 106.008,
+    "relevansi": 1.0,
+    "distance_to_coast_km": 3.17,
+    "risk_score": 82.9
   },
   {
+    "industry_id": "IND014",
     "nama": "Pelabuhan Perikanan Karangantu",
     "tipe": "Perikanan",
     "latitude": -6.031,
-    "longitude": 106.17
+    "longitude": 106.17,
+    "relevansi": 0.3,
+    "distance_to_coast_km": 0.56,
+    "risk_score": 30.0
   }
 ]

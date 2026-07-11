@@ -1,15 +1,11 @@
 """
 beach_recommendation.py — Sistem Rekomendasi Pantai Tersehat
 
-Model rekomendasi berbasis skor komposit kesehatan air pantai (Health Score)
-yang menggabungkan beberapa parameter kualitas air dari citra Sentinel-2:
-  - Persentase area sehat (Pct_Sehat_2026)
-  - Kekeruhan air (NDTI) — semakin rendah semakin baik
-  - Konsentrasi klorofil-a (NDCI) — semakin rendah semakin baik
-  - Total Suspended Solids (TSS) — semakin rendah semakin baik
-  - Colored Dissolved Organic Matter (CDOM) — semakin rendah semakin baik
-  - Tren kualitas air historis (MEMBAIK > STABIL > MEMBURUK)
-  - Dampak industri terdekat (RENDAH > SEDANG > TINGGI)
+Model rekomendasi berbasis skor kelayakan pantai (Health Score)
+yang menggabungkan beberapa parameter terestrial & human footprint:
+  - Indeks Dampak Industri (IDI) komposit
+  - Kepadatan Penduduk Kecamatan pesisir Banten
+  - Indeks Pengaruh Urban (IPU) dari pusat perkotaan terdekat
 
 Penggunaan:
     from beach_recommendation import BeachRecommender
