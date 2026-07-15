@@ -191,6 +191,7 @@ output/*
 !output/banten_water_quality_map.html
 !output/banten_industries.json
 !output/heatmap_industri.html
+!output/banten_beach_recommendations.json
 !output/model/
 output/model/*
 !output/model/water_quality_rf.joblib
