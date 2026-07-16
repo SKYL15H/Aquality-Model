@@ -141,6 +141,8 @@ class BeachRecommender:
                 "pantai": name,
                 "slug": stats.get("slug") or "".join(c if c.isalnum() or c in " -" else "" for c in name.lower().strip()).replace(" ", "-").replace("--", "-"),
                 "kecamatan": kec,
+                "desa": stats.get("desa"),
+                "kode_adm4": stats.get("kode_adm4"),
                 "kabupaten_kota": stats.get("Kabupaten_Kota"),
                 "latitude": stats.get("latitude"),
                 "longitude": stats.get("longitude"),

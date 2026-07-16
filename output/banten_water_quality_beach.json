@@ -2,7 +2,7 @@
   "Pantai Anyer": {
     "Kecamatan": "Anyar",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/anyer.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-anyer.jpg",
     "latitude": -6.0465,
     "longitude": 105.885,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -31,12 +31,14 @@
     "indeks_dampak_industri": 21.63,
     "kepadatan_penduduk_kecamatan": 800.0,
     "indeks_pengaruh_urban": 12.4,
-    "Pantai": "Pantai Anyer"
+    "Pantai": "Pantai Anyer",
+    "desa": "Anyar",
+    "kode_adm4": "36.04.30.2001"
   },
   "Pantai Carita": {
     "Kecamatan": "Carita",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/carita.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-carita.jpg",
     "latitude": -6.1305,
     "longitude": 105.8427,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -62,12 +64,14 @@
     "indeks_dampak_industri": 9.61,
     "kepadatan_penduduk_kecamatan": 550.0,
     "indeks_pengaruh_urban": 11.52,
-    "Pantai": "Pantai Carita"
+    "Pantai": "Pantai Carita",
+    "desa": "Sukanagara",
+    "kode_adm4": "36.01.12.2008"
   },
   "Pantai Tanjung Lesung": {
     "Kecamatan": "Panimbang",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-tanjung-lesung.png",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-tanjung-lesung.png",
     "latitude": -6.4785,
     "longitude": 105.6565,
     "industri_terdekat": "PLTU Labuan (Banten 2)",
@@ -93,12 +97,14 @@
     "indeks_dampak_industri": 0.89,
     "kepadatan_penduduk_kecamatan": 300.0,
     "indeks_pengaruh_urban": 5.03,
-    "Pantai": "Pantai Tanjung Lesung"
+    "Pantai": "Pantai Tanjung Lesung",
+    "desa": "Tanjungjaya",
+    "kode_adm4": "36.01.06.2012"
   },
   "Pantai Sawarna": {
     "Kecamatan": "Bayah",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/sawarna.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/sawarna.jpg",
     "latitude": -6.993,
     "longitude": 106.318,
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
@@ -126,12 +132,14 @@
     "indeks_dampak_industri": 2.57,
     "kepadatan_penduduk_kecamatan": 350.0,
     "indeks_pengaruh_urban": 0.24,
-    "Pantai": "Pantai Sawarna"
+    "Pantai": "Pantai Sawarna",
+    "desa": "Sawarna",
+    "kode_adm4": "36.02.03.2002"
   },
   "Pantai Bagedur": {
     "Kecamatan": "Malingping",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-bagedur.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-bagedur.jpg",
     "latitude": -6.9038,
     "longitude": 106.0125,
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
@@ -157,12 +165,14 @@
     "indeks_dampak_industri": 0.37,
     "kepadatan_penduduk_kecamatan": 700.0,
     "indeks_pengaruh_urban": 0.55,
-    "Pantai": "Pantai Bagedur"
+    "Pantai": "Pantai Bagedur",
+    "desa": "Sukamanah",
+    "kode_adm4": "36.02.01.2023"
   },
   "Pantai Karang Bolong": {
     "Kecamatan": "Cinangka",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/karang-bolong.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-karang-bolong.jpg",
     "latitude": -6.1082,
     "longitude": 105.8569,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -188,12 +198,14 @@
     "indeks_dampak_industri": 12.33,
     "kepadatan_penduduk_kecamatan": 450.0,
     "indeks_pengaruh_urban": 11.7,
-    "Pantai": "Pantai Karang Bolong"
+    "Pantai": "Pantai Karang Bolong",
+    "desa": "Karangsuraga",
+    "kode_adm4": "36.04.31.2006"
   },
   "Pantai Ciputih": {
     "Kecamatan": "Sumur",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-ciputih.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-ciputih.jpg",
     "latitude": -6.6575,
     "longitude": 105.518,
     "industri_terdekat": "PLTU Labuan (Banten 2)",
@@ -219,12 +231,14 @@
     "indeks_dampak_industri": 0.08,
     "kepadatan_penduduk_kecamatan": 90.0,
     "indeks_pengaruh_urban": 0.99,
-    "Pantai": "Pantai Ciputih"
+    "Pantai": "Pantai Ciputih",
+    "desa": "Kertamukti",
+    "kode_adm4": "36.01.01.2003"
   },
   "Pantai Pulau Umang": {
     "Kecamatan": "Sumur",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pulau-umang.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-umang.jpeg",
     "latitude": -6.64065,
     "longitude": 105.58436,
     "industri_terdekat": "PLTU Labuan (Banten 2)",
@@ -250,12 +264,14 @@
     "indeks_dampak_industri": 0.14,
     "kepadatan_penduduk_kecamatan": 90.0,
     "indeks_pengaruh_urban": 1.51,
-    "Pantai": "Pantai Pulau Umang"
+    "Pantai": "Pantai Pulau Umang",
+    "desa": "Sumberjaya",
+    "kode_adm4": "36.01.01.2001"
   },
   "Pantai Sambolo": {
     "Kecamatan": "Anyar",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-sambolo.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-sambolo.jpg",
     "latitude": -6.0712,
     "longitude": 105.8812,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -283,12 +299,14 @@
     "indeks_dampak_industri": 18.75,
     "kepadatan_penduduk_kecamatan": 800.0,
     "indeks_pengaruh_urban": 12.49,
-    "Pantai": "Pantai Sambolo"
+    "Pantai": "Pantai Sambolo",
+    "desa": "Bandulu",
+    "kode_adm4": "36.04.30.2002"
   },
   "Pantai Pasir Putih Sirih": {
     "Kecamatan": "Anyar",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pasir-pantai.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pasir-putih-sirih.jpg",
     "latitude": -6.0825,
     "longitude": 105.8805,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -314,12 +332,14 @@
     "indeks_dampak_industri": 17.54,
     "kepadatan_penduduk_kecamatan": 800.0,
     "indeks_pengaruh_urban": 12.58,
-    "Pantai": "Pantai Pasir Putih Sirih"
+    "Pantai": "Pantai Pasir Putih Sirih",
+    "desa": "Bandulu",
+    "kode_adm4": "36.04.30.2002"
   },
   "Pantai Marbella": {
     "Kecamatan": "Anyar",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-marbella.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-marbella.jpg",
     "latitude": -6.062,
     "longitude": 105.8825,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -347,12 +367,14 @@
     "indeks_dampak_industri": 19.83,
     "kepadatan_penduduk_kecamatan": 800.0,
     "indeks_pengaruh_urban": 12.46,
-    "Pantai": "Pantai Marbella"
+    "Pantai": "Pantai Marbella",
+    "desa": "Bandulu",
+    "kode_adm4": "36.04.30.2002"
   },
   "Pantai Florida Indah": {
     "Kecamatan": "Cinangka",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-florida.png",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-florida.png",
     "latitude": -6.1345,
     "longitude": 105.867,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -378,12 +400,14 @@
     "indeks_dampak_industri": 11.29,
     "kepadatan_penduduk_kecamatan": 450.0,
     "indeks_pengaruh_urban": 12.61,
-    "Pantai": "Pantai Florida Indah"
+    "Pantai": "Pantai Florida Indah",
+    "desa": "Sindanglaya",
+    "kode_adm4": "36.04.31.2010"
   },
   "Pantai Jambu": {
     "Kecamatan": "Cinangka",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-jambu.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-jambu.jpg",
     "latitude": -6.1158,
     "longitude": 105.864,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -409,12 +433,14 @@
     "indeks_dampak_industri": 12.48,
     "kepadatan_penduduk_kecamatan": 450.0,
     "indeks_pengaruh_urban": 12.16,
-    "Pantai": "Pantai Jambu"
+    "Pantai": "Pantai Jambu",
+    "desa": "Bulakan",
+    "kode_adm4": "36.04.31.2004"
   },
   "Pantai Lontar": {
     "Kecamatan": "Tirtayasa",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-lontar.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-lontar.jpg",
     "latitude": -5.96884,
     "longitude": 106.29646,
     "industri_terdekat": "Pelabuhan Perikanan Karangantu",
@@ -440,12 +466,14 @@
     "indeks_dampak_industri": 3.56,
     "kepadatan_penduduk_kecamatan": 600.0,
     "indeks_pengaruh_urban": 9.09,
-    "Pantai": "Pantai Lontar"
+    "Pantai": "Pantai Lontar",
+    "desa": "Lontar",
+    "kode_adm4": "36.04.13.2007"
   },
   "Pantai Tanjung Pasir": {
     "Kecamatan": "Teluknaga",
     "Kabupaten_Kota": "Tangerang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/tanjung-pasir.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-tanjung-pasir.jpg",
     "latitude": -6.015,
     "longitude": 106.685,
     "industri_terdekat": "Pelabuhan Perikanan Karangantu",
@@ -471,12 +499,14 @@
     "indeks_dampak_industri": 0.05,
     "kepadatan_penduduk_kecamatan": 2800.0,
     "indeks_pengaruh_urban": 7.93,
-    "Pantai": "Pantai Tanjung Pasir"
+    "Pantai": "Pantai Tanjung Pasir",
+    "desa": "Tanjung Pasir",
+    "kode_adm4": "36.03.13.2010"
   },
   "Pantai Tanjung Kait": {
     "Kecamatan": "Mauk",
     "Kabupaten_Kota": "Tangerang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/tanjung-kait.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-tanjung-kait.jpg",
     "latitude": -6.0195,
     "longitude": 106.452,
     "industri_terdekat": "Pelabuhan Perikanan Karangantu",
@@ -502,12 +532,14 @@
     "indeks_dampak_industri": 0.67,
     "kepadatan_penduduk_kecamatan": 1500.0,
     "indeks_pengaruh_urban": 7.92,
-    "Pantai": "Pantai Tanjung Kait"
+    "Pantai": "Pantai Tanjung Kait",
+    "desa": "Tanjung Anom",
+    "kode_adm4": "36.03.08.2012"
   },
   "Pantai Binuangeun": {
     "Kecamatan": "Wanasalam",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-binuangeun.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-binuangeun.jpg",
     "latitude": -6.829,
     "longitude": 105.903,
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
@@ -533,12 +565,14 @@
     "indeks_dampak_industri": 0.13,
     "kepadatan_penduduk_kecamatan": 400.0,
     "indeks_pengaruh_urban": 0.91,
-    "Pantai": "Pantai Binuangeun"
+    "Pantai": "Pantai Binuangeun",
+    "desa": "Muara",
+    "kode_adm4": "36.02.01.2009"
   },
   "Pantai Karang Taraje": {
     "Kecamatan": "Bayah",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-taraje.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-taraje.jpg",
     "latitude": -6.9912,
     "longitude": 106.3312,
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
@@ -566,12 +600,14 @@
     "indeks_dampak_industri": 2.3,
     "kepadatan_penduduk_kecamatan": 350.0,
     "indeks_pengaruh_urban": 0.24,
-    "Pantai": "Pantai Karang Taraje"
+    "Pantai": "Pantai Karang Taraje",
+    "desa": "Sawarna",
+    "kode_adm4": "36.02.03.2002"
   },
   "Pantai Sangiang": {
     "Kecamatan": "Anyar",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-sangiang.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-sangiang.jpg",
     "latitude": -5.9535,
     "longitude": 105.8565,
     "industri_terdekat": "PLTU Suralaya",
@@ -599,12 +635,14 @@
     "indeks_dampak_industri": 17.38,
     "kepadatan_penduduk_kecamatan": 800.0,
     "indeks_pengaruh_urban": 8.33,
-    "Pantai": "Pantai Sangiang"
+    "Pantai": "Pantai Sangiang",
+    "desa": "Anyar",
+    "kode_adm4": "36.04.30.2001"
   },
   "Pantai Pasir Putih Florida": {
     "Kecamatan": "Cinangka",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-florida-pasir-putih.png",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pasir-putih-florida.png",
     "latitude": -6.1265,
     "longitude": 105.8645,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -630,12 +668,14 @@
     "indeks_dampak_industri": 11.69,
     "kepadatan_penduduk_kecamatan": 450.0,
     "indeks_pengaruh_urban": 12.36,
-    "Pantai": "Pantai Pasir Putih Florida"
+    "Pantai": "Pantai Pasir Putih Florida",
+    "desa": "Sindanglaya",
+    "kode_adm4": "36.04.31.2010"
   },
   "Pantai Karang Songsong": {
     "Kecamatan": "Cihara",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/karang-songsong.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-karang-songsong.jpg",
     "latitude": -6.88395,
     "longitude": 106.11112,
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
@@ -661,12 +701,14 @@
     "indeks_dampak_industri": 0.96,
     "kepadatan_penduduk_kecamatan": 180.0,
     "indeks_pengaruh_urban": 0.61,
-    "Pantai": "Pantai Karang Songsong"
+    "Pantai": "Pantai Karang Songsong",
+    "desa": "Karangkamulyan",
+    "kode_adm4": "36.02.26.2008"
   },
   "Pantai Pulau Cangkir": {
     "Kecamatan": "Kronjo",
     "Kabupaten_Kota": "Tangerang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pulau-cangkir.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-cangkir.jpg",
     "latitude": -6.00889,
     "longitude": 106.42,
     "industri_terdekat": "Pelabuhan Perikanan Karangantu",
@@ -692,12 +734,14 @@
     "indeks_dampak_industri": 0.95,
     "kepadatan_penduduk_kecamatan": 1100.0,
     "indeks_pengaruh_urban": 7.7,
-    "Pantai": "Pantai Pulau Cangkir"
+    "Pantai": "Pantai Pulau Cangkir",
+    "desa": "Kronjo",
+    "kode_adm4": "36.03.07.2001"
   },
   "Pantai Pasir Putih Cihara": {
     "Kecamatan": "Cihara",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-cihara.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-cihara.jpeg",
     "latitude": -6.84643,
     "longitude": 106.06923,
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
@@ -723,12 +767,14 @@
     "indeks_dampak_industri": 0.54,
     "kepadatan_penduduk_kecamatan": 180.0,
     "indeks_pengaruh_urban": 0.8,
-    "Pantai": "Pantai Pasir Putih Cihara"
+    "Pantai": "Pantai Pasir Putih Cihara",
+    "desa": "Ciparahu",
+    "kode_adm4": "36.02.26.2003"
   },
   "Pantai Tanjung Layar": {
     "Kecamatan": "Bayah",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-tanjung-layar.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-tanjung-layar.jpg",
     "latitude": -6.99431,
     "longitude": 106.30716,
     "industri_terdekat": "PT Indocement Tunggal Prakarsa (Bayah)",
@@ -756,12 +802,14 @@
     "indeks_dampak_industri": 2.79,
     "kepadatan_penduduk_kecamatan": 350.0,
     "indeks_pengaruh_urban": 0.24,
-    "Pantai": "Pantai Tanjung Layar"
+    "Pantai": "Pantai Tanjung Layar",
+    "desa": "Sawarna",
+    "kode_adm4": "36.02.03.2002"
   },
   "Pantai Caringin": {
     "Kecamatan": "Labuan",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "https://storage.googleapis.com/aquality-images/images/pantai-caringin.jpg",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-caringin.jpg",
     "latitude": -6.35329,
     "longitude": 105.82301,
     "industri_terdekat": "PLTU Labuan (Banten 2)",
@@ -789,6 +837,8 @@
     "indeks_dampak_industri": 6.85,
     "kepadatan_penduduk_kecamatan": 1600.0,
     "indeks_pengaruh_urban": 20.16,
-    "Pantai": "Pantai Caringin"
+    "Pantai": "Pantai Caringin",
+    "desa": "Caringin",
+    "kode_adm4": "36.01.12.2009"
   }
 }
