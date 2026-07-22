@@ -1,706 +1,1289 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Heatmap Kepadatan & Dampak Industri — Pesisir Banten</title>
-
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_cc83793b34a31215a68aae105c1316a8 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
 
-    <!-- Leaflet Heat -->
-    <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
 
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
 
-        html, body {
-            width: 100%; height: 100%;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0a0e1a;
-            color: #e0e6f0;
-            overflow: hidden;
-        }
-
-        #map {
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-        }
-
-        /* ─── Header Bar ─── */
-        .header-bar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 12px 24px;
-            background: rgba(10, 14, 26, 0.82);
-            backdrop-filter: blur(24px) saturate(1.6);
-            -webkit-backdrop-filter: blur(24px) saturate(1.6);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .header-bar .logo {
-            width: 36px; height: 36px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #6366f1, #ec4899);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 16px; color: #fff;
-            flex-shrink: 0;
-        }
-        .header-bar h1 {
-            font-size: 15px; font-weight: 700;
-            background: linear-gradient(90deg, #a5b4fc, #f9a8d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.3px;
-        }
-        .header-bar .subtitle {
-            font-size: 11px; font-weight: 400;
-            color: rgba(255,255,255,0.45);
-        }
-
-        /* ─── Layer Toggle Panel ─── */
-        .panel {
-            position: fixed;
-            top: 80px; left: 16px;
-            z-index: 1000;
-            width: 290px;
-            background: rgba(15, 20, 38, 0.88);
-            backdrop-filter: blur(20px) saturate(1.5);
-            -webkit-backdrop-filter: blur(20px) saturate(1.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-        }
-        .panel h2 {
-            font-size: 13px; font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 14px;
-        }
-
-        /* Toggle buttons */
-        .toggle-group {
-            display: flex; flex-direction: column; gap: 8px;
-            margin-bottom: 16px;
-        }
-        .toggle-btn {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.04);
-            cursor: pointer;
-            transition: all 0.25s ease;
-            user-select: none;
-        }
-        .toggle-btn:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.15);
-        }
-        .toggle-btn.active {
-            border-color: rgba(99, 102, 241, 0.5);
-            background: rgba(99, 102, 241, 0.12);
-        }
-        .toggle-btn .dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            transition: box-shadow 0.25s;
-        }
-        .toggle-btn.active .dot { box-shadow: 0 0 8px 2px currentColor; }
-        .toggle-btn .label {
-            font-size: 13px; font-weight: 600;
-        }
-        .toggle-btn .desc {
-            font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 2px;
-        }
-
-        /* Opacity slider */
-        .slider-row {
-            display: flex; align-items: center; gap: 10px;
-            margin-bottom: 6px;
-        }
-        .slider-row label {
-            font-size: 11px; color: rgba(255,255,255,0.5);
-            flex-shrink: 0; width: 50px;
-        }
-        .slider-row input[type="range"] {
-            flex: 1; height: 4px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: rgba(255,255,255,0.12);
-            border-radius: 4px;
-            outline: none;
-        }
-        .slider-row input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px; height: 14px;
-            border-radius: 50%;
-            background: #6366f1;
-            cursor: pointer;
-            box-shadow: 0 0 6px rgba(99,102,241,0.5);
-        }
-
-        /* Checkbox for markers */
-        .check-row {
-            display: flex; align-items: center; gap: 8px;
-            padding: 8px 0 0;
-        }
-        .check-row input[type="checkbox"] {
-            accent-color: #6366f1;
-            width: 15px; height: 15px;
-        }
-        .check-row label {
-            font-size: 12px; color: rgba(255,255,255,0.6);
-            cursor: pointer;
-        }
-
-        /* ─── Legend ─── */
-        .legend-panel {
-            position: fixed;
-            bottom: 24px; left: 16px;
-            z-index: 1000;
-            width: 290px;
-            background: rgba(15, 20, 38, 0.88);
-            backdrop-filter: blur(20px) saturate(1.5);
-            -webkit-backdrop-filter: blur(20px) saturate(1.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 16px 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-        }
-        .legend-panel h3 {
-            font-size: 11px; font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255,255,255,0.4);
-            margin-bottom: 10px;
-        }
-        .gradient-bar {
-            height: 12px;
-            border-radius: 6px;
-            margin-bottom: 6px;
-        }
-        .gradient-labels {
-            display: flex; justify-content: space-between;
-            font-size: 10px; color: rgba(255,255,255,0.5);
-            margin-bottom: 14px;
-        }
-        .legend-items { display: flex; flex-direction: column; gap: 6px; }
-        .legend-item {
-            display: flex; align-items: center; gap: 8px;
-            font-size: 11px;
-        }
-        .legend-item .swatch {
-            width: 14px; height: 14px;
-            border-radius: 4px;
-            flex-shrink: 0;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* ─── Info Card (bottom-right) ─── */
-        .info-card {
-            position: fixed;
-            bottom: 24px; right: 16px;
-            z-index: 1000;
-            width: 320px;
-            max-height: 320px;
-            overflow-y: auto;
-            background: rgba(15, 20, 38, 0.92);
-            backdrop-filter: blur(20px) saturate(1.5);
-            -webkit-backdrop-filter: blur(20px) saturate(1.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            display: none;
-        }
-        .info-card.visible { display: block; }
-        .info-card h3 {
-            font-size: 15px; font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .info-card .kabkota {
-            font-size: 11px; color: rgba(255,255,255,0.4);
-            margin-bottom: 12px;
-        }
-        .info-row {
-            display: flex; justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            font-size: 12px;
-        }
-        .info-row .key { color: rgba(255,255,255,0.5); }
-        .info-row .val { font-weight: 600; text-align: right; }
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 700;
-        }
-        .badge-danger  { background: rgba(239,68,68,0.2); color: #f87171; }
-        .badge-warning { background: rgba(245,158,11,0.2); color: #fbbf24; }
-        .badge-medium  { background: rgba(251,191,36,0.2); color: #fcd34d; }
-        .badge-low     { background: rgba(34,197,94,0.2);  color: #4ade80; }
-        .badge-safe    { background: rgba(96,165,250,0.2); color: #93c5fd; }
-
-        /* ─── Stats bar ─── */
-        .stats-bar {
-            position: fixed;
-            top: 80px; right: 16px;
-            z-index: 1000;
-            display: flex; gap: 8px;
-        }
-        .stat-chip {
-            padding: 10px 16px;
-            background: rgba(15, 20, 38, 0.88);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            text-align: center;
-        }
-        .stat-chip .num {
-            font-size: 20px; font-weight: 800;
-            background: linear-gradient(135deg, #6366f1, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .stat-chip .lbl {
-            font-size: 10px; color: rgba(255,255,255,0.4);
-            text-transform: uppercase; letter-spacing: 0.5px;
-            margin-top: 2px;
-        }
-
-        /* Scrollbar */
-        .info-card::-webkit-scrollbar { width: 4px; }
-        .info-card::-webkit-scrollbar-track { background: transparent; }
-        .info-card::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-
-        /* Leaflet popup override */
-        .leaflet-popup-content-wrapper {
-            background: rgba(15, 20, 38, 0.95) !important;
-            color: #e0e6f0 !important;
-            border-radius: 12px !important;
-            border: 1px solid rgba(255,255,255,0.1) !important;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
-        }
-        .leaflet-popup-tip { background: rgba(15, 20, 38, 0.95) !important; }
-        .leaflet-popup-content { font-family: 'Inter', sans-serif !important; font-size: 12px !important; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .panel, .legend-panel { width: 240px; }
-            .stats-bar { flex-direction: column; width: 110px; }
-            .info-card { width: 260px; }
-        }
-    </style>
+        
+    <script src="https://cdn.jsdelivr.net/gh/python-visualization/folium@main/folium/templates/leaflet_heat.min.js"></script>
 </head>
 <body>
-
-<!-- Header -->
-<div class="header-bar">
-    <div class="logo">🏭</div>
-    <div>
-        <h1>Heatmap Kepadatan & Dampak Industri</h1>
-        <div class="subtitle">Pesisir Banten — Aquality Analysis</div>
-    </div>
-</div>
-
-<!-- Stats -->
-<div class="stats-bar">
-    <div class="stat-chip"><div class="num">14</div><div class="lbl">Industri</div></div>
-    <div class="stat-chip"><div class="num">38</div><div class="lbl">Kecamatan</div></div>
-    <div class="stat-chip"><div class="num">16</div><div class="lbl">Pantai</div></div>
-</div>
-
-<!-- Control Panel -->
-<div class="panel" id="controlPanel">
-    <h2>Layer Heatmap</h2>
-    <div class="toggle-group">
-        <div class="toggle-btn active" id="btnDensity" onclick="toggleLayer('density')">
-            <div class="dot" style="background:#f59e0b; color:#f59e0b;"></div>
-            <div>
-                <div class="label">Kepadatan Industri</div>
-                <div class="desc">Jumlah industri dalam radius 10 km</div>
-            </div>
-        </div>
-        <div class="toggle-btn" id="btnImpact" onclick="toggleLayer('impact')">
-            <div class="dot" style="background:#ef4444; color:#ef4444;"></div>
-            <div>
-                <div class="label">Dampak Industri (IDI)</div>
-                <div class="desc">Indeks komposit IDW 0-100</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="slider-row">
-        <label>Radius</label>
-        <input type="range" id="sliderRadius" min="10" max="60" value="30" oninput="updateRadius(this.value)"/>
-    </div>
-    <div class="slider-row" style="margin-bottom:12px;">
-        <label>Intensitas</label>
-        <input type="range" id="sliderIntensity" min="0.1" max="1" step="0.05" value="0.7" oninput="updateIntensity(this.value)"/>
-    </div>
-
-    <div class="check-row">
-        <input type="checkbox" id="chkMarkers" checked onchange="toggleMarkers(this.checked)"/>
-        <label for="chkMarkers">Tampilkan marker industri</label>
-    </div>
-    <div class="check-row">
-        <input type="checkbox" id="chkKec" checked onchange="toggleKec(this.checked)"/>
-        <label for="chkKec">Tampilkan titik kecamatan</label>
-    </div>
-</div>
-
-<!-- Legend -->
-<div class="legend-panel">
-    <h3 id="legendTitle">Legenda — Kepadatan Industri</h3>
-    <div class="gradient-bar" id="gradientBar" style="background: linear-gradient(90deg, #1a1a2e, #f59e0b, #ef4444);"></div>
-    <div class="gradient-labels" id="gradientLabels">
-        <span>0 industri</span>
-        <span>5-6</span>
-        <span>11 industri</span>
-    </div>
-    <h3 style="margin-top:8px;">Marker Industri</h3>
-    <div class="legend-items">
-        <div class="legend-item"><div class="swatch" style="background:#ef4444;"></div><span>Petrokimia / Kimia (Relevansi 1.0)</span></div>
-        <div class="legend-item"><div class="swatch" style="background:#f97316;"></div><span>Baja / Pulp & Paper (0.9)</span></div>
-        <div class="legend-item"><div class="swatch" style="background:#eab308;"></div><span>Pembangkit / Energi (0.7)</span></div>
-        <div class="legend-item"><div class="swatch" style="background:#22c55e;"></div><span>Semen / Pelabuhan (0.5-0.6)</span></div>
-        <div class="legend-item"><div class="swatch" style="background:#3b82f6;"></div><span>Perikanan (0.3)</span></div>
-    </div>
-</div>
-
-<!-- Info Card -->
-<div class="info-card" id="infoCard"></div>
-
-<!-- Map -->
-<div id="map"></div>
-
-<script>
-// ─── DATA ───────────────────────────────────────────────────────
-
-const INDUSTRIES = [
-    { nama: "PT Krakatau Steel", tipe: "Baja/Logam", lat: -6.0048, lon: 106.0148, relevansi: 0.9 },
-    { nama: "PT Chandra Asri Petrochemical", tipe: "Petrokimia", lat: -6.0200, lon: 106.0050, relevansi: 1.0 },
-    { nama: "PT Asahimas Chemical", tipe: "Kimia", lat: -6.0120, lon: 106.0200, relevansi: 1.0 },
-    { nama: "PLTU Suralaya", tipe: "Pembangkit Listrik", lat: -5.9320, lon: 105.9440, relevansi: 0.7 },
-    { nama: "PT Indah Kiat Pulp & Paper (Merak)", tipe: "Pulp & Paper", lat: -5.9550, lon: 106.0000, relevansi: 0.9 },
-    { nama: "PT Indonesia Power Suralaya", tipe: "Energi", lat: -5.9350, lon: 105.9460, relevansi: 0.7 },
-    { nama: "PT Banten Energy", tipe: "Energi", lat: -6.0450, lon: 105.9750, relevansi: 0.7 },
-    { nama: "Pelabuhan Merak", tipe: "Pelabuhan", lat: -5.9350, lon: 106.0000, relevansi: 0.5 },
-    { nama: "PT Lotte Chemical Indonesia", tipe: "Kimia", lat: -6.0380, lon: 106.0100, relevansi: 1.0 },
-    { nama: "PLTU Labuan (Banten 2)", tipe: "Pembangkit Listrik", lat: -6.3660, lon: 105.8180, relevansi: 0.7 },
-    { nama: "PT Indocement Tunggal Prakarsa (Bayah)", tipe: "Semen", lat: -6.9500, lon: 106.2600, relevansi: 0.6 },
-    { nama: "Pelabuhan Ciwandan", tipe: "Pelabuhan/Logistik", lat: -6.0350, lon: 105.9600, relevansi: 0.5 },
-    { nama: "PT Sulfindo Adiusaha", tipe: "Kimia", lat: -6.0150, lon: 106.0080, relevansi: 1.0 },
-    { nama: "Pelabuhan Perikanan Karangantu", tipe: "Perikanan", lat: -6.0310, lon: 106.1700, relevansi: 0.3 }
-];
-
-// Kecamatan data (from JSON)
-const KECAMATAN = [
-    { nama: "Cibeber", kab: "Cilegon", lat: -6.043111, lon: 106.058757, jumlah: 6, kepadatan: 0.0191, idi: 36.82, kategori: "TINGGI" },
-    { nama: "Citangkil", kab: "Cilegon", lat: -6.014606, lon: 106.010489, jumlah: 9, kepadatan: 0.0286, idi: 59.16, kategori: "SANGAT TINGGI" },
-    { nama: "Ciwandan", kab: "Cilegon", lat: -6.031094, lon: 105.967279, jumlah: 8, kepadatan: 0.0255, idi: 47.44, kategori: "TINGGI" },
-    { nama: "Grogol", kab: "Cilegon", lat: -5.971752, lon: 106.01866, jumlah: 11, kepadatan: 0.035, idi: 47.55, kategori: "TINGGI" },
-    { nama: "Jombang", kab: "Cilegon", lat: -6.010072, lon: 106.061569, jumlah: 6, kepadatan: 0.0191, idi: 39.04, kategori: "TINGGI" },
-    { nama: "Pulomerak", kab: "Cilegon", lat: -5.921117, lon: 106.010137, jumlah: 5, kepadatan: 0.0159, idi: 35.21, kategori: "TINGGI" },
-    { nama: "Kasemen", kab: "Kota Serang", lat: -6.062136, lon: 106.18028, jumlah: 1, kepadatan: 0.0032, idi: 11.81, kategori: "RENDAH" },
-    { nama: "Bayah", kab: "Lebak", lat: -6.909335, lon: 106.299045, jumlah: 1, kepadatan: 0.0032, idi: 3.06, kategori: "SANGAT RENDAH" },
-    { nama: "Cihara", kab: "Lebak", lat: -6.839636, lon: 106.127101, jumlah: 0, kepadatan: 0.0, idi: 0.86, kategori: "SANGAT RENDAH" },
-    { nama: "Cilograng", kab: "Lebak", lat: -6.923037, lon: 106.374606, jumlah: 0, kepadatan: 0.0, idi: 1.56, kategori: "SANGAT RENDAH" },
-    { nama: "Malingping", kab: "Lebak", lat: -6.752439, lon: 106.004818, jumlah: 0, kepadatan: 0.0, idi: 0.24, kategori: "SANGAT RENDAH" },
-    { nama: "Panggarangan", kab: "Lebak", lat: -6.825321, lon: 106.217919, jumlah: 0, kepadatan: 0.0, idi: 1.34, kategori: "SANGAT RENDAH" },
-    { nama: "Wanasalam", kab: "Lebak", lat: -6.747551, lon: 105.908894, jumlah: 0, kepadatan: 0.0, idi: 0.17, kategori: "SANGAT RENDAH" },
-    { nama: "Carita", kab: "Pandeglang", lat: -6.279965, lon: 105.867597, jumlah: 0, kepadatan: 0.0, idi: 5.1, kategori: "RENDAH" },
-    { nama: "Cibitung", kab: "Pandeglang", lat: -6.789494, lon: 105.715872, jumlah: 0, kepadatan: 0.0, idi: 0.07, kategori: "SANGAT RENDAH" },
-    { nama: "Cigeulis", kab: "Pandeglang", lat: -6.614356, lon: 105.686158, jumlah: 0, kepadatan: 0.0, idi: 0.2, kategori: "SANGAT RENDAH" },
-    { nama: "Cimanggu", kab: "Pandeglang", lat: -6.700000, lon: 105.650000, jumlah: 0, kepadatan: 0.0, idi: 0.05, kategori: "SANGAT RENDAH" },
-    { nama: "Labuan", kab: "Pandeglang", lat: -6.378400, lon: 105.826700, jumlah: 1, kepadatan: 0.0032, idi: 6.8, kategori: "RENDAH" },
-    { nama: "Panimbang", kab: "Pandeglang", lat: -6.478500, lon: 105.656500, jumlah: 0, kepadatan: 0.0, idi: 0.89, kategori: "SANGAT RENDAH" },
-    { nama: "Sobang", kab: "Pandeglang", lat: -6.550000, lon: 105.700000, jumlah: 0, kepadatan: 0.0, idi: 0.15, kategori: "SANGAT RENDAH" },
-    { nama: "Sumur", kab: "Pandeglang", lat: -6.657500, lon: 105.518000, jumlah: 0, kepadatan: 0.0, idi: 0.08, kategori: "SANGAT RENDAH" },
-    { nama: "Sukaresmi", kab: "Pandeglang", lat: -6.520000, lon: 105.750000, jumlah: 0, kepadatan: 0.0, idi: 0.4, kategori: "SANGAT RENDAH" },
-    { nama: "Anyar", kab: "Serang", lat: -6.082500, lon: 105.880500, jumlah: 2, kepadatan: 0.0064, idi: 18.75, kategori: "SEDANG" },
-    { nama: "Bojonegara", kab: "Serang", lat: -6.030000, lon: 106.090000, jumlah: 3, kepadatan: 0.0096, idi: 25.0, kategori: "SEDANG" },
-    { nama: "Cinangka", kab: "Serang", lat: -6.115800, lon: 105.864000, jumlah: 0, kepadatan: 0.0, idi: 12.33, kategori: "RENDAH" },
-    { nama: "Kramatwatu", kab: "Serang", lat: -6.060000, lon: 106.110000, jumlah: 2, kepadatan: 0.0064, idi: 16.5, kategori: "SEDANG" },
-    { nama: "Pontang", kab: "Serang", lat: -6.050000, lon: 106.220000, jumlah: 1, kepadatan: 0.0032, idi: 8.5, kategori: "RENDAH" },
-    { nama: "Puloampel", kab: "Serang", lat: -6.000000, lon: 106.090000, jumlah: 4, kepadatan: 0.0127, idi: 28.0, kategori: "SEDANG" },
-    { nama: "Tanara", kab: "Serang", lat: -6.040000, lon: 106.260000, jumlah: 0, kepadatan: 0.0, idi: 5.2, kategori: "RENDAH" },
-    { nama: "Tirtayasa", kab: "Serang", lat: -5.969000, lon: 106.296000, jumlah: 0, kepadatan: 0.0, idi: 3.56, kategori: "SANGAT RENDAH" },
-    { nama: "Kosambi", kab: "Tangerang", lat: -6.115000, lon: 106.680000, jumlah: 0, kepadatan: 0.0, idi: 0.03, kategori: "SANGAT RENDAH" },
-    { nama: "Teluknaga", kab: "Tangerang", lat: -6.100000, lon: 106.640000, jumlah: 0, kepadatan: 0.0, idi: 0.04, kategori: "SANGAT RENDAH" },
-    { nama: "Pakuhaji", kab: "Tangerang", lat: -6.070000, lon: 106.560000, jumlah: 0, kepadatan: 0.0, idi: 0.05, kategori: "SANGAT RENDAH" },
-    { nama: "Sukadiri", kab: "Tangerang", lat: -6.100000, lon: 106.580000, jumlah: 0, kepadatan: 0.0, idi: 0.04, kategori: "SANGAT RENDAH" },
-    { nama: "Mauk", kab: "Tangerang", lat: -6.019500, lon: 106.452000, jumlah: 0, kepadatan: 0.0, idi: 0.12, kategori: "SANGAT RENDAH" },
-    { nama: "Kemiri", kab: "Tangerang", lat: -6.080000, lon: 106.500000, jumlah: 0, kepadatan: 0.0, idi: 0.07, kategori: "SANGAT RENDAH" },
-    { nama: "Kronjo", kab: "Tangerang", lat: -6.060000, lon: 106.480000, jumlah: 0, kepadatan: 0.0, idi: 0.08, kategori: "SANGAT RENDAH" },
-    { nama: "Mekarbaru", kab: "Tangerang", lat: -6.090000, lon: 106.530000, jumlah: 0, kepadatan: 0.0, idi: 0.05, kategori: "SANGAT RENDAH" }
-];
-
-
-// ─── MAP INITIALIZATION ─────────────────────────────────────────
-
-const map = L.map('map', {
-    center: [-6.25, 105.95],
-    zoom: 9,
-    zoomControl: false,
-    attributionControl: false
-});
-
-L.control.zoom({ position: 'topright' }).addTo(map);
-
-// Dark tile layer
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
-}).addTo(map);
-
-
-// ─── HEATMAP LAYERS ─────────────────────────────────────────────
-
-// Density Heatmap: weight = jumlah industri dalam radius 10km (0-11)
-const densityPoints = [];
-KECAMATAN.forEach(k => {
-    if (k.jumlah > 0) {
-        densityPoints.push([k.lat, k.lon, k.jumlah / 11]); // normalized
-    }
-});
-// Add industry locations themselves as high-intensity points
-INDUSTRIES.forEach(ind => {
-    densityPoints.push([ind.lat, ind.lon, 0.9]);
-});
-
-const heatDensity = L.heatLayer(densityPoints, {
-    radius: 30,
-    blur: 20,
-    maxZoom: 13,
-    max: 1.0,
-    gradient: {
-        0.0: '#0a0e2a',
-        0.2: '#1e1b4b',
-        0.4: '#f59e0b',
-        0.6: '#f97316',
-        0.8: '#ef4444',
-        1.0: '#fef08a'
-    }
-}).addTo(map);
-
-// Impact Heatmap: weight = IDI (0-100) normalized
-const impactPoints = [];
-KECAMATAN.forEach(k => {
-    impactPoints.push([k.lat, k.lon, k.idi / 60]); // cap at 60 for visual
-});
-INDUSTRIES.forEach(ind => {
-    impactPoints.push([ind.lat, ind.lon, ind.relevansi]);
-});
-
-const heatImpact = L.heatLayer(impactPoints, {
-    radius: 30,
-    blur: 20,
-    maxZoom: 13,
-    max: 1.0,
-    gradient: {
-        0.0: '#0a0e2a',
-        0.15: '#312e81',
-        0.3: '#7c3aed',
-        0.5: '#ec4899',
-        0.7: '#ef4444',
-        0.9: '#f97316',
-        1.0: '#fef08a'
-    }
-});
-
-
-// ─── INDUSTRY MARKERS ───────────────────────────────────────────
-
-function getIndustryColor(tipe) {
-    if (['Petrokimia', 'Kimia'].includes(tipe)) return '#ef4444';
-    if (['Baja/Logam', 'Pulp & Paper'].includes(tipe)) return '#f97316';
-    if (['Pembangkit Listrik', 'Energi'].includes(tipe)) return '#eab308';
-    if (['Semen', 'Pelabuhan', 'Pelabuhan/Logistik'].includes(tipe)) return '#22c55e';
-    return '#3b82f6';
-}
-
-function getIndustryIcon(tipe) {
-    if (['Petrokimia', 'Kimia'].includes(tipe)) return '⚗️';
-    if (['Baja/Logam'].includes(tipe)) return '🔩';
-    if (['Pulp & Paper'].includes(tipe)) return '📄';
-    if (['Pembangkit Listrik', 'Energi'].includes(tipe)) return '⚡';
-    if (['Semen'].includes(tipe)) return '🏗️';
-    if (['Pelabuhan', 'Pelabuhan/Logistik'].includes(tipe)) return '🚢';
-    return '🐟';
-}
-
-const industryGroup = L.layerGroup();
-INDUSTRIES.forEach(ind => {
-    const color = getIndustryColor(ind.tipe);
-    const icon = L.divIcon({
-        html: `<div style="
-            width:32px; height:32px;
-            border-radius:50%;
-            background: radial-gradient(circle, ${color}dd, ${color}55);
-            border: 2px solid ${color};
-            display:flex; align-items:center; justify-content:center;
-            font-size:14px;
-            box-shadow: 0 0 12px ${color}88;
-            animation: pulse 2s ease-in-out infinite;
-        ">${getIndustryIcon(ind.tipe)}</div>`,
-        className: '',
-        iconSize: [32, 32],
-        iconAnchor: [16, 16]
-    });
-
-    const marker = L.marker([ind.lat, ind.lon], { icon }).addTo(industryGroup);
-    marker.bindPopup(`
-        <div style="min-width:180px;">
-            <div style="font-weight:700; font-size:13px; margin-bottom:4px;">${ind.nama}</div>
-            <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:8px;">${ind.tipe}</div>
-            <div style="display:flex; justify-content:space-between; font-size:11px;">
-                <span style="color:rgba(255,255,255,0.5);">Relevansi Polusi</span>
-                <span style="font-weight:700; color:${color};">${(ind.relevansi * 100).toFixed(0)}%</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:4px;">
-                <span style="color:rgba(255,255,255,0.5);">Koordinat</span>
-                <span style="font-weight:500;">${ind.lat.toFixed(4)}, ${ind.lon.toFixed(4)}</span>
-            </div>
-        </div>
-    `);
-});
-industryGroup.addTo(map);
-
-
-// ─── KECAMATAN MARKERS ──────────────────────────────────────────
-
-function getKategoriColor(k) {
-    switch (k) {
-        case 'SANGAT TINGGI': return '#ef4444';
-        case 'TINGGI': return '#f97316';
-        case 'SEDANG': return '#eab308';
-        case 'RENDAH': return '#22c55e';
-        default: return '#3b82f6';
-    }
-}
-function getKategoriBadge(k) {
-    switch (k) {
-        case 'SANGAT TINGGI': return 'badge-danger';
-        case 'TINGGI': return 'badge-warning';
-        case 'SEDANG': return 'badge-medium';
-        case 'RENDAH': return 'badge-low';
-        default: return 'badge-safe';
-    }
-}
-
-const kecGroup = L.layerGroup();
-KECAMATAN.forEach(kec => {
-    const color = getKategoriColor(kec.kategori);
-    const circle = L.circleMarker([kec.lat, kec.lon], {
-        radius: 5 + Math.min(kec.jumlah, 11) * 1.2,
-        fillColor: color,
-        color: 'rgba(255,255,255,0.3)',
-        weight: 1,
-        fillOpacity: 0.7
-    }).addTo(kecGroup);
-
-    circle.on('click', () => showInfoCard(kec));
-    circle.bindTooltip(`<b>${kec.nama}</b><br>${kec.kab}<br>IDI: ${kec.idi}`, { className: '' });
-});
-kecGroup.addTo(map);
-
-
-// ─── INFO CARD ──────────────────────────────────────────────────
-
-function showInfoCard(kec) {
-    const card = document.getElementById('infoCard');
-    const badgeClass = getKategoriBadge(kec.kategori);
-    card.innerHTML = `
-        <h3>${kec.nama}</h3>
-        <div class="kabkota">${kec.kab}, Banten</div>
-        <div class="info-row"><span class="key">Industri dlm 10km</span><span class="val">${kec.jumlah}</span></div>
-        <div class="info-row"><span class="key">Kepadatan Industri</span><span class="val">${kec.kepadatan.toFixed(4)} /km²</span></div>
-        <div class="info-row"><span class="key">Indeks Dampak (IDI)</span><span class="val" style="font-size:16px; color:${getKategoriColor(kec.kategori)};">${kec.idi}</span></div>
-        <div class="info-row"><span class="key">Kategori Dampak</span><span class="val"><span class="badge ${badgeClass}">${kec.kategori}</span></span></div>
-    `;
-    card.classList.add('visible');
-}
-
-map.on('click', (e) => {
-    // If click not on a marker, hide info card
-    document.getElementById('infoCard').classList.remove('visible');
-});
-
-
-// ─── LAYER TOGGLES ──────────────────────────────────────────────
-
-let currentLayer = 'density';
-
-function toggleLayer(layer) {
-    currentLayer = layer;
-
-    if (layer === 'density') {
-        map.addLayer(heatDensity);
-        map.removeLayer(heatImpact);
-        document.getElementById('btnDensity').classList.add('active');
-        document.getElementById('btnImpact').classList.remove('active');
-        document.getElementById('legendTitle').textContent = 'Legenda — Kepadatan Industri';
-        document.getElementById('gradientBar').style.background = 'linear-gradient(90deg, #0a0e2a, #1e1b4b, #f59e0b, #f97316, #ef4444, #fef08a)';
-        document.getElementById('gradientLabels').innerHTML = '<span>0 industri</span><span>5-6</span><span>11 industri</span>';
-    } else {
-        map.removeLayer(heatDensity);
-        map.addLayer(heatImpact);
-        document.getElementById('btnImpact').classList.add('active');
-        document.getElementById('btnDensity').classList.remove('active');
-        document.getElementById('legendTitle').textContent = 'Legenda — Dampak Industri (IDI)';
-        document.getElementById('gradientBar').style.background = 'linear-gradient(90deg, #0a0e2a, #312e81, #7c3aed, #ec4899, #ef4444, #f97316, #fef08a)';
-        document.getElementById('gradientLabels').innerHTML = '<span>IDI 0</span><span>IDI 30</span><span>IDI 60+</span>';
-    }
-}
-
-function updateRadius(val) {
-    heatDensity.setOptions({ radius: parseInt(val) });
-    heatImpact.setOptions({ radius: parseInt(val) });
-}
-
-function updateIntensity(val) {
-    heatDensity.setOptions({ max: parseFloat(val) });
-    heatImpact.setOptions({ max: parseFloat(val) });
-}
-
-function toggleMarkers(show) {
-    if (show) map.addLayer(industryGroup);
-    else map.removeLayer(industryGroup);
-}
-
-function toggleKec(show) {
-    if (show) map.addLayer(kecGroup);
-    else map.removeLayer(kecGroup);
-}
-
-
-// ─── PULSE ANIMATION ────────────────────────────────────────────
-
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.15); opacity: 0.85; }
-    }
-`;
-document.head.appendChild(style);
-
-</script>
+    
+    
+            <div class="folium-map" id="map_cc83793b34a31215a68aae105c1316a8" ></div>
+        
 </body>
+<script>
+    
+    
+            var map_cc83793b34a31215a68aae105c1316a8 = L.map(
+                "map_cc83793b34a31215a68aae105c1316a8",
+                {
+                    center: [-6.3, 106.0],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 9,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_ce3e46e46eba98ad77dee51211b255e5 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_ce3e46e46eba98ad77dee51211b255e5.addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+            var heat_map_f29299bd6d4b57d05a0c2af698f3dc74 = L.heatLayer(
+                [[-6.0048, 106.0148, 0.73], [-6.02, 106.005, 0.8220000000000001], [-6.012, 106.02, 0.758], [-5.932, 105.944, 0.7], [-5.955, 106.0, 0.9], [-5.935, 105.946, 0.7], [-6.045, 105.975, 0.5760000000000001], [-5.935, 106.0, 0.5], [-6.038, 106.01, 0.696], [-6.366, 105.818, 0.7], [-6.95, 106.26, 0.586], [-6.035, 105.96, 0.47100000000000003], [-6.015, 106.008, 0.8290000000000001], [-6.031, 106.17, 0.3]],
+                {
+  "minOpacity": 0.5,
+  "maxZoom": 12,
+  "radius": 25,
+  "blur": 15,
+}
+            );
+        
+    
+            heat_map_f29299bd6d4b57d05a0c2af698f3dc74.addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+            var circle_marker_bd79e9748ed05cdc9b921902de41037c = L.circleMarker(
+                [-6.71, 105.335],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_c3dba4d959d1d8e04ead3c2d9a733054 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_feff113b18914351a001292a2f63ed3c = $(`<div id="html_feff113b18914351a001292a2f63ed3c" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Ujung Kulon (Score: 99.95)</div>`)[0];
+                popup_c3dba4d959d1d8e04ead3c2d9a733054.setContent(html_feff113b18914351a001292a2f63ed3c);
+            
+        
+
+        circle_marker_bd79e9748ed05cdc9b921902de41037c.bindPopup(popup_c3dba4d959d1d8e04ead3c2d9a733054)
+        ;
+
+        
+    
+    
+            var circle_marker_78483aeb838169264486fa961a8df549 = L.circleMarker(
+                [-6.6575, 105.518],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_91e5efd51068ebe404caa9fd63717729 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0a4dddee1b3d341b01208cdb5d4b44cf = $(`<div id="html_0a4dddee1b3d341b01208cdb5d4b44cf" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Ciputih (Score: 98.81)</div>`)[0];
+                popup_91e5efd51068ebe404caa9fd63717729.setContent(html_0a4dddee1b3d341b01208cdb5d4b44cf);
+            
+        
+
+        circle_marker_78483aeb838169264486fa961a8df549.bindPopup(popup_91e5efd51068ebe404caa9fd63717729)
+        ;
+
+        
+    
+    
+            var circle_marker_e8b88c025ea12eded4ab69b969007179 = L.circleMarker(
+                [-6.955, 106.39],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_dcabae7044d8b2b08ee3522202581f36 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f8b50a4a7fb46fa6a15cc5aca483e4e3 = $(`<div id="html_f8b50a4a7fb46fa6a15cc5aca483e4e3" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Cibareno (Score: 98.21)</div>`)[0];
+                popup_dcabae7044d8b2b08ee3522202581f36.setContent(html_f8b50a4a7fb46fa6a15cc5aca483e4e3);
+            
+        
+
+        circle_marker_e8b88c025ea12eded4ab69b969007179.bindPopup(popup_dcabae7044d8b2b08ee3522202581f36)
+        ;
+
+        
+    
+    
+            var circle_marker_ea16f0b4cf3bcd33849f39d4cecc92be = L.circleMarker(
+                [-6.965, 106.38],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_72779c91f556def8d5d9d260eeac9bf3 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_84c1e3bdf3ebfb7c6cdc0e305b9a8a62 = $(`<div id="html_84c1e3bdf3ebfb7c6cdc0e305b9a8a62" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Citarate (Score: 98.11)</div>`)[0];
+                popup_72779c91f556def8d5d9d260eeac9bf3.setContent(html_84c1e3bdf3ebfb7c6cdc0e305b9a8a62);
+            
+        
+
+        circle_marker_ea16f0b4cf3bcd33849f39d4cecc92be.bindPopup(popup_72779c91f556def8d5d9d260eeac9bf3)
+        ;
+
+        
+    
+    
+            var circle_marker_c113706fd9b6d645408ba4c92168a600 = L.circleMarker(
+                [-6.64065, 105.58436],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_10b6345f1269f027e20ffda178862412 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7ba4d88bcf9de9046a28d9bc6d00ca37 = $(`<div id="html_7ba4d88bcf9de9046a28d9bc6d00ca37" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pulau Umang (Score: 97.98)</div>`)[0];
+                popup_10b6345f1269f027e20ffda178862412.setContent(html_7ba4d88bcf9de9046a28d9bc6d00ca37);
+            
+        
+
+        circle_marker_c113706fd9b6d645408ba4c92168a600.bindPopup(popup_10b6345f1269f027e20ffda178862412)
+        ;
+
+        
+    
+    
+            var circle_marker_6253c40ce6b21f147e9b0ae7a515cfde = L.circleMarker(
+                [-6.84643, 106.06923],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_6249904e515003a4250609a4e566514b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d6b827410379dd40d2eda2cc5a39764a = $(`<div id="html_d6b827410379dd40d2eda2cc5a39764a" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pasir Putih Cihara (Score: 97.84)</div>`)[0];
+                popup_6249904e515003a4250609a4e566514b.setContent(html_d6b827410379dd40d2eda2cc5a39764a);
+            
+        
+
+        circle_marker_6253c40ce6b21f147e9b0ae7a515cfde.bindPopup(popup_6249904e515003a4250609a4e566514b)
+        ;
+
+        
+    
+    
+            var circle_marker_3814472f9a763eba0dc607228992082b = L.circleMarker(
+                [-6.89, 106.105],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_24d09ff55de564868df94d6e5581b329 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f3a4c16426afa5d17e576f7d81a44a17 = $(`<div id="html_f3a4c16426afa5d17e576f7d81a44a17" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Cibobos (Score: 97.84)</div>`)[0];
+                popup_24d09ff55de564868df94d6e5581b329.setContent(html_f3a4c16426afa5d17e576f7d81a44a17);
+            
+        
+
+        circle_marker_3814472f9a763eba0dc607228992082b.bindPopup(popup_24d09ff55de564868df94d6e5581b329)
+        ;
+
+        
+    
+    
+            var circle_marker_fb842dfbc457ffd013565f1be27115d8 = L.circleMarker(
+                [-6.88395, 106.11112],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_231c453faa7f8f4c5957266816fe7807 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1885acf4571e72e59822d9dcda7f21cc = $(`<div id="html_1885acf4571e72e59822d9dcda7f21cc" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Karang Songsong (Score: 97.77)</div>`)[0];
+                popup_231c453faa7f8f4c5957266816fe7807.setContent(html_1885acf4571e72e59822d9dcda7f21cc);
+            
+        
+
+        circle_marker_fb842dfbc457ffd013565f1be27115d8.bindPopup(popup_231c453faa7f8f4c5957266816fe7807)
+        ;
+
+        
+    
+    
+            var circle_marker_08c1bed1948ed39e6718f2171495a5d8 = L.circleMarker(
+                [-6.8131, 105.65],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_2ed7384a60a0bed5e7df5a37e1e13c8e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_08b0b4c058a79da9314249c7bf02c27d = $(`<div id="html_08b0b4c058a79da9314249c7bf02c27d" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Batu Hideung (Score: 97.3)</div>`)[0];
+                popup_2ed7384a60a0bed5e7df5a37e1e13c8e.setContent(html_08b0b4c058a79da9314249c7bf02c27d);
+            
+        
+
+        circle_marker_08c1bed1948ed39e6718f2171495a5d8.bindPopup(popup_2ed7384a60a0bed5e7df5a37e1e13c8e)
+        ;
+
+        
+    
+    
+            var circle_marker_26e1f8073ebd2acf2d99731f46242f56 = L.circleMarker(
+                [-6.8072, 105.6417],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_ef61abe757014cb0f16776680b77f561 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5a9aee8ba1ec34e513d64f2fe499a0c4 = $(`<div id="html_5a9aee8ba1ec34e513d64f2fe499a0c4" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Lalassa (Score: 97.29)</div>`)[0];
+                popup_ef61abe757014cb0f16776680b77f561.setContent(html_5a9aee8ba1ec34e513d64f2fe499a0c4);
+            
+        
+
+        circle_marker_26e1f8073ebd2acf2d99731f46242f56.bindPopup(popup_ef61abe757014cb0f16776680b77f561)
+        ;
+
+        
+    
+    
+            var circle_marker_2b59c37a1de69c8e3011eb98154edc66 = L.circleMarker(
+                [-6.8, 105.635],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_f7e93ca0bdc080aeba212f0c1eccca68 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f83cf6d59ca3116af2a75c6f69e99f48 = $(`<div id="html_f83cf6d59ca3116af2a75c6f69e99f48" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Cipenyu (Score: 97.25)</div>`)[0];
+                popup_f7e93ca0bdc080aeba212f0c1eccca68.setContent(html_f83cf6d59ca3116af2a75c6f69e99f48);
+            
+        
+
+        circle_marker_2b59c37a1de69c8e3011eb98154edc66.bindPopup(popup_f7e93ca0bdc080aeba212f0c1eccca68)
+        ;
+
+        
+    
+    
+            var circle_marker_a6fa1b9e406fcbc44e50666da0578652 = L.circleMarker(
+                [-6.85, 106.17],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_e8e5a7989fc5d60d4d6623f9c98e3f70 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2b3b3322b72fb71002d5c2007c07eb69 = $(`<div id="html_2b3b3322b72fb71002d5c2007c07eb69" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Panggarangan (Score: 97.08)</div>`)[0];
+                popup_e8e5a7989fc5d60d4d6623f9c98e3f70.setContent(html_2b3b3322b72fb71002d5c2007c07eb69);
+            
+        
+
+        circle_marker_a6fa1b9e406fcbc44e50666da0578652.bindPopup(popup_e8e5a7989fc5d60d4d6623f9c98e3f70)
+        ;
+
+        
+    
+    
+            var circle_marker_8419b84d0e0e9b4e8c8c79e3e6cedbda = L.circleMarker(
+                [-6.829, 105.903],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_d8ece3d60b7c5a185f917dd77835ead6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ff8095de3480e9ba7386751b7f12ec4f = $(`<div id="html_ff8095de3480e9ba7386751b7f12ec4f" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Binuangeun (Score: 95.9)</div>`)[0];
+                popup_d8ece3d60b7c5a185f917dd77835ead6.setContent(html_ff8095de3480e9ba7386751b7f12ec4f);
+            
+        
+
+        circle_marker_8419b84d0e0e9b4e8c8c79e3e6cedbda.bindPopup(popup_d8ece3d60b7c5a185f917dd77835ead6)
+        ;
+
+        
+    
+    
+            var circle_marker_686376efeada74e9874104daf49b1996 = L.circleMarker(
+                [-6.9912, 106.3312],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_0bb88bbb00e0e2489ed2611a4e13b3f9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f20640cb47b029c78413b6205c34b06c = $(`<div id="html_f20640cb47b029c78413b6205c34b06c" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Karang Taraje (Score: 95.56)</div>`)[0];
+                popup_0bb88bbb00e0e2489ed2611a4e13b3f9.setContent(html_f20640cb47b029c78413b6205c34b06c);
+            
+        
+
+        circle_marker_686376efeada74e9874104daf49b1996.bindPopup(popup_0bb88bbb00e0e2489ed2611a4e13b3f9)
+        ;
+
+        
+    
+    
+            var circle_marker_d16417035c22208713277830b2dc169d = L.circleMarker(
+                [-6.993, 106.318],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_08c4ec7f3872571ce1feed4a7b82db17 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7b43a58d6552235cbac0f9326658ae34 = $(`<div id="html_7b43a58d6552235cbac0f9326658ae34" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Sawarna (Score: 95.33)</div>`)[0];
+                popup_08c4ec7f3872571ce1feed4a7b82db17.setContent(html_7b43a58d6552235cbac0f9326658ae34);
+            
+        
+
+        circle_marker_d16417035c22208713277830b2dc169d.bindPopup(popup_08c4ec7f3872571ce1feed4a7b82db17)
+        ;
+
+        
+    
+    
+            var circle_marker_af02abac03ffbf05ac72bb0f69d62cf7 = L.circleMarker(
+                [-6.988, 106.315],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_b45ba939386bb16fe267f3d952fb5d4f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_dcc77aa0a4d859bd518ff484b1b0ad0a = $(`<div id="html_dcc77aa0a4d859bd518ff484b1b0ad0a" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Goa Langir (Score: 95.18)</div>`)[0];
+                popup_b45ba939386bb16fe267f3d952fb5d4f.setContent(html_dcc77aa0a4d859bd518ff484b1b0ad0a);
+            
+        
+
+        circle_marker_af02abac03ffbf05ac72bb0f69d62cf7.bindPopup(popup_b45ba939386bb16fe267f3d952fb5d4f)
+        ;
+
+        
+    
+    
+            var circle_marker_f75320db3f988db7942862e268065806 = L.circleMarker(
+                [-6.99431, 106.30716],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_f21de324e1f1c7f5f04f3153d287c050 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d8fc835e6a4a0ef1ff5253513319dc3c = $(`<div id="html_d8fc835e6a4a0ef1ff5253513319dc3c" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Tanjung Layar (Score: 95.14)</div>`)[0];
+                popup_f21de324e1f1c7f5f04f3153d287c050.setContent(html_d8fc835e6a4a0ef1ff5253513319dc3c);
+            
+        
+
+        circle_marker_f75320db3f988db7942862e268065806.bindPopup(popup_f21de324e1f1c7f5f04f3153d287c050)
+        ;
+
+        
+    
+    
+            var circle_marker_d209de51b882e6dfe10f855c532a3b70 = L.circleMarker(
+                [-6.989, 106.305],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_e8eb3b70f6251d5329b9c2310e16cd30 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0f233e720adeb1bbc090710657f12973 = $(`<div id="html_0f233e720adeb1bbc090710657f12973" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pulo Manuk (Score: 94.99)</div>`)[0];
+                popup_e8eb3b70f6251d5329b9c2310e16cd30.setContent(html_0f233e720adeb1bbc090710657f12973);
+            
+        
+
+        circle_marker_d209de51b882e6dfe10f855c532a3b70.bindPopup(popup_e8eb3b70f6251d5329b9c2310e16cd30)
+        ;
+
+        
+    
+    
+            var circle_marker_f54ef23a125e1e648bde0c0f6c31e6b6 = L.circleMarker(
+                [-6.98, 106.29],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_c3f2442a8013016194132c85df8598f7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_242ab34c46af5fb7c87d10662b4542f7 = $(`<div id="html_242ab34c46af5fb7c87d10662b4542f7" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Ciantir (Score: 94.44)</div>`)[0];
+                popup_c3f2442a8013016194132c85df8598f7.setContent(html_242ab34c46af5fb7c87d10662b4542f7);
+            
+        
+
+        circle_marker_f54ef23a125e1e648bde0c0f6c31e6b6.bindPopup(popup_c3f2442a8013016194132c85df8598f7)
+        ;
+
+        
+    
+    
+            var circle_marker_d559f4d5a75b347c3cb153617515e5aa = L.circleMarker(
+                [-6.967, 106.296],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_80021aa9f32c3aee739c01342f3883d8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d38429f14a9ac133a728ea7fc256d833 = $(`<div id="html_d38429f14a9ac133a728ea7fc256d833" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Legon Pari (Score: 94.3)</div>`)[0];
+                popup_80021aa9f32c3aee739c01342f3883d8.setContent(html_d38429f14a9ac133a728ea7fc256d833);
+            
+        
+
+        circle_marker_d559f4d5a75b347c3cb153617515e5aa.bindPopup(popup_80021aa9f32c3aee739c01342f3883d8)
+        ;
+
+        
+    
+    
+            var circle_marker_874ab3bcf9a79dcd722bd4477fd1569f = L.circleMarker(
+                [-6.9038, 106.0125],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_083c47a5e9d43c57fde186fe098c2945 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_96f2b527bc39eed351c6381f6898d65c = $(`<div id="html_96f2b527bc39eed351c6381f6898d65c" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Bagedur (Score: 93.34)</div>`)[0];
+                popup_083c47a5e9d43c57fde186fe098c2945.setContent(html_96f2b527bc39eed351c6381f6898d65c);
+            
+        
+
+        circle_marker_874ab3bcf9a79dcd722bd4477fd1569f.bindPopup(popup_083c47a5e9d43c57fde186fe098c2945)
+        ;
+
+        
+    
+    
+            var circle_marker_489c006457df1bdbbb767bf3022e6d50 = L.circleMarker(
+                [-6.4785, 105.6565],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_d624bb9217c6ff13f2777c197213d7f5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4fb86f066ac4772134c95f4f28aa2f58 = $(`<div id="html_4fb86f066ac4772134c95f4f28aa2f58" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Tanjung Lesung (Score: 90.02)</div>`)[0];
+                popup_d624bb9217c6ff13f2777c197213d7f5.setContent(html_4fb86f066ac4772134c95f4f28aa2f58);
+            
+        
+
+        circle_marker_489c006457df1bdbbb767bf3022e6d50.bindPopup(popup_d624bb9217c6ff13f2777c197213d7f5)
+        ;
+
+        
+    
+    
+            var circle_marker_f157fd451cb0461024d0882a5b6413e2 = L.circleMarker(
+                [-6.529, 105.817],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_78a2a3fd07f63bd0858587b42ab12abc = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_56e00a647084461410cac27a82584d33 = $(`<div id="html_56e00a647084461410cac27a82584d33" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Teluk Lada (Score: 87.89)</div>`)[0];
+                popup_78a2a3fd07f63bd0858587b42ab12abc.setContent(html_56e00a647084461410cac27a82584d33);
+            
+        
+
+        circle_marker_f157fd451cb0461024d0882a5b6413e2.bindPopup(popup_78a2a3fd07f63bd0858587b42ab12abc)
+        ;
+
+        
+    
+    
+            var circle_marker_42e1d6ac2780975270a9ae0e455bd0b8 = L.circleMarker(
+                [-5.96884, 106.29646],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_8c3accbd5a0c977497dddfd428b509e2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7ddbb002d54cfb5c9587afae82e0b974 = $(`<div id="html_7ddbb002d54cfb5c9587afae82e0b974" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Lontar (Score: 78.76)</div>`)[0];
+                popup_8c3accbd5a0c977497dddfd428b509e2.setContent(html_7ddbb002d54cfb5c9587afae82e0b974);
+            
+        
+
+        circle_marker_42e1d6ac2780975270a9ae0e455bd0b8.bindPopup(popup_8c3accbd5a0c977497dddfd428b509e2)
+        ;
+
+        
+    
+    
+            var circle_marker_e6a43c5f0de2f7969443ae0dd4cc36c9 = L.circleMarker(
+                [-6.00889, 106.42],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_acf4de61f4722ca9ecff2cc86cade848 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e15b454ab74e82502b19212111b130a8 = $(`<div id="html_e15b454ab74e82502b19212111b130a8" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pulau Cangkir (Score: 78.23)</div>`)[0];
+                popup_acf4de61f4722ca9ecff2cc86cade848.setContent(html_e15b454ab74e82502b19212111b130a8);
+            
+        
+
+        circle_marker_e6a43c5f0de2f7969443ae0dd4cc36c9.bindPopup(popup_acf4de61f4722ca9ecff2cc86cade848)
+        ;
+
+        
+    
+    
+            var circle_marker_325c058bba259679143ac0134bcdf04a = L.circleMarker(
+                [-6.0195, 106.452],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_ef13b5861ff1eb988de3f5251aa91c35 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_18db58923512382163f8a01066372dda = $(`<div id="html_18db58923512382163f8a01066372dda" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Tanjung Kait (Score: 74.28)</div>`)[0];
+                popup_ef13b5861ff1eb988de3f5251aa91c35.setContent(html_18db58923512382163f8a01066372dda);
+            
+        
+
+        circle_marker_325c058bba259679143ac0134bcdf04a.bindPopup(popup_ef13b5861ff1eb988de3f5251aa91c35)
+        ;
+
+        
+    
+    
+            var circle_marker_80347861a442ea141332f8977f4c10ce = L.circleMarker(
+                [-5.975, 106.25],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_1f6b8fb2d9cc69ddff6e9cd1a8c5927e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_099feca0b2d286ab590def470fb341cc = $(`<div id="html_099feca0b2d286ab590def470fb341cc" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Tanara (Score: 73.22)</div>`)[0];
+                popup_1f6b8fb2d9cc69ddff6e9cd1a8c5927e.setContent(html_099feca0b2d286ab590def470fb341cc);
+            
+        
+
+        circle_marker_80347861a442ea141332f8977f4c10ce.bindPopup(popup_1f6b8fb2d9cc69ddff6e9cd1a8c5927e)
+        ;
+
+        
+    
+    
+            var circle_marker_2013733729adc34d9d0b932d4e2f12f8 = L.circleMarker(
+                [-6.1258, 105.8383],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_244c9bb61323d1bcbcdfe2644677f6c6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b35183fb3d926d56dfa723aaad03348e = $(`<div id="html_b35183fb3d926d56dfa723aaad03348e" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Batu Saung (Score: 71.95)</div>`)[0];
+                popup_244c9bb61323d1bcbcdfe2644677f6c6.setContent(html_b35183fb3d926d56dfa723aaad03348e);
+            
+        
+
+        circle_marker_2013733729adc34d9d0b932d4e2f12f8.bindPopup(popup_244c9bb61323d1bcbcdfe2644677f6c6)
+        ;
+
+        
+    
+    
+            var circle_marker_90dcc255d102fbd02d15d3650aba4895 = L.circleMarker(
+                [-6.125, 105.838],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_81b7d6df2ed0bfe8777954d47b7afc32 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1fb9823ab85bf0c6c883c33fc78f68de = $(`<div id="html_1fb9823ab85bf0c6c883c33fc78f68de" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pandan Carita (Score: 71.02)</div>`)[0];
+                popup_81b7d6df2ed0bfe8777954d47b7afc32.setContent(html_1fb9823ab85bf0c6c883c33fc78f68de);
+            
+        
+
+        circle_marker_90dcc255d102fbd02d15d3650aba4895.bindPopup(popup_81b7d6df2ed0bfe8777954d47b7afc32)
+        ;
+
+        
+    
+    
+            var circle_marker_a99c220bcfcc4cd55fbd618d4e26db61 = L.circleMarker(
+                [-6.1305, 105.8427],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_8f17f803a5534473a1583de6c3382ada = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_667c41b1b5ba7f8f96d2cef9121fcf33 = $(`<div id="html_667c41b1b5ba7f8f96d2cef9121fcf33" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Carita (Score: 70.47)</div>`)[0];
+                popup_8f17f803a5534473a1583de6c3382ada.setContent(html_667c41b1b5ba7f8f96d2cef9121fcf33);
+            
+        
+
+        circle_marker_a99c220bcfcc4cd55fbd618d4e26db61.bindPopup(popup_8f17f803a5534473a1583de6c3382ada)
+        ;
+
+        
+    
+    
+            var circle_marker_9edd22a61e86068da0b46f2491d6e6a9 = L.circleMarker(
+                [-6.1454, 105.853],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_b4415e06d79059740a723926124d8bcb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8f129a65ce33bee56a97123c021ce003 = $(`<div id="html_8f129a65ce33bee56a97123c021ce003" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Marina (Score: 70.42)</div>`)[0];
+                popup_b4415e06d79059740a723926124d8bcb.setContent(html_8f129a65ce33bee56a97123c021ce003);
+            
+        
+
+        circle_marker_9edd22a61e86068da0b46f2491d6e6a9.bindPopup(popup_b4415e06d79059740a723926124d8bcb)
+        ;
+
+        
+    
+    
+            var circle_marker_8ae6ce4179c4702eab45780234e468cc = L.circleMarker(
+                [-6.1082, 105.8569],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_cb93aed8c544c52c952b939344ff97eb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e53568a3dc7d529e17805680eb3a6efb = $(`<div id="html_e53568a3dc7d529e17805680eb3a6efb" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Karang Bolong (Score: 68.87)</div>`)[0];
+                popup_cb93aed8c544c52c952b939344ff97eb.setContent(html_e53568a3dc7d529e17805680eb3a6efb);
+            
+        
+
+        circle_marker_8ae6ce4179c4702eab45780234e468cc.bindPopup(popup_cb93aed8c544c52c952b939344ff97eb)
+        ;
+
+        
+    
+    
+            var circle_marker_3373390de485765aa9e05fd93abcdc85 = L.circleMarker(
+                [-6.1265, 105.8645],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_6fa908e54a06956cfa2349c32e9cd294 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6ff1bd5f591d95d3913b7d7ea83fb2af = $(`<div id="html_6ff1bd5f591d95d3913b7d7ea83fb2af" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pasir Putih Florida (Score: 68.41)</div>`)[0];
+                popup_6fa908e54a06956cfa2349c32e9cd294.setContent(html_6ff1bd5f591d95d3913b7d7ea83fb2af);
+            
+        
+
+        circle_marker_3373390de485765aa9e05fd93abcdc85.bindPopup(popup_6fa908e54a06956cfa2349c32e9cd294)
+        ;
+
+        
+    
+    
+            var circle_marker_b70374d0732c611ec3dcf538f44fc2de = L.circleMarker(
+                [-6.1345, 105.867],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_96cbfd2e5271d9f640491c3615f29d32 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2204121b373e01c8ba61fddb2a730895 = $(`<div id="html_2204121b373e01c8ba61fddb2a730895" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Florida Indah (Score: 68.37)</div>`)[0];
+                popup_96cbfd2e5271d9f640491c3615f29d32.setContent(html_2204121b373e01c8ba61fddb2a730895);
+            
+        
+
+        circle_marker_b70374d0732c611ec3dcf538f44fc2de.bindPopup(popup_96cbfd2e5271d9f640491c3615f29d32)
+        ;
+
+        
+    
+    
+            var circle_marker_c5a40b06fd7d47eccb603d816147f548 = L.circleMarker(
+                [-6.035, 106.56],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_daae45836522426aba2843cbfe5329fd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3a53bdcc370e426d4387c0843db45d1a = $(`<div id="html_3a53bdcc370e426d4387c0843db45d1a" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pakuhaji (Score: 68.22)</div>`)[0];
+                popup_daae45836522426aba2843cbfe5329fd.setContent(html_3a53bdcc370e426d4387c0843db45d1a);
+            
+        
+
+        circle_marker_c5a40b06fd7d47eccb603d816147f548.bindPopup(popup_daae45836522426aba2843cbfe5329fd)
+        ;
+
+        
+    
+    
+            var circle_marker_3f1a3c3acb644b83cf006d5dda2201e7 = L.circleMarker(
+                [-6.1158, 105.864],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_0adefd83ccb09888f0e682d16d681063 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_035df31a47b825cdb7cd34bee745da70 = $(`<div id="html_035df31a47b825cdb7cd34bee745da70" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Jambu (Score: 68.05)</div>`)[0];
+                popup_0adefd83ccb09888f0e682d16d681063.setContent(html_035df31a47b825cdb7cd34bee745da70);
+            
+        
+
+        circle_marker_3f1a3c3acb644b83cf006d5dda2201e7.bindPopup(popup_0adefd83ccb09888f0e682d16d681063)
+        ;
+
+        
+    
+    
+            var circle_marker_ca2b277f47e6d6d2f6262760104e035e = L.circleMarker(
+                [-5.9535, 105.8565],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_d6bce9ae115aa603d3393c7ebd24cda4 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3eb791692cc8b7920923ba2385d4e55a = $(`<div id="html_3eb791692cc8b7920923ba2385d4e55a" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Sangiang (Score: 66.3)</div>`)[0];
+                popup_d6bce9ae115aa603d3393c7ebd24cda4.setContent(html_3eb791692cc8b7920923ba2385d4e55a);
+            
+        
+
+        circle_marker_ca2b277f47e6d6d2f6262760104e035e.bindPopup(popup_d6bce9ae115aa603d3393c7ebd24cda4)
+        ;
+
+        
+    
+    
+            var circle_marker_4639f80f292cb1b59c2f613fd03206cf = L.circleMarker(
+                [-5.985, 106.21],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_43eca5cbf573901e3041ce3f4a4b29de = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_768b2f1078793bf65cb1da1c01bcaee4 = $(`<div id="html_768b2f1078793bf65cb1da1c01bcaee4" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pontang (Score: 65.84)</div>`)[0];
+                popup_43eca5cbf573901e3041ce3f4a4b29de.setContent(html_768b2f1078793bf65cb1da1c01bcaee4);
+            
+        
+
+        circle_marker_4639f80f292cb1b59c2f613fd03206cf.bindPopup(popup_43eca5cbf573901e3041ce3f4a4b29de)
+        ;
+
+        
+    
+    
+            var circle_marker_4ba0e557c843e72bb3e9a3b2f1e1a635 = L.circleMarker(
+                [-6.015, 106.685],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_cfb0706cf858b95e7ec82e1c9e309930 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_16f942bb207a39b7dd18eee8ede69481 = $(`<div id="html_16f942bb207a39b7dd18eee8ede69481" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Tanjung Pasir (Score: 62.24)</div>`)[0];
+                popup_cfb0706cf858b95e7ec82e1c9e309930.setContent(html_16f942bb207a39b7dd18eee8ede69481);
+            
+        
+
+        circle_marker_4ba0e557c843e72bb3e9a3b2f1e1a635.bindPopup(popup_cfb0706cf858b95e7ec82e1c9e309930)
+        ;
+
+        
+    
+    
+            var circle_marker_28a35c881bd8fed66548d1309f04da62 = L.circleMarker(
+                [-6.0825, 105.8805],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_0a32f48066f6cd2cf75bb475a47bdd72 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c4fba460fa06b912b6e855fa7c0cd0d0 = $(`<div id="html_c4fba460fa06b912b6e855fa7c0cd0d0" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pasir Putih Sirih (Score: 59.77)</div>`)[0];
+                popup_0a32f48066f6cd2cf75bb475a47bdd72.setContent(html_c4fba460fa06b912b6e855fa7c0cd0d0);
+            
+        
+
+        circle_marker_28a35c881bd8fed66548d1309f04da62.bindPopup(popup_0a32f48066f6cd2cf75bb475a47bdd72)
+        ;
+
+        
+    
+    
+            var circle_marker_109175c08d02037415481878cdc75dcf = L.circleMarker(
+                [-6.0712, 105.8812],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_7de350f7d885f828e1b5ec3b4f660a12 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f46ac3b75758856a8318cd9b20940e89 = $(`<div id="html_f46ac3b75758856a8318cd9b20940e89" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Sambolo (Score: 58.88)</div>`)[0];
+                popup_7de350f7d885f828e1b5ec3b4f660a12.setContent(html_f46ac3b75758856a8318cd9b20940e89);
+            
+        
+
+        circle_marker_109175c08d02037415481878cdc75dcf.bindPopup(popup_7de350f7d885f828e1b5ec3b4f660a12)
+        ;
+
+        
+    
+    
+            var circle_marker_55dad779b2779ceb63c3f0b195bad890 = L.circleMarker(
+                [-6.062, 105.8825],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_366fe0d64002975ea397b0f9a6e3c651 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a5c59d6ce0941502089b142e9c4c1f6c = $(`<div id="html_a5c59d6ce0941502089b142e9c4c1f6c" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Marbella (Score: 58.01)</div>`)[0];
+                popup_366fe0d64002975ea397b0f9a6e3c651.setContent(html_a5c59d6ce0941502089b142e9c4c1f6c);
+            
+        
+
+        circle_marker_55dad779b2779ceb63c3f0b195bad890.bindPopup(popup_366fe0d64002975ea397b0f9a6e3c651)
+        ;
+
+        
+    
+    
+            var circle_marker_5dfd122148393bf64be62dc01673f318 = L.circleMarker(
+                [-6.0465, 105.885],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_48b1356b12d01580295b6d68657b6d19 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c4b2f72b0b5aa342c4f33d868caa7f59 = $(`<div id="html_c4b2f72b0b5aa342c4f33d868caa7f59" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Anyer (Score: 56.59)</div>`)[0];
+                popup_48b1356b12d01580295b6d68657b6d19.setContent(html_c4b2f72b0b5aa342c4f33d868caa7f59);
+            
+        
+
+        circle_marker_5dfd122148393bf64be62dc01673f318.bindPopup(popup_48b1356b12d01580295b6d68657b6d19)
+        ;
+
+        
+    
+    
+            var circle_marker_edccf64e9e4d5928523bb144b274043f = L.circleMarker(
+                [-6.067, 106.667],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_8210650a34f44b6a77ff2c6bef28211f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a6f3f1d546a8379861d6380b7b5380cb = $(`<div id="html_a6f3f1d546a8379861d6380b7b5380cb" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Tanjung Burung (Score: 56.51)</div>`)[0];
+                popup_8210650a34f44b6a77ff2c6bef28211f.setContent(html_a6f3f1d546a8379861d6380b7b5380cb);
+            
+        
+
+        circle_marker_edccf64e9e4d5928523bb144b274043f.bindPopup(popup_8210650a34f44b6a77ff2c6bef28211f)
+        ;
+
+        
+    
+    
+            var circle_marker_23a085a35c50b853ec2a4883937e6a55 = L.circleMarker(
+                [-6.087, 106.703],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_26fa01616f48d373044720fec00b8a5b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2aca519c2624a32e12711e4559da7946 = $(`<div id="html_2aca519c2624a32e12711e4559da7946" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Dadap (Score: 52.81)</div>`)[0];
+                popup_26fa01616f48d373044720fec00b8a5b.setContent(html_2aca519c2624a32e12711e4559da7946);
+            
+        
+
+        circle_marker_23a085a35c50b853ec2a4883937e6a55.bindPopup(popup_26fa01616f48d373044720fec00b8a5b)
+        ;
+
+        
+    
+    
+            var circle_marker_08a694f9dcae533d48fe3fdf7fb7717b = L.circleMarker(
+                [-6.372, 105.81],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_8bc251ed242b344d0f43636b536f4105 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f6786754760f7a7ad7ffb3b906aeb95a = $(`<div id="html_f6786754760f7a7ad7ffb3b906aeb95a" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Labuan (Score: 51.55)</div>`)[0];
+                popup_8bc251ed242b344d0f43636b536f4105.setContent(html_f6786754760f7a7ad7ffb3b906aeb95a);
+            
+        
+
+        circle_marker_08a694f9dcae533d48fe3fdf7fb7717b.bindPopup(popup_8bc251ed242b344d0f43636b536f4105)
+        ;
+
+        
+    
+    
+            var circle_marker_091e594cf33e54fd3c512a915f64966d = L.circleMarker(
+                [-6.35329, 105.82301],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_8d9ae17395e953d9cf0dc1bcb1d00e04 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_826b2a585c0327705c8f13c3366daefa = $(`<div id="html_826b2a585c0327705c8f13c3366daefa" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Caringin (Score: 49.66)</div>`)[0];
+                popup_8d9ae17395e953d9cf0dc1bcb1d00e04.setContent(html_826b2a585c0327705c8f13c3366daefa);
+            
+        
+
+        circle_marker_091e594cf33e54fd3c512a915f64966d.bindPopup(popup_8d9ae17395e953d9cf0dc1bcb1d00e04)
+        ;
+
+        
+    
+    
+            var circle_marker_393704cf526fb9b0be2a1a241d9d05e2 = L.circleMarker(
+                [-5.932, 105.985],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_81f453ddb61a4268987d9ff995a11e26 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_68200e6ec694efce7d948eddf2fa1dc0 = $(`<div id="html_68200e6ec694efce7d948eddf2fa1dc0" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pulorida (Score: 29.46)</div>`)[0];
+                popup_81f453ddb61a4268987d9ff995a11e26.setContent(html_68200e6ec694efce7d948eddf2fa1dc0);
+            
+        
+
+        circle_marker_393704cf526fb9b0be2a1a241d9d05e2.bindPopup(popup_81f453ddb61a4268987d9ff995a11e26)
+        ;
+
+        
+    
+    
+            var circle_marker_493755aa01e2dbd2b3aa0af2836d8d59 = L.circleMarker(
+                [-5.9339, 105.9896],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_4a9d06be9e29bfae1aa1c5e5bbf2d202 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_38c73c3df827e1243dd2f4d6eb61e207 = $(`<div id="html_38c73c3df827e1243dd2f4d6eb61e207" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pulau Merak Besar (Score: 28.29)</div>`)[0];
+                popup_4a9d06be9e29bfae1aa1c5e5bbf2d202.setContent(html_38c73c3df827e1243dd2f4d6eb61e207);
+            
+        
+
+        circle_marker_493755aa01e2dbd2b3aa0af2836d8d59.bindPopup(popup_4a9d06be9e29bfae1aa1c5e5bbf2d202)
+        ;
+
+        
+    
+    
+            var circle_marker_97d7ad6f4210c307df8c8e61058d36ef = L.circleMarker(
+                [-5.9417, 105.997],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_a50d8026f8845f07a837fff5c14473bd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8f466578a3ff06cc62f0ae7a87539add = $(`<div id="html_8f466578a3ff06cc62f0ae7a87539add" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Pulau Merak Kecil (Score: 24.7)</div>`)[0];
+                popup_a50d8026f8845f07a837fff5c14473bd.setContent(html_8f466578a3ff06cc62f0ae7a87539add);
+            
+        
+
+        circle_marker_97d7ad6f4210c307df8c8e61058d36ef.bindPopup(popup_a50d8026f8845f07a837fff5c14473bd)
+        ;
+
+        
+    
+    
+            var circle_marker_e2a8f68dfab33d612843694182bf5bea = L.circleMarker(
+                [-6.012, 105.965],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 3}
+            ).addTo(map_cc83793b34a31215a68aae105c1316a8);
+        
+    
+        var popup_df58c4a98c7a861ed6369207b9562d92 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ca936fb0e926fef3a26f887f0cd7b0a0 = $(`<div id="html_ca936fb0e926fef3a26f887f0cd7b0a0" style="width: 100.0%; height: 100.0%;">🏖️ Pantai Karang Pamulang (Score: 23.77)</div>`)[0];
+                popup_df58c4a98c7a861ed6369207b9562d92.setContent(html_ca936fb0e926fef3a26f887f0cd7b0a0);
+            
+        
+
+        circle_marker_e2a8f68dfab33d612843694182bf5bea.bindPopup(popup_df58c4a98c7a861ed6369207b9562d92)
+        ;
+
+        
+    
+</script>
 </html>
