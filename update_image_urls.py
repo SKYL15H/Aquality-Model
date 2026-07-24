@@ -9,7 +9,7 @@ BASE = "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/"
 
 # Mapping: slug -> image filename (from the provided URL list)
 SLUG_TO_IMAGE = {
-    "pantai-batu-hideung":         "pantai-batu-hideung.jpg",
+    "pantai-batu-hideung":         "batu-hideung.jpg",
     "pantai-lalassa":              "lalasa-tanjung-lesung.jpg",
     "pantai-anyer":                "pantai-anyer.jpg",
     "pantai-bagedur":              "pantai-bagedur.jpg",
