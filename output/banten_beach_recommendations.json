@@ -248,7 +248,7 @@
     "kabupaten_kota": "Pandeglang",
     "latitude": -6.8131,
     "longitude": 105.65,
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/batu-hideung.jpg",
     "health_score": 97.3,
     "label_rekomendasi": "SANGAT DIREKOMENDASIKAN",
     "industri_terdekat": "PLTU Labuan (Banten 2)",
@@ -780,7 +780,7 @@
     "narasi_rekomendasi": "**Pantai Tanjung Kait** (Mauk) berada di peringkat **#26** dari 51 pantai dengan skor kelayakan lingkungan **74.28/100** — **DIREKOMENDASIKAN**. Kondisi lingkungan sekitar pantai tergolong baik untuk tujuan rekreasi karena minimnya polusi. Kecamatan Mauk memiliki kepadatan penduduk **1,500 jiwa/km²**. Indeks Pengaruh Urban pantai ini **RENDAH** (7.92/100) karena lokasinya yang terisolasi secara alami dari pusat perkotaan. Indeks Dampak Industri **0.67/100** (SANGAT RENDAH) — pantai ini sangat jauh dari kawasan industri sehingga dampak polusi industri sangat minimal. Keunggulan utama: indeks dampak industri (skor: 98.61). Aspek terlemah: skor kepadatan penduduk (skor: 54.66)."
   },
   {
-    "pantai": "Pantai Tanara",
+    "pantai": "Pantai z",
     "slug": "pantai-tanara",
     "kecamatan": "Tanara",
     "desa": "Tanara",
