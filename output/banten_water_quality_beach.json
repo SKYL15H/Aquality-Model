@@ -374,7 +374,7 @@
   "Pantai Florida Indah": {
     "Kecamatan": "Cinangka",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-florida.png",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pasir-putih-florida.png",
     "latitude": -6.1345,
     "longitude": 105.867,
     "industri_terdekat": "Pelabuhan Ciwandan",
@@ -844,7 +844,7 @@
   "Pantai Batu Hideung": {
     "Kecamatan": "Panimbang",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/batu-hideung.jpg",
     "latitude": -6.8131,
     "longitude": 105.65,
     "slug": "pantai-batu-hideung",
@@ -877,7 +877,7 @@
   "Pantai Lalassa": {
     "Kecamatan": "Panimbang",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/lalasa-tanjung-lesung.jpg",
     "latitude": -6.8072,
     "longitude": 105.6417,
     "slug": "pantai-lalassa",
@@ -910,7 +910,7 @@
   "Pantai Cipenyu": {
     "Kecamatan": "Panimbang",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-cipenyu.jpg",
     "latitude": -6.8,
     "longitude": 105.635,
     "slug": "pantai-cipenyu",
@@ -943,7 +943,7 @@
   "Pantai Pandan Carita": {
     "Kecamatan": "Carita",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pandan.jpg",
     "latitude": -6.125,
     "longitude": 105.838,
     "slug": "pantai-pandan-carita",
@@ -976,7 +976,7 @@
   "Pantai Labuan": {
     "Kecamatan": "Labuan",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-labuan.jpg",
     "latitude": -6.372,
     "longitude": 105.81,
     "slug": "pantai-labuan",
@@ -1011,7 +1011,7 @@
   "Pantai Teluk Lada": {
     "Kecamatan": "Sobang",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-ladda.jpg",
     "latitude": -6.529,
     "longitude": 105.817,
     "slug": "pantai-teluk-lada",
@@ -1044,7 +1044,7 @@
   "Pantai Ujung Kulon": {
     "Kecamatan": "Sumur",
     "Kabupaten_Kota": "Pandeglang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-ujung-kulon.jpg",
     "latitude": -6.71,
     "longitude": 105.335,
     "slug": "pantai-ujung-kulon",
@@ -1077,7 +1077,7 @@
   "Pantai Ciantir": {
     "Kecamatan": "Bayah",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-ciantir-banten.jpg",
     "latitude": -6.98,
     "longitude": 106.29,
     "slug": "pantai-ciantir",
@@ -1112,7 +1112,7 @@
   "Pantai Legon Pari": {
     "Kecamatan": "Bayah",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-legon-pari.jpg",
     "latitude": -6.967,
     "longitude": 106.296,
     "slug": "pantai-legon-pari",
@@ -1147,7 +1147,7 @@
   "Pantai Pulo Manuk": {
     "Kecamatan": "Bayah",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pulo-manuk.jpg",
     "latitude": -6.989,
     "longitude": 106.305,
     "slug": "pantai-pulo-manuk",
@@ -1182,7 +1182,7 @@
   "Pantai Goa Langir": {
     "Kecamatan": "Bayah",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-goa-langir.jpg",
     "latitude": -6.988,
     "longitude": 106.315,
     "slug": "pantai-goa-langir",
@@ -1217,7 +1217,7 @@
   "Pantai Cibobos": {
     "Kecamatan": "Cihara",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-cibobos.jpg",
     "latitude": -6.89,
     "longitude": 106.105,
     "slug": "pantai-cibobos",
@@ -1250,7 +1250,7 @@
   "Pantai Citarate": {
     "Kecamatan": "Cilograng",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-citarate.jpg",
     "latitude": -6.965,
     "longitude": 106.38,
     "slug": "pantai-citarate",
@@ -1283,7 +1283,7 @@
   "Pantai Cibareno": {
     "Kecamatan": "Cilograng",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-cibareno.jpg",
     "latitude": -6.955,
     "longitude": 106.39,
     "slug": "pantai-cibareno",
@@ -1316,7 +1316,7 @@
   "Pantai Panggarangan": {
     "Kecamatan": "Panggarangan",
     "Kabupaten_Kota": "Lebak",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-panggarangan.jpg",
     "latitude": -6.85,
     "longitude": 106.17,
     "slug": "pantai-panggarangan",
@@ -1349,7 +1349,7 @@
   "Pantai Marina": {
     "Kecamatan": "Cinangka",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-marina-anyer.jpg",
     "latitude": -6.1454,
     "longitude": 105.853,
     "slug": "pantai-marina",
@@ -1382,7 +1382,7 @@
   "Pantai Batu Saung": {
     "Kecamatan": "Cinangka",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-batu-saung.jpg",
     "latitude": -6.1258,
     "longitude": 105.8383,
     "slug": "pantai-batu-saung",
@@ -1415,7 +1415,7 @@
   "Pantai Karang Pamulang": {
     "Kecamatan": "Bojonegara",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-karang-pamulang.jpg",
     "latitude": -6.012,
     "longitude": 105.965,
     "slug": "pantai-karang-pamulang",
@@ -1460,7 +1460,7 @@
   "Pantai Pontang": {
     "Kecamatan": "Pontang",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pontang.jpg",
     "latitude": -5.985,
     "longitude": 106.21,
     "slug": "pantai-pontang",
@@ -1495,7 +1495,7 @@
   "Pantai Tanara": {
     "Kecamatan": "Tanara",
     "Kabupaten_Kota": "Serang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-tanara.jpg",
     "latitude": -5.975,
     "longitude": 106.25,
     "slug": "pantai-tanara",
@@ -1528,7 +1528,7 @@
   "Pantai Tanjung Burung": {
     "Kecamatan": "Teluknaga",
     "Kabupaten_Kota": "Tangerang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-tanjung-burung.jpg",
     "latitude": -6.067,
     "longitude": 106.667,
     "slug": "pantai-tanjung-burung",
@@ -1561,7 +1561,7 @@
   "Pantai Dadap": {
     "Kecamatan": "Kosambi",
     "Kabupaten_Kota": "Tangerang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-dadap.jpg",
     "latitude": -6.087,
     "longitude": 106.703,
     "slug": "pantai-dadap",
@@ -1594,7 +1594,7 @@
   "Pantai Pakuhaji": {
     "Kecamatan": "Pakuhaji",
     "Kabupaten_Kota": "Tangerang",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pakuhaji.jpg",
     "latitude": -6.035,
     "longitude": 106.56,
     "slug": "pantai-pakuhaji",
@@ -1627,7 +1627,7 @@
   "Pantai Pulorida": {
     "Kecamatan": "Pulomerak",
     "Kabupaten_Kota": "Cilegon",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pulorida.jpg",
     "latitude": -5.932,
     "longitude": 105.985,
     "slug": "pantai-pulorida",
@@ -1668,7 +1668,7 @@
   "Pantai Pulau Merak Kecil": {
     "Kecamatan": "Pulomerak",
     "Kabupaten_Kota": "Cilegon",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pulau-merak-kecil.jpg",
     "latitude": -5.9417,
     "longitude": 105.997,
     "slug": "pantai-pulau-merak-kecil",
@@ -1710,7 +1710,7 @@
   "Pantai Pulau Merak Besar": {
     "Kecamatan": "Pulomerak",
     "Kabupaten_Kota": "Cilegon",
-    "url_gambar": "",
+    "url_gambar": "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/pantai-pulau-merak-besar.jpg",
     "latitude": -5.9339,
     "longitude": 105.9896,
     "slug": "pantai-pulau-merak-besar",
