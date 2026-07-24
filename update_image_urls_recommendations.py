@@ -8,7 +8,7 @@ import json
 BASE = "https://uqjvr3hvnh8nfixj.public.blob.vercel-storage.com/images/"
 
 SLUG_TO_IMAGE = {
-    "pantai-batu-hideung":         "batu-hideung.jpg",
+    "pantai-batu-hideung":         "pantai-batu-hideung.jpg",
     "pantai-lalassa":              "lalasa-tanjung-lesung.jpg",
     "pantai-anyer":                "pantai-anyer.jpg",
     "pantai-bagedur":              "pantai-bagedur.jpg",
